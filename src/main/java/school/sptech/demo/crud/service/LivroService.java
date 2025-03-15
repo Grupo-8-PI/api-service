@@ -45,7 +45,7 @@ public class LivroService {
     }
     public Livro deleteLivroById(Integer id){
         if(repository.existsById(id)){
-            Optional<Livro> livroToBeDeleted = repository.findById(id)
+            Optional<Livro> livroToBeDeleted = repository.findById(id);
             repository.deleteById(id);
             return livroToBeDeleted.get();
         }
