@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface LivroRepository extends JpaRepository<Livro, Integer> {
   List<Livro> findByNomeOrId(String nome, Integer id);
-  Livro findByNome(String nome);
+//  Livro findByNome(String nome);
 }
