@@ -32,7 +32,7 @@ public class LivroController {
         }
         return ResponseEntity.status(200).body(livroFounded);
     }
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> postLivro(@RequestBody Livro livro){
         Livro livroPosted = service.postLivro(livro);
         if(livroPosted==null){
