@@ -32,6 +32,7 @@ public class DoadorService {
             Doador doadorWithTheSameCpf = possibleDoadorWithTheSameCpf.get();
             throw new DataIntegrityViolationException("Error: There is a conflict, the CPF presented was already posted");
         }
+        doador.setId(null);
         Doador doadorToBePost = repository.save(doador);
         return doadorToBePost;
     }
