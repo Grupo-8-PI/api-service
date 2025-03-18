@@ -26,10 +26,12 @@ public class LivroService {
     public Livro postLivro(Livro livro) {
         List<Livro> existingLivro = repository.findByNomeOrId(livro.getNome(), livro.getId());
         if(existingLivro.isEmpty()){
+            livro.setId(null);
             return repository.save(livro);
         }else if(existingLivro.size()==1){
             Livro livroToUpdate = existingLivro.get(0);
             livroToUpdate.setQtdLivros((livroToUpdate.getQtdLivros())+ livro.getQtdLivros());
+            livroToUpdate.setId(null);
             return repository.save(livroToUpdate);
         }else{
             return null;
