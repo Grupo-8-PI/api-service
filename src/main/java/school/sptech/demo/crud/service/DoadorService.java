@@ -21,10 +21,7 @@ public class DoadorService {
         return allDoadores;
     }
     public Optional<Doador> getDoadorById(Integer id){
-        if(repository.existsById(id)){
-            return repository.findById(id);
-        }
-        return null;
+        return repository.findById(id);
     }
     public Doador postDoador(Doador doador){
         Optional<Doador> possibleDoadorWithTheSameCpf = repository.findByCpfAndIdNot(doador.getCpf(), doador.getId());
