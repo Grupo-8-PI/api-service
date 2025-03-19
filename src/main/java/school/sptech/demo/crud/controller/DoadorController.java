@@ -24,6 +24,18 @@ DoadorService service;
     }
     return ResponseEntity.status(200).body(doadoresAchados);
 }
+@GetMapping("/name_search")
+    public ResponseEntity<?> getDoadorByNome(@RequestParam String nome){
+    List<Doador> doadorWithTheSameName = service.getDoadorByNome(nome);
+    if(doadorWithTheSameName.size()==0){
+        return ResponseEntity.status(404).build();
+    }else if(doadorWithTheSameName.size()>1){
+        return ResponseEntity.status(409).body("Error: there were more than 1 person with the same name");
+    }else{
+        return ResponseEntity.status(200).body(doadorWithTheSameName.getFirst());
+    }
+}
+
 @GetMapping("/{id}")
     public ResponseEntity<Doador> getDoadorById(@PathVariable Integer id){
     Optional<Doador> doadorReceived = service.getDoadorById(id);

@@ -32,6 +32,17 @@ public class LivroController {
         }
         return ResponseEntity.status(200).body(livroFounded);
     }
+    @GetMapping("/name_search")
+    public ResponseEntity<?> getLivroByNome(@RequestParam String nome){
+        List<Livro> livrosFoundWithTheSameName = service.getLivrosByNome(nome);
+        if(livrosFoundWithTheSameName.size()==0){
+            return ResponseEntity.status(404).build();
+        }else if(livrosFoundWithTheSameName.size()>1){
+            return ResponseEntity.status(409).body("Error: there were more than 1 book with the same name, it should'nt be this way, the attribute 'qtdLivros' must have been modified if more than one of a book were present");
+        }else{
+            return ResponseEntity.status(200).body(livrosFoundWithTheSameName.getFirst());
+        }
+    }
     @PostMapping
     public ResponseEntity<?> postLivro(@RequestBody Livro livro){
         Livro livroPosted = service.postLivro(livro);

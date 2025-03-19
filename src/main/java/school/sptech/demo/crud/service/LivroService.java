@@ -23,6 +23,9 @@ public class LivroService {
         }
         return null;
     }
+    public List<Livro> getLivrosByNome(String nome){
+        return repository.findByNome(nome);
+    }
     public Livro postLivro(Livro livro) {
         List<Livro> existingLivro = repository.findByNomeOrId(livro.getNome(), livro.getId());
         if(existingLivro.isEmpty()){
