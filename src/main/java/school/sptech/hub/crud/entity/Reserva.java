@@ -10,7 +10,7 @@ import java.util.List;
 public class Reserva {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-private int id;
+private Integer id;
 
 private LocalDateTime dtReserva;
 

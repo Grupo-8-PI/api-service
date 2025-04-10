@@ -1,12 +1,14 @@
 package school.sptech.hub.crud.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
 public class Usuario {
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Integer id;
 @Column(length = 45)
 private String nome;
 

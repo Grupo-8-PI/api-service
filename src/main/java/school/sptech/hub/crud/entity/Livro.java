@@ -10,7 +10,7 @@ public class Livro {
 
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-private int id;
+private Integer id;
 
 @Column(length = 45)
 private String isbn;

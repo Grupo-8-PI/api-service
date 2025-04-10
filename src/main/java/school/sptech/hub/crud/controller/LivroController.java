@@ -1,0 +1,7 @@
+package school.sptech.hub.crud.controller;
+
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class LivroController {
+}
