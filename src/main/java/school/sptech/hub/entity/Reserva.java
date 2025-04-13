@@ -21,8 +21,6 @@ private LocalDateTime statusReserva;
 private Integer totalReserva;
 
 @ManyToOne
-private List<ItemReserva> reservas;
-@ManyToOne
 private List<Usuario> usuarios;
 
     public int getId() {
