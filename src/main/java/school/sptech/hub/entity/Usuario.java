@@ -10,42 +10,29 @@ import java.time.LocalDate;
 
 @Entity
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
-    @NotBlank
     @Column(length = 45)
-    @Size(max = 45, message = "The field nome must not be more than 45 characters long")
     private String nome;
 
-    @NotNull
-    @NotBlank
-    @Email(message = "Invalid email provided")
     @Column(length = 45)
     private String email;
 
-    @NotNull
-    @NotBlank
-    @Size(max = 11, message = "Phone number with more than 11 characters provided")
     @Column(length = 45)
     private String telefone;
 
-    @NotNull
-    @NotBlank
+
     @Column(length = 45)
     private String tipo_usuario;
 
-    @NotNull
-    @NotBlank
     @Size(max = 14, message = "Invalid CPF provided")
     @Column(length = 45)
     private String cpf;
 
-    @NotNull
-    @NotBlank
-    @Size(min = 8, message = "Password too short")
+
     @Column(length = 45)
     private String senha;
 

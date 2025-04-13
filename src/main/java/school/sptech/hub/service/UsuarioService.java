@@ -2,6 +2,9 @@ package school.sptech.hub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import school.sptech.hub.controller.dto.UsuarioCreateDto;
+import school.sptech.hub.controller.dto.UsuarioMapper;
+import school.sptech.hub.controller.dto.UsuarioResponseDto;
 import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.repository.UsuarioRepository;
 
@@ -11,12 +14,13 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
 
-    public Usuario createUser(Usuario usuario) {
-        usuario.setId(null);
-        if (isValidUserType(usuario.getTipo_usuario())) {
-            return repository.save(usuario);
+    public UsuarioResponseDto createUser(UsuarioCreateDto usuario) {
+        if(!isValidUserType(usuario.getTipo_usuario())){
+            return null;
         }
-        return null;
+        Usuario usuarioEntity = UsuarioMapper.toEntity(usuario);
+        Usuario createdUser = repository.save(usuarioEntity);
+        return UsuarioMapper.toResponseDto(createdUser);
     }
 
     public Usuario getUserById(Integer id) {
@@ -29,8 +33,8 @@ public class UsuarioService {
         if (existingUser == null) {
             return null;
         }
-        Usuario usuarioUpdated = updateUserFields(existingUser, usuario);
-        return repository.save(usuarioUpdated);
+//        Usuario usuarioUpdated = updateUserFields(existingUser, usuario);
+        return repository.save(existingUser);
     }
 
 
@@ -38,28 +42,4 @@ public class UsuarioService {
         return "admin".equalsIgnoreCase(userType) || "user".equalsIgnoreCase(userType);
     }
 
-    private Usuario updateUserFields(Usuario existingUsuario, Usuario toBeUpdatedUser) {
-        if (toBeUpdatedUser.getNome() != null) {
-            existingUsuario.setNome(toBeUpdatedUser.getNome());
-        }
-        if (toBeUpdatedUser.getEmail() != null) {
-            existingUsuario.setEmail(toBeUpdatedUser.getEmail());
-        }
-        if (toBeUpdatedUser.getTelefone() != null) {
-            existingUsuario.setTelefone(toBeUpdatedUser.getTelefone());
-        }
-        if (toBeUpdatedUser.getTipo_usuario() != null) {
-            existingUsuario.setTipo_usuario(toBeUpdatedUser.getTipo_usuario());
-        }
-        if (toBeUpdatedUser.getCpf() != null) {
-            existingUsuario.setCpf(toBeUpdatedUser.getCpf());
-        }
-        if (toBeUpdatedUser.getDtNascimento() != null) {
-            existingUsuario.setDtNascimento(toBeUpdatedUser.getDtNascimento());
-        }
-        if (toBeUpdatedUser.getSenha() != null) {
-            existingUsuario.setSenha(toBeUpdatedUser.getSenha());
-        }
-        return existingUsuario;
-    }
 }

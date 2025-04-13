@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import school.sptech.hub.controller.dto.UsuarioCreateDto;
+import school.sptech.hub.controller.dto.UsuarioResponseDto;
 import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.service.UsuarioService;
 
@@ -15,8 +17,8 @@ public class UsuarioController {
     private UsuarioService service;
 
     @PostMapping
-    public ResponseEntity<Usuario> createUser(@Valid @RequestBody Usuario usuario) {
-        Usuario createdUser = service.createUser(usuario);
+    public ResponseEntity<UsuarioResponseDto> createUser(@Valid @RequestBody UsuarioCreateDto usuario) {
+        UsuarioResponseDto createdUser = service.createUser(usuario);
         if (createdUser == null) {
             return ResponseEntity.status(400)
                     .body(null);
