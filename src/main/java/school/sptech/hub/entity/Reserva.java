@@ -7,21 +7,21 @@ import java.util.List;
 
 @Entity
 public class Reserva {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-private LocalDateTime dtReserva;
+    private LocalDateTime dtReserva;
 
-private LocalDateTime dt_limite;
+    private LocalDateTime dt_limite;
 
-@Column(length = 45)
-private LocalDateTime statusReserva;
+    @Column(length = 45)
+    private LocalDateTime statusReserva;
 
-private Integer totalReserva;
+    private Integer totalReserva;
 
-@ManyToOne
-private List<Usuario> usuarios;
+    @ManyToOne
+    private Usuario usuarios;
 
     public int getId() {
         return id;
