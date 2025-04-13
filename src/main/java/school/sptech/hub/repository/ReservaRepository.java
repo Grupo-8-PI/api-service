@@ -1,7 +1,7 @@
-package school.sptech.hub.crud.repository;
+package school.sptech.hub.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import school.sptech.hub.crud.entity.Reserva;
+import school.sptech.hub.entity.Reserva;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
 }

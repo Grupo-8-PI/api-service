@@ -1,4 +1,4 @@
-package school.sptech.hub.crud.entity;
+package school.sptech.hub.entity;
 
 
 import jakarta.persistence.*;

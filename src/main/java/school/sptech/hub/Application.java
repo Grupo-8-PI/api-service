@@ -1,4 +1,4 @@
-package school.sptech.hub.crud;
+package school.sptech.hub;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

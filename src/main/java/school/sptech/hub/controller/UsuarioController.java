@@ -1,7 +1,7 @@
-package school.sptech.hub.crud.controller;
+package school.sptech.hub.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class LivroController {
+public class UsuarioController {
 }

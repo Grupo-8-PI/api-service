@@ -1,4 +1,4 @@
-package school.sptech.hub.crud;
+package school.sptech.hub;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
