@@ -48,4 +48,15 @@ public class UsuarioController {
         return ResponseEntity.status(200)
                 .body(updateUser);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Usuario> deleteUserById(@PathVariable Integer id){
+        Usuario deletedUser = service.deleteUserById(id);
+        if (deletedUser == null) {
+            return ResponseEntity.status(404)
+                    .build();
+        }
+        return ResponseEntity.status(200)
+                .body(deletedUser);
+    }
 }

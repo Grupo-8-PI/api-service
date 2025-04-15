@@ -40,6 +40,15 @@ public class UsuarioService {
         return repository.save(updatedUser);
     }
 
+    public Usuario deleteUserById(Integer id) {
+        Usuario usuarioFinded = repository.findById(id).orElse(null);
+        if (usuarioFinded == null) {
+            return null;
+        }
+        repository.delete(usuarioFinded);
+        return usuarioFinded;
+    }
+
 
     private boolean isValidUserType(String userType) {
         return "admin".equalsIgnoreCase(userType) || "user".equalsIgnoreCase(userType);
