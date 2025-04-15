@@ -16,7 +16,7 @@ public class Reserva {
     private LocalDateTime dt_limite;
 
     @Column(length = 45)
-    private LocalDateTime statusReserva;
+    private String statusReserva;
 
     private Integer totalReserva;
 
@@ -47,11 +47,11 @@ public class Reserva {
         this.dt_limite = dt_limite;
     }
 
-    public LocalDateTime getStatusReserva() {
+    public String  getStatusReserva() {
         return statusReserva;
     }
 
-    public void setStatusReserva(LocalDateTime statusReserva) {
+    public void setStatusReserva(String statusReserva) {
         this.statusReserva = statusReserva;
     }
 
