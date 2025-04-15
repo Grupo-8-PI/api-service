@@ -28,23 +28,24 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUserById(@PathVariable Integer id) {
-        Usuario usuario = service.getUserById(id);
+    public ResponseEntity<UsuarioResponseDto> getUserById(@PathVariable Integer id) {
+        UsuarioResponseDto usuario = service.getUserById(id);
         if (usuario != null) {
-            return ResponseEntity.ok()
+            return ResponseEntity.status(200)
                     .body(usuario);
         }
-        return ResponseEntity.notFound()
+        return ResponseEntity.status(404)
                 .build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
-         Usuario updateUser = service.updateUserById(id, usuario);
-         if(updateUser == null){
-             return ResponseEntity.notFound()
-                     .build();
-         }
-         return ResponseEntity.status(200).body(updateUser);
+        Usuario updateUser = service.updateUserById(id, usuario);
+        if (updateUser == null) {
+            return ResponseEntity.status(404)
+                    .build();
+        }
+        return ResponseEntity.status(200)
+                .body(updateUser);
     }
 }

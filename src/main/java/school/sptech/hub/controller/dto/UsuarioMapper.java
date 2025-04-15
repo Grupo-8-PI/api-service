@@ -27,13 +27,28 @@ public class UsuarioMapper {
         return dto;
     }
     public static Usuario updateUserFields(Usuario existingUsuario, Usuario toBeUpdatedUser) {
-        existingUsuario.setNome(toBeUpdatedUser.getNome());
-        existingUsuario.setEmail(toBeUpdatedUser.getEmail());
-        existingUsuario.setTelefone(toBeUpdatedUser.getTelefone());
-        existingUsuario.setTipo_usuario(toBeUpdatedUser.getTipo_usuario());
-        existingUsuario.setCpf(toBeUpdatedUser.getCpf());
-        existingUsuario.setDtNascimento(toBeUpdatedUser.getDtNascimento());
-        existingUsuario.setSenha(toBeUpdatedUser.getSenha());
+        if (toBeUpdatedUser.getNome() != null) {
+            existingUsuario.setNome(toBeUpdatedUser.getNome());
+        }
+        if (toBeUpdatedUser.getEmail() != null) {
+            existingUsuario.setEmail(toBeUpdatedUser.getEmail());
+        }
+        if (toBeUpdatedUser.getTelefone() != null) {
+            existingUsuario.setTelefone(toBeUpdatedUser.getTelefone());
+        }
+        if (toBeUpdatedUser.getTipo_usuario() != null) {
+            existingUsuario.setTipo_usuario(toBeUpdatedUser.getTipo_usuario());
+        }
+        if (toBeUpdatedUser.getCpf() != null) {
+            existingUsuario.setCpf(toBeUpdatedUser.getCpf());
+        }
+        if (toBeUpdatedUser.getDtNascimento() != null) {
+            existingUsuario.setDtNascimento(toBeUpdatedUser.getDtNascimento());
+        }
+        if (toBeUpdatedUser.getSenha() != null) {
+            existingUsuario.setSenha(toBeUpdatedUser.getSenha());
+        }
         return existingUsuario;
     }
+
 }

@@ -23,9 +23,12 @@ public class UsuarioService {
         return UsuarioMapper.toResponseDto(createdUser);
     }
 
-    public Usuario getUserById(Integer id) {
-        return repository.findById(id)
-                .orElse(null);
+    public UsuarioResponseDto getUserById(Integer id) {
+        Usuario usuarioFinded = repository.findById(id).orElse(null);
+        if (usuarioFinded == null) {
+            return null;
+        }
+        return UsuarioMapper.toResponseDto(usuarioFinded);
     }
 
     public Usuario updateUserById(Integer id, Usuario usuario) {
@@ -33,8 +36,8 @@ public class UsuarioService {
         if (existingUser == null) {
             return null;
         }
-//        Usuario usuarioUpdated = updateUserFields(existingUser, usuario);
-        return repository.save(existingUser);
+        Usuario updatedUser = UsuarioMapper.updateUserFields(existingUser, usuario);
+        return repository.save(updatedUser);
     }
 
 
