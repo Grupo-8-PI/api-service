@@ -32,4 +32,22 @@ public class ReservaController {
         return ResponseEntity.status(200).body(updatedReserva);
     }
 
+    @GetMapping("/id")
+    public ResponseEntity<Reserva> getReservaById(@PathVariable Integer id){
+        Reserva reserva = service.getReservaById(id);
+        if(reserva == null){
+            return ResponseEntity.status(404).build();
+        }
+        return ResponseEntity.status(200).body(reserva);
+    }
+
+    @DeleteMapping("/id")
+    public ResponseEntity<Reserva> deleteReservaById(@PathVariable Integer id){
+        Reserva reserva = service.deleteReservaById(id);
+        if(reserva == null){
+            return ResponseEntity.status(404).build();
+        }
+        return ResponseEntity.status(200).body(reserva);
+    }
+
 }
