@@ -3,10 +3,9 @@ package school.sptech.hub.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-public class Reserva {
+public class Venda {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
