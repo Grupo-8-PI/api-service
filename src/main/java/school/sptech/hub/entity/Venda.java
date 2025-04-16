@@ -12,10 +12,18 @@ public class Venda {
 
     private LocalDateTime dtReserva;
 
-    private LocalDateTime dt_limite;
+    private LocalDateTime dtLimite;
 
     @Column(length = 45)
     private String statusReserva;
+
+    public LocalDateTime getDtLimite() {
+        return dtLimite;
+    }
+
+    public void setDtLimite(LocalDateTime dtLimite) {
+        this.dtLimite = dtLimite;
+    }
 
     private Integer totalReserva;
 
@@ -36,14 +44,6 @@ public class Venda {
 
     public void setDtReserva(LocalDateTime dtReserva) {
         this.dtReserva = dtReserva;
-    }
-
-    public LocalDateTime getDt_limite() {
-        return dt_limite;
-    }
-
-    public void setDt_limite(LocalDateTime dt_limite) {
-        this.dt_limite = dt_limite;
     }
 
     public String  getStatusReserva() {
