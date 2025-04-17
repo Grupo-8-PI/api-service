@@ -27,11 +27,9 @@ private Integer paginas;
 
 private Integer qtdLivros;
 
-@Column(length = 45)
-private String acabamento;
+private Acabamento acabamento;
 
-@Column(length = 45)
-private String estadoConservacao;
+private Conservacao estadoConservacao;
 
 @Lob
 private String capa;
@@ -39,16 +37,14 @@ private String capa;
 private Double preco;
 
 @Column(length = 45)
-private String categoria;
+private Categoria categoria;
 
 
-
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -100,19 +96,19 @@ private String categoria;
         this.qtdLivros = qtdLivros;
     }
 
-    public String getAcabamento() {
+    public Acabamento getAcabamento() {
         return acabamento;
     }
 
-    public void setAcabamento(String acabamento) {
+    public void setAcabamento(Acabamento acabamento) {
         this.acabamento = acabamento;
     }
 
-    public String getEstadoConservacao() {
+    public Conservacao getEstadoConservacao() {
         return estadoConservacao;
     }
 
-    public void setEstadoConservacao(String estadoConservacao) {
+    public void setEstadoConservacao(Conservacao estadoConservacao) {
         this.estadoConservacao = estadoConservacao;
     }
 
@@ -132,11 +128,11 @@ private String categoria;
         this.preco = preco;
     }
 
-    public String getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 }
