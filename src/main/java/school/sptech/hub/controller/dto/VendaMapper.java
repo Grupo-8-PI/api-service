@@ -13,4 +13,29 @@ public class VendaMapper {
         venda.setTotalReserva(dto.getTotalReserva());
         return venda;
     }
+
+    public static VendaResponseDto toResponseDto(Venda venda){
+        VendaResponseDto dto = new VendaResponseDto();
+        dto.setId(venda.getId());
+        dto.setDtLimite(venda.getDtLimite().toString());
+        dto.setDtReserva(venda.getDtReserva().toString());
+        dto.setStatusReserva(venda.getStatusReserva());
+        dto.setTotalReserva(venda.getTotalReserva());
+        return dto;
+    }
+    public static Venda updateVendaFields(Venda existingVenda, Venda toBeUpdatedVenda) {
+        if (toBeUpdatedVenda.getDtLimite() != null) {
+            existingVenda.setDtLimite(toBeUpdatedVenda.getDtLimite());
+        }
+        if (toBeUpdatedVenda.getDtReserva() != null) {
+            existingVenda.setDtReserva(toBeUpdatedVenda.getDtReserva());
+        }
+        if (toBeUpdatedVenda.getStatusReserva() != null) {
+            existingVenda.setStatusReserva(toBeUpdatedVenda.getStatusReserva());
+        }
+        if (toBeUpdatedVenda.getTotalReserva() != null) {
+            existingVenda.setTotalReserva(toBeUpdatedVenda.getTotalReserva());
+        }
+        return existingVenda;
+    }
 }
