@@ -27,8 +27,10 @@ private Integer paginas;
 
 private Integer qtdLivros;
 
+@ManyToOne
 private Acabamento acabamento;
 
+@ManyToOne
 private Conservacao estadoConservacao;
 
 @Lob
@@ -36,7 +38,7 @@ private String capa;
 
 private Double preco;
 
-@Column(length = 45)
+@ManyToOne
 private Categoria categoria;
 
 
@@ -135,4 +137,5 @@ private Categoria categoria;
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
+
 }

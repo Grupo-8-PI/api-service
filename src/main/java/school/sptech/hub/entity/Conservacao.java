@@ -13,4 +13,20 @@ public class Conservacao {
     private Integer id;
 
     private String estadoConservacao;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getEstadoConservacao() {
+        return estadoConservacao;
+    }
+
+    public void setEstadoConservacao(String estadoConservacao) {
+        this.estadoConservacao = estadoConservacao;
+    }
 }

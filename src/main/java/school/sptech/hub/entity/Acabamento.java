@@ -10,4 +10,20 @@ public class Acabamento {
 
     @Column(length = 45)
     private String tipoAcabamento;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getTipoAcabamento() {
+        return tipoAcabamento;
+    }
+
+    public void setTipoAcabamento(String tipoAcabamento) {
+        this.tipoAcabamento = tipoAcabamento;
+    }
 }
