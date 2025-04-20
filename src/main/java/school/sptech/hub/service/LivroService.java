@@ -26,17 +26,9 @@ public class LivroService {
 
     public Livro createNewLivro(Livro livro) {
         livro.setId(null);
-        if (livro.getAcabamento() != null && livro.getAcabamento().getId() == null) {
-            livro.setAcabamento(acabamentoRepository.save(livro.getAcabamento()));
-        }
-
-        if (livro.getCategoria() != null && livro.getCategoria().getId() == null) {
-            livro.setCategoria(categoriaRepository.save(livro.getCategoria()));
-        }
-
-        if (livro.getEstadoConservacao() != null && livro.getEstadoConservacao().getId() == null) {
-            livro.setEstadoConservacao(conservacaoRepository.save(livro.getEstadoConservacao()));
-        }
+        livro.setAcabamento(acabamentoRepository.findById(livro.getAcabamento().getId()).orElse(null));
+        livro.setCategoria(categoriaRepository.findById(livro.getCategoria().getId()).orElse(null));
+        livro.setEstadoConservacao(conservacaoRepository.findById(livro.getEstadoConservacao().getId()).orElse(null));
         Livro livroCreated = livroRepository.save(livro);
         if(livroCreated == null) {
             return null;
