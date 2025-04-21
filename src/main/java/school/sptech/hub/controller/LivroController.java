@@ -1,5 +1,6 @@
 package school.sptech.hub.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ public class LivroController {
     private LivroService livroService;
 
     @PostMapping
+    @SecurityRequirement(name = "bearer")
     public ResponseEntity<Livro> cadastrarLivro(@RequestBody LivroCreateDto livro) {
         System.out.println(livro);
         Livro livroPostado = livroService.createNewLivro(livro);
