@@ -1,4 +1,4 @@
-package school.sptech.hub.controller.config;
+package school.sptech.hub.config;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,18 +1,23 @@
-package school.sptech.hub.controller.config;
+package school.sptech.hub.config;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import school.sptech.hub.service.AutenticacaoService;
 
 public class AutenticacaoProvider implements AuthenticationProvider {
 
     private final AutenticacaoService usuarioAutenticacaoService;
     private final PasswordEncoder passwordEncoder;
+
+    public AutenticacaoProvider(AutenticacaoService usuarioAutenticacaoService, PasswordEncoder passwordEncoder) {
+        this.usuarioAutenticacaoService = usuarioAutenticacaoService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
