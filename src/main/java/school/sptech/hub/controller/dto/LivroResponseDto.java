@@ -1,53 +1,30 @@
-package school.sptech.hub.entity;
+package school.sptech.hub.controller.dto;
 
+import school.sptech.hub.entity.Acabamento;
+import school.sptech.hub.entity.Categoria;
+import school.sptech.hub.entity.Conservacao;
 
-import jakarta.persistence.*;
+public class LivroResponseDto {
 
-import java.time.Year;
+    private String isbn;
 
-@Entity
-public class Livro {
+    private String autor;
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Integer id;
+    private String editora;
 
-@Column(length = 45)
-private String isbn;
+    private Integer anoPublicacao;
 
-@Column(length = 45)
-private String autor;
+    private Integer paginas;
 
-@Column(length = 45)
-private String editora;
+    private Acabamento acabamento;
 
-private Year anoPublicacao;
+    private Conservacao estadoConservacao;
 
-private Integer paginas;
+    private String capa;
 
+    private Double preco;
 
-@ManyToOne
-private Acabamento acabamento;
-
-@ManyToOne
-private Conservacao estadoConservacao;
-
-@Lob
-private String capa;
-
-private Double preco;
-
-@ManyToOne
-private Categoria categoria;
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private Categoria categoria;
 
     public String getIsbn() {
         return isbn;
@@ -73,11 +50,11 @@ private Categoria categoria;
         this.editora = editora;
     }
 
-    public Year getAnoPublicacao() {
+    public Integer getAnoPublicacao() {
         return anoPublicacao;
     }
 
-    public void setAnoPublicacao(Year anoPublicacao) {
+    public void setAnoPublicacao(Integer anoPublicacao) {
         this.anoPublicacao = anoPublicacao;
     }
 
@@ -89,12 +66,9 @@ private Categoria categoria;
         this.paginas = paginas;
     }
 
-
     public Acabamento getAcabamento() {
         return acabamento;
     }
-
-    
 
     public void setAcabamento(Acabamento acabamento) {
         this.acabamento = acabamento;
@@ -131,5 +105,4 @@ private Categoria categoria;
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
-
 }

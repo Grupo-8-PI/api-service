@@ -1,53 +1,39 @@
-package school.sptech.hub.entity;
+package school.sptech.hub.controller.dto;
 
-
-import jakarta.persistence.*;
+import jakarta.persistence.Lob;
+import jakarta.validation.constraints.Size;
+import school.sptech.hub.entity.Acabamento;
+import school.sptech.hub.entity.Categoria;
+import school.sptech.hub.entity.Conservacao;
 
 import java.time.Year;
 
-@Entity
-public class Livro {
+public class LivroCreateDto {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Integer id;
+    @Size(max = 45)
+    private String isbn;
 
-@Column(length = 45)
-private String isbn;
+    @Size(max = 45)
+    private String autor;
 
-@Column(length = 45)
-private String autor;
+    @Size(max = 45)
+    private String editora;
 
-@Column(length = 45)
-private String editora;
-
-private Year anoPublicacao;
-
-private Integer paginas;
+    @Size(max = 45)
+    private Year anoPublicacao;
 
 
-@ManyToOne
-private Acabamento acabamento;
+    private Integer paginas;
 
-@ManyToOne
-private Conservacao estadoConservacao;
+    private Acabamento acabamento;
 
-@Lob
-private String capa;
+    private Conservacao estadoConservacao;
 
-private Double preco;
+    private String capa;
 
-@ManyToOne
-private Categoria categoria;
+    private Double preco;
 
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private Categoria categoria;
 
     public String getIsbn() {
         return isbn;
@@ -89,12 +75,9 @@ private Categoria categoria;
         this.paginas = paginas;
     }
 
-
     public Acabamento getAcabamento() {
         return acabamento;
     }
-
-    
 
     public void setAcabamento(Acabamento acabamento) {
         this.acabamento = acabamento;
@@ -131,5 +114,4 @@ private Categoria categoria;
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
-
 }
