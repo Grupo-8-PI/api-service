@@ -46,7 +46,7 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
                 LOGGER.info("[FALHA AUTENTICACAO] - Token expirado, usuario: {} - {}",
                         exception.getClaims().getSubject() , exception.getMessage());
 
-                LOGGER.trace("[FALHA AUTENTICACAO] - stack trace: %s", exception);
+                LOGGER.trace("[FALHA AUTENTICACAO] - stack trace", exception);
 
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
