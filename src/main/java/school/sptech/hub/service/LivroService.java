@@ -2,19 +2,23 @@ package school.sptech.hub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import school.sptech.hub.controller.dto.LivroCreateDto;
+import school.sptech.hub.controller.dto.LivroMapper;
+import school.sptech.hub.controller.dto.LivroResponseDto;
 import school.sptech.hub.entity.Livro;
 import school.sptech.hub.repository.AcabamentoRepository;
 import school.sptech.hub.repository.CategoriaRepository;
 import school.sptech.hub.repository.ConservacaoRepository;
 import school.sptech.hub.repository.LivroRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class LivroService {
 
     @Autowired
-    private LivroRepository livroRepository;
+    private LivroRepository repository;
 
     @Autowired
     private AcabamentoRepository acabamentoRepository;
@@ -26,49 +30,50 @@ public class LivroService {
     private ConservacaoRepository conservacaoRepository;
 
 
-    public Livro createNewLivro(Livro livro) {
-        livro.setId(null);
-        livro.setAcabamento(acabamentoRepository.findById(livro.getAcabamento().getId()).orElse(null));
-        livro.setCategoria(categoriaRepository.findById(livro.getCategoria().getId()).orElse(null));
-        livro.setEstadoConservacao(conservacaoRepository.findById(livro.getEstadoConservacao().getId()).orElse(null));
-        Livro livroCreated = livroRepository.save(livro);
-        if(livroCreated == null) {
+    public Livro createNewLivro(LivroCreateDto livro) {
+        Livro livroEntity = LivroMapper.toEntity(livro);
+        if(livroEntity == null) {
             return null;
         }
 
-        return livroCreated;
+        Livro livroPostado = repository.save(livroEntity);
+        return livroPostado;
 
     }
 
-    public List<Livro> listarLivros() {
-        List<Livro> livros = livroRepository.findAll();
-        if(livros == null) {
-            return null;
+    public List<LivroResponseDto> listarLivros() {
+        List<Livro> livros = repository.findAll();
+        List<LivroResponseDto> livrosResponse = new ArrayList<>();
+        for (int i = 0; i < livros.size(); i++) {
+            Livro livroActual = livros.get(i);
+            LivroResponseDto livroResponseDto = LivroMapper.toResponseDto(livroActual);
+            livrosResponse.add(livroResponseDto);
         }
-        return livros;
+        return livrosResponse;
     }
 
-    public Livro buscarLivroPorId(Integer id) {
-        Livro livro = livroRepository.findById(id).orElse(null);
+
+    public LivroResponseDto buscarLivroPorId(Integer id) {
+        Livro livro = repository.findById(id).orElse(null);
         if(livro == null) {
             return null;
         }
-        return livro;
+       return LivroMapper.toResponseDto(livro);
     }
 
     public Livro atualizarLivro(Integer id, Livro livro) {
-        livro.setId(id);
-        Livro livroAtualizado = livroRepository.save(livro);
-        if(livroAtualizado == null) {
+        Livro existingLivro = repository.findById(id).orElse(null);
+        if(existingLivro == null){
             return null;
         }
-        return livroAtualizado;
+        Livro updatedLivro = LivroMapper.updateLivroFields(existingLivro, livro);
+        return repository.save(updatedLivro);
     }
 
     public Livro deletarLivro(Integer id) {
-        if(livroRepository.existsById(id)) {
-            livroRepository.deleteById(id);
-            return livroRepository.findById(id).orElse(null);
+        if(repository.existsById(id)) {
+            repository.deleteById(id);
+            return repository.findById(id).orElse(null);
         }
             return null;
     }
