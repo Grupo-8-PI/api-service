@@ -8,6 +8,8 @@ import school.sptech.hub.repository.CategoriaRepository;
 import school.sptech.hub.repository.ConservacaoRepository;
 import school.sptech.hub.repository.LivroRepository;
 
+import java.util.List;
+
 @Service
 public class LivroService {
 
@@ -36,6 +38,39 @@ public class LivroService {
 
         return livroCreated;
 
+    }
+
+    public List<Livro> listarLivros() {
+        List<Livro> livros = livroRepository.findAll();
+        if(livros == null) {
+            return null;
+        }
+        return livros;
+    }
+
+    public Livro buscarLivroPorId(Integer id) {
+        Livro livro = livroRepository.findById(id).orElse(null);
+        if(livro == null) {
+            return null;
+        }
+        return livro;
+    }
+
+    public Livro atualizarLivro(Integer id, Livro livro) {
+        livro.setId(id);
+        Livro livroAtualizado = livroRepository.save(livro);
+        if(livroAtualizado == null) {
+            return null;
+        }
+        return livroAtualizado;
+    }
+
+    public Livro deletarLivro(Integer id) {
+        if(livroRepository.existsById(id)) {
+            livroRepository.deleteById(id);
+            return livroRepository.findById(id).orElse(null);
+        }
+            return null;
     }
 
 }
