@@ -1,5 +1,6 @@
 package school.sptech.hub.controller.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,33 +8,43 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
+@Schema(description = "DTO utilizado para criação de um novo usuário")
 public class UsuarioCreateDto {
-    @NotBlank
-    @Size(max = 45)
+
+    @Schema(description = "Nome completo do usuário", example = "Ana Lúcia")
+    @NotBlank(message = "O nome é obrigatório")
+    @Size(max = 45, message = "O nome deve ter no máximo 45 caracteres")
     private String nome;
 
-    @NotBlank
-    @Email
+    @Schema(description = "Email válido do usuário", example = "analu.pereira@email.com")
+    @NotBlank(message = "O email é obrigatório")
+    @Email(message = "Formato de email inválido")
     private String email;
 
-    @NotBlank
-    @Size(max = 11)
+    @Schema(description = "Telefone com DDD", example = "11912345678")
+    @NotBlank(message = "O telefone é obrigatório")
+    @Size(max = 11, message = "O telefone deve ter no máximo 11 dígitos")
     private String telefone;
 
-    @NotBlank
+    @Schema(description = "Tipo de usuário (ex: administrador, cliente)", example = "admin")
+    @NotBlank(message = "O tipo de usuário é obrigatório")
     private String tipo_usuario;
 
-    @NotBlank
-    @Size(max = 14)
+    @Schema(description = "CPF do usuário", example = "12345678900")
+    @NotBlank(message = "O CPF é obrigatório")
+    @Size(max = 14, message = "O CPF deve ter no máximo 14 caracteres")
     private String cpf;
 
-    @NotBlank
-    @Size(min = 8)
+    @Schema(description = "Senha de acesso (mínimo 8 caracteres)", example = "senhaOkAEJ!")
+    @NotBlank(message = "A senha é obrigatória")
+    @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres")
     private String senha;
 
-    @NotNull
+    @Schema(description = "Data de nascimento", example = "2000-04-16")
+    @NotNull(message = "A data de nascimento é obrigatória")
     private LocalDate dtNascimento;
 
+    // Getters and Setters
     public String getNome() {
         return nome;
     }

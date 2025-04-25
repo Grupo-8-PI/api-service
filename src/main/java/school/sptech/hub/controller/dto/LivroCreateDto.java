@@ -1,38 +1,60 @@
 package school.sptech.hub.controller.dto;
 
-import jakarta.persistence.Lob;
-import jakarta.validation.constraints.Size;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
+
 import school.sptech.hub.entity.Acabamento;
 import school.sptech.hub.entity.Categoria;
 import school.sptech.hub.entity.Conservacao;
 
 import java.time.Year;
 
+@Schema(description = "DTO para cadastro de um novo livro")
 public class LivroCreateDto {
 
-    @Size(max = 45)
+    @Schema(description = "ISBN do livro", example = "978-3-16-148410-0")
+    @NotBlank(message = "O ISBN é obrigatório")
+    @Size(max = 45, message = "O ISBN deve ter no máximo 45 caracteres")
     private String isbn;
 
-    @Size(max = 45)
+    @Schema(description = "Nome do autor", example = "Machado de Assis")
+    @NotBlank(message = "O nome do autor é obrigatório")
+    @Size(max = 45, message = "O nome do autor deve ter no máximo 45 caracteres")
     private String autor;
 
-    @Size(max = 45)
+    @Schema(description = "Nome da editora", example = "Companhia das Letras")
+    @NotBlank(message = "O nome da editora é obrigatório")
+    @Size(max = 45, message = "O nome da editora deve ter no máximo 45 caracteres")
     private String editora;
 
-    @Size(max = 45)
+    @Schema(description = "Ano de publicação", example = "2001")
+    @NotNull(message = "O ano de publicação é obrigatório")
     private Year anoPublicacao;
 
-
+    @Schema(description = "Quantidade de páginas do livro", example = "320")
+    @NotNull(message = "O número de páginas é obrigatório")
+    @Min(value = 1, message = "O número de páginas deve ser maior que 0")
     private Integer paginas;
 
+    @Schema(description = "Tipo de acabamento do livro")
+    @NotNull(message = "O acabamento é obrigatório")
     private Acabamento acabamento;
 
+    @Schema(description = "Estado de conservação do livro")
+    @NotNull(message = "O estado de conservação é obrigatório")
     private Conservacao estadoConservacao;
 
+    @Schema(description = "URL da imagem da capa do livro", example = "https://m.media-amazon.com/images/I/91GAAzBixYL._UF894,1000_QL80_.jpg")
+    @NotBlank(message = "A capa é obrigatória")
     private String capa;
 
+    @Schema(description = "Preço do livro", example = "49.90")
+    @NotNull(message = "O preço é obrigatório")
+    @Positive(message = "O preço deve ser maior que zero")
     private Double preco;
 
+    @Schema(description = "Categoria do livro")
+    @NotNull(message = "A categoria é obrigatória")
     private Categoria categoria;
 
     public String getIsbn() {

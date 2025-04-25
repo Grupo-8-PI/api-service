@@ -51,7 +51,7 @@ public class UsuarioService {
 
 
     private boolean isValidUserType(String userType) {
-        return "admin".equalsIgnoreCase(userType) || "user".equalsIgnoreCase(userType);
+        return "admin".equalsIgnoreCase(userType) || "cliente".equalsIgnoreCase(userType);
     }
 
 }

@@ -1,29 +1,41 @@
 package school.sptech.hub.controller.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import school.sptech.hub.entity.Acabamento;
 import school.sptech.hub.entity.Categoria;
 import school.sptech.hub.entity.Conservacao;
 
+@Schema(description = "DTO de resposta com os dados de um livro")
 public class LivroResponseDto {
 
+    @Schema(description = "ISBN do livro", example = "978-3-16-148410-0")
     private String isbn;
 
+    @Schema(description = "Nome do autor do livro", example = "Machado de Assis")
     private String autor;
 
+    @Schema(description = "Nome da editora do livro", example = "Companhia das Letras")
     private String editora;
 
+    @Schema(description = "Ano de publicação do livro", example = "2001")
     private Integer anoPublicacao;
 
+    @Schema(description = "Número de páginas do livro", example = "320")
     private Integer paginas;
 
+    @Schema(description = "Tipo de acabamento do livro", example = "BROCHURA")
     private Acabamento acabamento;
 
+    @Schema(description = "Estado de conservação do livro", example = "OTIMO")
     private Conservacao estadoConservacao;
 
+    @Schema(description = "URL da imagem da capa do livro", example = "https://m.media-amazon.com/images/I/91GAAzBixYL._UF894,1000_QL80_.jpg")
     private String capa;
 
+    @Schema(description = "Preço do livro", example = "49.90")
     private Double preco;
 
+    @Schema(description = "Categoria do livro", example = "ROMANCE")
     private Categoria categoria;
 
     public String getIsbn() {
