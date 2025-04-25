@@ -1,10 +1,15 @@
 package school.sptech.hub.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.w3c.dom.stylesheets.LinkStyle;
 import school.sptech.hub.controller.dto.LivroCreateDto;
 import school.sptech.hub.controller.dto.LivroResponseDto;
 import school.sptech.hub.entity.Livro;
@@ -12,6 +17,7 @@ import school.sptech.hub.service.LivroService;
 
 import java.util.List;
 
+@Tag(name = "livros", description = "Operações relacionadas aos livros disponíveis")
 @RestController
 @RequestMapping("/livros")
 public class LivroController {
@@ -19,52 +25,131 @@ public class LivroController {
     @Autowired
     private LivroService livroService;
 
+    @Operation(
+            summary = "Cadastrar um novo livro",
+            description = "Cria um novo livro com os dados fornecidos no corpo da requisição"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Livro cadastrado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Livro.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Erro ao cadastrar o livro",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
     @PostMapping
     @SecurityRequirement(name = "bearer")
     public ResponseEntity<Livro> cadastrarLivro(@RequestBody LivroCreateDto livro) {
-        System.out.println(livro);
         Livro livroPostado = livroService.createNewLivro(livro);
-        if(livroPostado != null) {
+        if (livroPostado != null) {
             return ResponseEntity.status(200).body(livroPostado);
         } else {
             return ResponseEntity.status(400).build();
         }
     }
 
+    @Operation(
+            summary = "Listar todos os livros",
+            description = "Retorna uma lista com todos os livros disponíveis no sistema"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Erro ao listar os livros",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
     @GetMapping
     public ResponseEntity<List<LivroResponseDto>> listarLivros() {
         List<LivroResponseDto> livros = livroService.listarLivros();
-        if(livros != null) {
+        if (livros != null) {
             return ResponseEntity.status(200).body(livros);
         } else {
             return ResponseEntity.status(400).build();
         }
     }
 
+    @Operation(
+            summary = "Buscar livro por ID",
+            description = "Retorna os dados de um livro com base no ID fornecido"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Livro encontrado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Livro não encontrado",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
     @GetMapping("/{id}")
     public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
-        if(livro != null) {
+        if (livro != null) {
             return ResponseEntity.status(200).body(livro);
         } else {
             return ResponseEntity.status(404).build();
         }
     }
 
+    @Operation(
+            summary = "Atualizar um livro existente",
+            description = "Atualiza os dados de um livro com base no ID fornecido"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Livro atualizado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Livro.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Erro ao atualizar o livro",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Livro> atualizarLivro(@PathVariable Integer id, @RequestBody Livro livro) {
         Livro livroUpdated = livroService.atualizarLivro(id, livro);
-        if(livroUpdated != null) {
+        if (livroUpdated != null) {
             return ResponseEntity.status(200).body(livroUpdated);
         } else {
             return ResponseEntity.status(400).build();
         }
     }
 
+    @Operation(
+            summary = "Deletar um livro",
+            description = "Remove um livro do sistema com base no ID fornecido"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Livro deletado com sucesso",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Livro não encontrado",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarLivro(@PathVariable Integer id) {
         Livro livroDeleted = livroService.deletarLivro(id);
-        if(livroDeleted == null){
+        if (livroDeleted == null) {
             return ResponseEntity.status(404).build();
         } else {
             return ResponseEntity.status(200).build();
