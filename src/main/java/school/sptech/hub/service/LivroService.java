@@ -6,6 +6,7 @@ import school.sptech.hub.controller.dto.LivroCreateDto;
 import school.sptech.hub.controller.dto.LivroMapper;
 import school.sptech.hub.controller.dto.LivroResponseDto;
 import school.sptech.hub.entity.Livro;
+import school.sptech.hub.exceptions.LivroExceptions.LivroNaoEncontradoException;
 import school.sptech.hub.repository.AcabamentoRepository;
 import school.sptech.hub.repository.CategoriaRepository;
 import school.sptech.hub.repository.ConservacaoRepository;
@@ -54,15 +55,12 @@ public class LivroService {
 
 
     public LivroResponseDto buscarLivroPorId(Integer id) {
-        Livro livro = repository.findById(id).orElse(null);
-        if(livro == null) {
-            return null;
-        }
+        Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
        return LivroMapper.toResponseDto(livro);
     }
 
     public Livro atualizarLivro(Integer id, Livro livro) {
-        Livro existingLivro = repository.findById(id).orElse(null);
+        Livro existingLivro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
         if(existingLivro == null){
             return null;
         }
@@ -71,11 +69,9 @@ public class LivroService {
     }
 
     public Livro deletarLivro(Integer id) {
-        if(repository.existsById(id)) {
+            Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
             repository.deleteById(id);
-            return repository.findById(id).orElse(null);
-        }
-            return null;
+            return livro;
     }
 
 }
