@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.hub.controller.dto.LivroCreateDto;
+import school.sptech.hub.controller.dto.LivroErroResponseSwgDto;
 import school.sptech.hub.controller.dto.LivroResponseDto;
+import school.sptech.hub.controller.dto.VendaErroResponseSwgDto;
 import school.sptech.hub.entity.Livro;
 import school.sptech.hub.service.LivroService;
 
@@ -33,23 +35,21 @@ public class LivroController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Livro cadastrado com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Livro.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
                     description = "Erro ao cadastrar o livro",
-                    content = @Content(mediaType = "application/json")
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
             )
     })
     @PostMapping
     @SecurityRequirement(name = "bearer")
     public ResponseEntity<Livro> cadastrarLivro(@RequestBody LivroCreateDto livro) {
         Livro livroPostado = livroService.createNewLivro(livro);
-        if (livroPostado != null) {
+
             return ResponseEntity.status(200).body(livroPostado);
-        } else {
-            return ResponseEntity.status(400).build();
-        }
+
     }
 
     @Operation(
@@ -65,17 +65,15 @@ public class LivroController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Erro ao listar os livros",
-                    content = @Content(mediaType = "application/json")
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
             )
     })
     @GetMapping
     public ResponseEntity<List<LivroResponseDto>> listarLivros() {
         List<LivroResponseDto> livros = livroService.listarLivros();
-        if (livros != null) {
+
             return ResponseEntity.status(200).body(livros);
-        } else {
-            return ResponseEntity.status(400).build();
-        }
+
     }
 
     @Operation(
@@ -91,17 +89,15 @@ public class LivroController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Livro não encontrado",
-                    content = @Content(mediaType = "application/json")
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
             )
     })
     @GetMapping("/{id}")
     public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
-        if (livro != null) {
+
             return ResponseEntity.status(200).body(livro);
-        } else {
-            return ResponseEntity.status(404).build();
-        }
+
     }
 
     @Operation(
@@ -112,22 +108,20 @@ public class LivroController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Livro atualizado com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Livro.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
                     description = "Erro ao atualizar o livro",
-                    content = @Content(mediaType = "application/json")
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
             )
     })
     @PutMapping("/{id}")
     public ResponseEntity<Livro> atualizarLivro(@PathVariable Integer id, @RequestBody Livro livro) {
         Livro livroUpdated = livroService.atualizarLivro(id, livro);
-        if (livroUpdated != null) {
+
             return ResponseEntity.status(200).body(livroUpdated);
-        } else {
-            return ResponseEntity.status(400).build();
-        }
+
     }
 
     @Operation(
@@ -138,21 +132,19 @@ public class LivroController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Livro deletado com sucesso",
-                    content = @Content(mediaType = "application/json")
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Livro não encontrado",
-                    content = @Content(mediaType = "application/json")
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
             )
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarLivro(@PathVariable Integer id) {
         Livro livroDeleted = livroService.deletarLivro(id);
-        if (livroDeleted == null) {
-            return ResponseEntity.status(404).build();
-        } else {
+
             return ResponseEntity.status(200).build();
-        }
+
     }
 }

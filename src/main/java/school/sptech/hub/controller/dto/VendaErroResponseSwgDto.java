@@ -2,10 +2,11 @@ package school.sptech.hub.controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "DTO utilizado para mensagens de erro nas operações relacionadas aos livros")
-public class LivroErroResponseDto {
+@Schema(description = "DTO utilizado para mensagens de erro nas operações relacionadas as vendas/reservas")
+public class VendaErroResponseSwgDto {
+
     @Schema(description = "Código do erro", example = "404")
-private int status;
+    private int status;
 
     @Schema(description = "Mensagem de erro", example = "Recurso não encontrado")
     private String mensagem;
@@ -22,14 +23,14 @@ private int status;
     @Schema(description = "Timestamp do erro", example = "2025-04-23T14:55:00")
     private String timestamp400;
 
-    public LivroErroResponseDto(int status, String mensagem, String timestamp) {
+    public VendaErroResponseSwgDto(int status, String mensagem, String timestamp) {
         this.status = status;
         this.mensagem = mensagem;
         this.timestamp = timestamp;
     }
 
-    public static VendaErroResponseDto erro404(String detalhe) {
-        return new VendaErroResponseDto(
+    public static VendaErroResponseSwgDto erro404(String detalhe) {
+        return new VendaErroResponseSwgDto(
                 404,
                 detalhe != null ? detalhe : "Recurso não encontrado",
                 java.time.LocalDateTime.now().toString()

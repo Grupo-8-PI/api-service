@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.hub.controller.dto.UsuarioErroResponseDto;
+import school.sptech.hub.controller.dto.UsuarioErroResponseSwgDto;
 import school.sptech.hub.controller.dto.UsuarioCreateDto;
 import school.sptech.hub.controller.dto.UsuarioResponseDto;
 import school.sptech.hub.entity.Usuario;
@@ -38,15 +38,14 @@ public class UsuarioController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Dados inválidos - erro de validação",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseSwgDto.class))
             )
     })
     @PostMapping
     public ResponseEntity<UsuarioResponseDto> createUser(@Valid @RequestBody UsuarioCreateDto usuario) {
         UsuarioResponseDto createdUser = service.createUser(usuario);
-        if (createdUser == null) {
-            return ResponseEntity.status(400).body(null);
-        }
+
+
         return ResponseEntity.status(201).body(createdUser);
     }
 
@@ -64,16 +63,14 @@ public class UsuarioController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Usuário não encontrado",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseSwgDto.class))
             )
     })
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDto> getUserById(@PathVariable Integer id) {
         UsuarioResponseDto usuario = service.getUserById(id);
-        if (usuario != null) {
-            return ResponseEntity.status(200).body(usuario);
-        }
-        return ResponseEntity.status(404).build();
+
+        return ResponseEntity.status(200).body(usuario);
     }
 
 
@@ -85,20 +82,18 @@ public class UsuarioController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Usuário atualizado com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Usuario.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Usuário não encontrado",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseSwgDto.class))
             )
     })
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
         Usuario updateUser = service.updateUserById(id, usuario);
-        if (updateUser == null) {
-            return ResponseEntity.status(404).build();
-        }
+
         return ResponseEntity.status(200).body(updateUser);
     }
 
@@ -111,20 +106,18 @@ public class UsuarioController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Usuário deletado com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Usuario.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Usuário não encontrado",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseSwgDto.class))
             )
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Usuario> deleteUserById(@PathVariable Integer id){
         Usuario deletedUser = service.deleteUserById(id);
-        if (deletedUser == null) {
-            return ResponseEntity.status(404).build();
-        }
+
         return ResponseEntity.status(200).body(deletedUser);
     }
 }

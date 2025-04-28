@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.hub.controller.dto.VendaErroResponseDto;
+import school.sptech.hub.controller.dto.VendaErroResponseSwgDto;
 import school.sptech.hub.controller.dto.VendaResponseDto;
 import school.sptech.hub.entity.Venda;
 import school.sptech.hub.service.VendaService;
@@ -37,17 +37,15 @@ public class VendaController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Processo de reserva não finalizado.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
             )
     })
     @PostMapping
     public ResponseEntity<Venda> createReserva(@RequestBody Venda venda) {
         Venda createdVenda = service.createReserva(venda);
-        if(createdVenda != null) {
+
             return ResponseEntity.status(200).body(createdVenda);
-        } else {
-            return ResponseEntity.status(400).build();
-        }
+
     }
 
     @Operation(
@@ -63,15 +61,13 @@ public class VendaController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Reserva com este id não encontrada.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
             )
     })
     @PutMapping("/{id}")
     public ResponseEntity<Venda> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
         Venda updatedVenda = service.updateReserva(id, vendaToUpdate);
-        if(updatedVenda ==null){
-            return ResponseEntity.status(404).build();
-        }
+
         return ResponseEntity.status(200).body(updatedVenda);
     }
 
@@ -88,15 +84,13 @@ public class VendaController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Reserva não encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
             )
     })
     @GetMapping("/{id}")
     public ResponseEntity<Venda> getReservaById(@PathVariable Integer id){
         Venda venda = service.getReservaById(id);
-        if(venda == null){
-            return ResponseEntity.status(404).build();
-        }
+
         return ResponseEntity.status(200).body(venda);
     }
 
@@ -114,15 +108,13 @@ public class VendaController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Reserva não encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
             )
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Venda> deleteReservaById(@PathVariable Integer id){
         Venda venda = service.deleteReservaById(id);
-        if(venda == null){
-            return ResponseEntity.status(404).build();
-        }
+
         return ResponseEntity.status(200).body(venda);
     }
 
