@@ -6,7 +6,7 @@ import school.sptech.hub.controller.dto.UsuarioCreateDto;
 import school.sptech.hub.controller.dto.UsuarioMapper;
 import school.sptech.hub.controller.dto.UsuarioResponseDto;
 import school.sptech.hub.entity.Usuario;
-import school.sptech.hub.exceptions.UsuarioExceptions.TIpoUsuarioInvalidoException;
+import school.sptech.hub.exceptions.UsuarioExceptions.TipoUsuarioInvalidoException;
 import school.sptech.hub.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
 import school.sptech.hub.repository.UsuarioRepository;
 
@@ -18,7 +18,7 @@ public class UsuarioService {
 
     public UsuarioResponseDto createUser(UsuarioCreateDto usuario) {
         if(!isValidUserType(usuario.getTipo_usuario())){
-            throw new TIpoUsuarioInvalidoException("Tipo de usuário inválido.");
+            throw new TipoUsuarioInvalidoException("Tipo de usuário inválido.");
         }
         Usuario usuarioEntity = UsuarioMapper.toEntity(usuario);
         Usuario createdUser = repository.save(usuarioEntity);
