@@ -42,7 +42,6 @@ public class UsuarioService {
         return usuarioFinded;
     }
 
-
     private boolean isValidUserType(String userType) {
         return "admin".equalsIgnoreCase(userType) || "cliente".equalsIgnoreCase(userType);
     }
