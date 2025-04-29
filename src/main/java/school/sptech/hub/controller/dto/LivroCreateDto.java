@@ -17,6 +17,10 @@ public class LivroCreateDto {
     @Size(max = 45, message = "O ISBN deve ter no máximo 45 caracteres")
     private String isbn;
 
+    @Schema(description = "Título do livro", example = "Dom Casmurro")
+    @NotBlank(message = "O título é obrigatório")
+    private String titulo;
+
     @Schema(description = "Nome do autor", example = "Machado de Assis")
     @NotBlank(message = "O nome do autor é obrigatório")
     @Size(max = 45, message = "O nome do autor deve ter no máximo 45 caracteres")
@@ -135,5 +139,13 @@ public class LivroCreateDto {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 }

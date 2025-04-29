@@ -12,6 +12,9 @@ public class Livro {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Integer id;
 
+@Column(length = 60)
+private String titulo;
+
 @Column(length = 45)
 private String isbn;
 
@@ -39,6 +42,7 @@ private Double preco;
 
 @ManyToOne
 private Categoria categoria;
+
 
 
     public Integer getId() {
@@ -94,7 +98,13 @@ private Categoria categoria;
         return acabamento;
     }
 
-    
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
     public void setAcabamento(Acabamento acabamento) {
         this.acabamento = acabamento;
