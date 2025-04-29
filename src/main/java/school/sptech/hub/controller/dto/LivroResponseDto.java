@@ -11,6 +11,9 @@ public class LivroResponseDto {
     @Schema(description = "ISBN do livro", example = "978-3-16-148410-0")
     private String isbn;
 
+    @Schema(description = "Título do livro", example = "Dom Casmurro")
+    private String titulo;
+
     @Schema(description = "Nome do autor do livro", example = "Machado de Assis")
     private String autor;
 
@@ -37,6 +40,15 @@ public class LivroResponseDto {
 
     @Schema(description = "Categoria do livro", example = "ROMANCE")
     private Categoria categoria;
+
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
     public String getIsbn() {
         return isbn;

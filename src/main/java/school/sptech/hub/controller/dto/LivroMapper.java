@@ -6,6 +6,7 @@ public class LivroMapper {
     public static Livro toEntity(LivroCreateDto dto) {
         Livro livro = new Livro();
         livro.setIsbn(dto.getIsbn());
+        livro.setTitulo(dto.getTitulo());
         livro.setAutor(dto.getAutor());
         livro.setEditora(dto.getEditora());
         livro.setAnoPublicacao(dto.getAnoPublicacao());
@@ -21,6 +22,7 @@ public class LivroMapper {
     public static LivroResponseDto toResponseDto(Livro livro) {
         LivroResponseDto dto = new LivroResponseDto();
         dto.setIsbn(livro.getIsbn());
+        dto.setTitulo(livro.getTitulo());
         dto.setAutor(livro.getAutor());
         dto.setEditora(livro.getEditora());
         dto.setAnoPublicacao(livro.getAnoPublicacao().getValue());
@@ -37,6 +39,10 @@ public class LivroMapper {
         if (updatedLivro.getIsbn() != null) {
             existingLivro.setIsbn(updatedLivro.getIsbn());
         }
+        if (updatedLivro.getTitulo() != null) {
+            existingLivro.setTitulo(updatedLivro.getTitulo());
+        }
+
         if (updatedLivro.getAutor() != null) {
             existingLivro.setAutor(updatedLivro.getAutor());
         }
