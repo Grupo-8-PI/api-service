@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import school.sptech.hub.controller.dto.UsuarioDetalhesDto;
 import school.sptech.hub.entity.Usuario;
+import school.sptech.hub.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
 import school.sptech.hub.repository.UsuarioRepository;
 
 import java.util.Optional;
@@ -17,11 +18,11 @@ public class AutenticacaoService implements UserDetailsService {
     private UsuarioRepository usuarioRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(username);
 
         if (usuarioOpt.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("Usuario: %s não encontrado.", username));
+            throw new UsuarioNaoEncontradoException(String.format("Usuario: %s não encontrado.", username));
         }
 
         return new UsuarioDetalhesDto(usuarioOpt.get());
