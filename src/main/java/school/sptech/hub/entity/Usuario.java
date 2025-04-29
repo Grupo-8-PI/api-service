@@ -33,7 +33,7 @@ public class Usuario {
     private String cpf;
 
 
-    @Column(length = 45)
+    @Column(length = 60)
     private String senha;
 
     @NotNull
