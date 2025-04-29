@@ -10,9 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.hub.controller.dto.UsuarioErroResponseSwgDto;
-import school.sptech.hub.controller.dto.UsuarioCreateDto;
-import school.sptech.hub.controller.dto.UsuarioResponseDto;
+import school.sptech.hub.controller.dto.*;
 import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.service.UsuarioService;
 
@@ -119,5 +117,13 @@ public class UsuarioController {
         Usuario deletedUser = service.deleteUserById(id);
 
         return ResponseEntity.status(200).body(deletedUser);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
+        final Usuario usuario = UsuarioMapper.toUsuarioLoginDto(usuarioLoginDto);
+        UsuarioTokenDto usuarioTokenDto = this.service.autenticar(usuario);
+
+        return ResponseEntity.status(200).body(usuarioTokenDto);
     }
 }

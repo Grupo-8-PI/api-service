@@ -51,4 +51,34 @@ public class UsuarioMapper {
         return existingUsuario;
     }
 
+    public static Usuario toUsuarioLoginDto(UsuarioLoginDto usuarioLoginDto) {
+        Usuario usuario = new Usuario();
+
+        usuario.setEmail(usuarioLoginDto.getEmail());
+        usuario.setSenha(usuarioLoginDto.getSenha());
+
+        return usuario;
+    }
+
+    public static UsuarioTokenDto toUsuarioTokenDto(Usuario usuario, String token) {
+        UsuarioTokenDto usuarioTokenDto = new UsuarioTokenDto();
+
+        usuarioTokenDto.setUserId(Long.valueOf(usuario.getId()));
+        usuarioTokenDto.setEmail(usuario.getEmail());
+        usuarioTokenDto.setNome(usuario.getNome());
+        usuarioTokenDto.setToken(token);
+
+        return usuarioTokenDto;
+    }
+
+    public static UsuarioListarDto toUsuarioListarDto(Usuario usuario) {
+        UsuarioListarDto usuarioListarDto = new UsuarioListarDto();
+
+        usuarioListarDto.setId(Long.valueOf(usuario.getId()));
+        usuarioListarDto.setEmail(usuario.getEmail());
+        usuarioListarDto.setNome(usuario.getNome());
+
+        return usuarioListarDto;
+    }
+
 }
