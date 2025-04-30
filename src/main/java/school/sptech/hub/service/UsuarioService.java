@@ -71,10 +71,12 @@ public class UsuarioService {
         return UsuarioMapper.toResponseDto(usuarioFinded);
     }
 
-    public Usuario updateUserById(Integer id, Usuario usuario) {
+    public UsuarioResponseDto updateUserById(Integer id, Usuario usuario) {
         Usuario existingUser = repository.findById(id).orElseThrow(()-> new UsuarioNaoEncontradoException("Usuário não encontrado"));
         Usuario updatedUser = UsuarioMapper.updateUserFields(existingUser, usuario);
-        return repository.save(updatedUser);
+        UsuarioResponseDto usuarioResponseDto = UsuarioMapper.toResponseDto(updatedUser);
+        repository.save(updatedUser);
+        return usuarioResponseDto;
     }
 
     public Usuario deleteUserById(Integer id) {

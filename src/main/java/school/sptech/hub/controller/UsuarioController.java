@@ -94,8 +94,8 @@ public class UsuarioController {
             )
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
-        Usuario updateUser = service.updateUserById(id, usuario);
+    public ResponseEntity<UsuarioResponseDto> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
+        UsuarioResponseDto updateUser = service.updateUserById(id, usuario);
 
         return ResponseEntity.status(200).body(updateUser);
     }
