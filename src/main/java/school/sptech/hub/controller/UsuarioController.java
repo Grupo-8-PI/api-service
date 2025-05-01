@@ -8,11 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.hub.controller.dto.UsuarioErroResponseSwgDto;
-import school.sptech.hub.controller.dto.UsuarioCreateDto;
-import school.sptech.hub.controller.dto.UsuarioResponseDto;
+import school.sptech.hub.controller.dto.*;
 import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.service.UsuarioService;
 
@@ -43,10 +42,14 @@ public class UsuarioController {
     })
     @PostMapping
     public ResponseEntity<UsuarioResponseDto> createUser(@Valid @RequestBody UsuarioCreateDto usuario) {
-        UsuarioResponseDto createdUser = service.createUser(usuario);
 
+        try {
+            UsuarioResponseDto createdUser = service.createUser(usuario);
+            return ResponseEntity.status(201).body(createdUser);
 
-        return ResponseEntity.status(201).body(createdUser);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).build();
+        }
     }
 
 
@@ -91,8 +94,8 @@ public class UsuarioController {
             )
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
-        Usuario updateUser = service.updateUserById(id, usuario);
+    public ResponseEntity<UsuarioUpdateTokenDto> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
+        UsuarioUpdateTokenDto updateUser = service.updateUserById(id, usuario);
 
         return ResponseEntity.status(200).body(updateUser);
     }
@@ -119,5 +122,13 @@ public class UsuarioController {
         Usuario deletedUser = service.deleteUserById(id);
 
         return ResponseEntity.status(200).body(deletedUser);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
+        final Usuario usuario = UsuarioMapper.toUsuarioLoginDto(usuarioLoginDto);
+        UsuarioTokenDto usuarioTokenDto = this.service.autenticar(usuario);
+
+        return ResponseEntity.status(200).body(usuarioTokenDto);
     }
 }

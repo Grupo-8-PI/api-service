@@ -15,13 +15,13 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 45)
+    @Column(length = 45, unique = true)
     private String nome;
 
-    @Column(length = 45)
+    @Column(length = 45, unique = true)
     private String email;
 
-    @Column(length = 45)
+    @Column(length = 45, unique = true)
     private String telefone;
 
 
@@ -29,11 +29,11 @@ public class Usuario {
     private String tipo_usuario;
 
     @Size(max = 14, message = "Invalid CPF provided")
-    @Column(length = 45)
+    @Column(length = 45, unique = true)
     private String cpf;
 
 
-    @Column(length = 45)
+    @Column(length = 60)
     private String senha;
 
     @NotNull
