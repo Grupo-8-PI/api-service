@@ -76,13 +76,9 @@ public class UsuarioService {
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         updatedUser.setSenha(senhaCriptografada);
 
-        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
-                usuario.getEmail(), usuario.getSenha()
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                updatedUser.getEmail(), updatedUser.getSenha()
         );
-
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final String token = gerenciadorTokenJwt.generateToken(authentication);
 
