@@ -81,4 +81,19 @@ public class UsuarioMapper {
         return usuarioListarDto;
     }
 
+    public static UsuarioUpdateTokenDto toUsuarioUpdateDto(UsuarioResponseDto usuario, String token){
+        UsuarioUpdateTokenDto dto = new UsuarioUpdateTokenDto();
+
+        dto.setId(usuario.getId());
+        dto.setNome(usuario.getNome());
+        dto.setEmail(usuario.getEmail());
+        dto.setTelefone(usuario.getTelefone());
+        dto.setTipo_usuario(usuario.getTipo_usuario());
+        dto.setCpf(usuario.getCpf());
+        dto.setDtNascimento(usuario.getDtNascimento());
+        dto.setToken(token);
+
+        return dto;
+    }
+
 }

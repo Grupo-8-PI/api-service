@@ -9,10 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import school.sptech.hub.config.GerenciadorTokenJwt;
-import school.sptech.hub.controller.dto.UsuarioCreateDto;
-import school.sptech.hub.controller.dto.UsuarioMapper;
-import school.sptech.hub.controller.dto.UsuarioResponseDto;
-import school.sptech.hub.controller.dto.UsuarioTokenDto;
+import school.sptech.hub.controller.dto.*;
 import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.exceptions.UsuarioExceptions.TipoUsuarioInvalidoException;
 import school.sptech.hub.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
@@ -71,12 +68,28 @@ public class UsuarioService {
         return UsuarioMapper.toResponseDto(usuarioFinded);
     }
 
-    public UsuarioResponseDto updateUserById(Integer id, Usuario usuario) {
+    public UsuarioUpdateTokenDto updateUserById(Integer id, Usuario usuario) {
         Usuario existingUser = repository.findById(id).orElseThrow(()-> new UsuarioNaoEncontradoException("Usuário não encontrado"));
         Usuario updatedUser = UsuarioMapper.updateUserFields(existingUser, usuario);
         UsuarioResponseDto usuarioResponseDto = UsuarioMapper.toResponseDto(updatedUser);
+
+        String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
+        updatedUser.setSenha(senhaCriptografada);
+
+        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
+                usuario.getEmail(), usuario.getSenha()
+        );
+
+        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        final String token = gerenciadorTokenJwt.generateToken(authentication);
+
         repository.save(updatedUser);
-        return usuarioResponseDto;
+
+        UsuarioUpdateTokenDto response = UsuarioMapper.toUsuarioUpdateDto(usuarioResponseDto, token);
+        return response;
     }
 
     public Usuario deleteUserById(Integer id) {
