@@ -23,7 +23,7 @@ public class UsuarioCreateDto {
 
     @Schema(description = "Telefone com DDD", example = "11912345678")
     @NotBlank(message = "O telefone é obrigatório")
-    @Size(max = 11, message = "O telefone deve ter no máximo 11 dígitos")
+    @Size(max = 14, message = "O telefone deve ter no máximo 11 dígitos")
     private String telefone;
 
     @Schema(description = "Tipo de usuário (ex: administrador, cliente)", example = "admin")
