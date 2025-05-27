@@ -7,7 +7,7 @@ import school.sptech.hub.exceptions.VendaExceptions.VendaInvalidaException;
 import school.sptech.hub.exceptions.VendaExceptions.VendaNaoEncontradaException;
 import school.sptech.hub.repository.ReservaRepository;
 
-import static school.sptech.hub.strategy.VendaDomain.isValidVenda;
+import static school.sptech.hub.validators.VendaValidator.isValidVenda;
 
 @Service
 public class VendaService {
