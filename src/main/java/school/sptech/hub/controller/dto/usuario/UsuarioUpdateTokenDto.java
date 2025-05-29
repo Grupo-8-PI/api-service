@@ -1,6 +1,4 @@
-package school.sptech.hub.controller.dto;
-
-import io.swagger.v3.oas.annotations.media.Schema;
+package school.sptech.hub.controller.dto.usuario;
 
 import java.time.LocalDate;
 

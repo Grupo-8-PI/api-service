@@ -2,9 +2,9 @@ package school.sptech.hub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import school.sptech.hub.controller.dto.LivroCreateDto;
-import school.sptech.hub.controller.dto.LivroMapper;
-import school.sptech.hub.controller.dto.LivroResponseDto;
+import school.sptech.hub.controller.dto.livro.LivroCreateDto;
+import school.sptech.hub.controller.dto.livro.LivroMapper;
+import school.sptech.hub.controller.dto.livro.LivroResponseDto;
 import school.sptech.hub.entity.Livro;
 import school.sptech.hub.exceptions.LivroExceptions.LivroNaoEncontradoException;
 import school.sptech.hub.repository.AcabamentoRepository;

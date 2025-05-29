@@ -10,10 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.hub.controller.dto.LivroCreateDto;
-import school.sptech.hub.controller.dto.LivroErroResponseSwgDto;
-import school.sptech.hub.controller.dto.LivroResponseDto;
-import school.sptech.hub.controller.dto.VendaErroResponseSwgDto;
+import school.sptech.hub.controller.dto.livro.LivroCreateDto;
+import school.sptech.hub.controller.dto.livro.LivroErroResponseSwgDto;
+import school.sptech.hub.controller.dto.livro.LivroResponseDto;
 import school.sptech.hub.entity.Livro;
 import school.sptech.hub.service.LivroService;
 

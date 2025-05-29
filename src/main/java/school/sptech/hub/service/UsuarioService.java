@@ -9,12 +9,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import school.sptech.hub.config.GerenciadorTokenJwt;
-import school.sptech.hub.controller.dto.*;
+import school.sptech.hub.controller.dto.usuario.*;
 import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.exceptions.UsuarioExceptions.TipoUsuarioInvalidoException;
 import school.sptech.hub.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
 import school.sptech.hub.repository.UsuarioRepository;
-import school.sptech.hub.validators.UsuarioValidator.*;
 
 import static school.sptech.hub.validators.UsuarioValidator.isValidUserType;
 

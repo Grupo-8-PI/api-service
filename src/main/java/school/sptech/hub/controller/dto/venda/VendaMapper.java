@@ -1,6 +1,5 @@
-package school.sptech.hub.controller.dto;
+package school.sptech.hub.controller.dto.venda;
 
-import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.entity.Venda;
 
 public class VendaMapper {

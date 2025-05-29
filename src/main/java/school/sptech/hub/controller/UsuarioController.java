@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.hub.controller.dto.*;
+import school.sptech.hub.controller.dto.usuario.*;
 import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.service.UsuarioService;
 

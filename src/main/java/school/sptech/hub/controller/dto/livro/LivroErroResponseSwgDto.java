@@ -1,6 +1,7 @@
-package school.sptech.hub.controller.dto;
+package school.sptech.hub.controller.dto.livro;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import school.sptech.hub.controller.dto.venda.VendaErroResponseSwgDto;
 
 @Schema(description = "DTO utilizado para mensagens de erro nas operações relacionadas aos livros")
 public class LivroErroResponseSwgDto {

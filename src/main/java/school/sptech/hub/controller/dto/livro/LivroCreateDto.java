@@ -1,4 +1,4 @@
-package school.sptech.hub.controller.dto;
+package school.sptech.hub.controller.dto.livro;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;

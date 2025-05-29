@@ -1,11 +1,10 @@
-package school.sptech.hub.controller.dto;
+package school.sptech.hub.controller.dto.usuario;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import school.sptech.hub.entity.Usuario;
 
 import java.util.Collection;
-import java.util.List;
 
 public class UsuarioDetalhesDto implements UserDetails {
     private final String nome;

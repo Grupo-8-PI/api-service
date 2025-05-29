@@ -1,4 +1,4 @@
-package school.sptech.hub.controller.dto;
+package school.sptech.hub.controller.dto.usuario;
 
 public class UsuarioTokenDto {
 
