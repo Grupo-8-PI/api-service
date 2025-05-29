@@ -8,6 +8,9 @@ import school.sptech.hub.entity.Conservacao;
 @Schema(description = "DTO de resposta com os dados de um livro")
 public class LivroResponseDto {
 
+    @Schema(description = "ID do Livro", example = "2")
+    private Integer id;
+
     @Schema(description = "ISBN do livro", example = "978-3-16-148410-0")
     private String isbn;
 
@@ -128,5 +131,13 @@ public class LivroResponseDto {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

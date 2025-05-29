@@ -21,6 +21,7 @@ public class LivroMapper {
 
     public static LivroResponseDto toResponseDto(Livro livro) {
         LivroResponseDto dto = new LivroResponseDto();
+        dto.setId(livro.getId());
         dto.setIsbn(livro.getIsbn());
         dto.setTitulo(livro.getTitulo());
         dto.setAutor(livro.getAutor());
@@ -36,6 +37,7 @@ public class LivroMapper {
     }
 
     public static Livro updateLivroFields(Livro existingLivro, Livro updatedLivro) {
+
         if (updatedLivro.getIsbn() != null) {
             existingLivro.setIsbn(updatedLivro.getIsbn());
         }
