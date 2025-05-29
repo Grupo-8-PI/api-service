@@ -36,7 +36,6 @@ public class LivroService {
         if(livroEntity == null) {
             return null;
         }
-
         Livro livroPostado = repository.save(livroEntity);
         return livroPostado;
 

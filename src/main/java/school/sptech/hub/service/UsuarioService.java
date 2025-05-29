@@ -14,6 +14,9 @@ import school.sptech.hub.entity.Usuario;
 import school.sptech.hub.exceptions.UsuarioExceptions.TipoUsuarioInvalidoException;
 import school.sptech.hub.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
 import school.sptech.hub.repository.UsuarioRepository;
+import school.sptech.hub.validators.UsuarioValidator.*;
+
+import static school.sptech.hub.validators.UsuarioValidator.isValidUserType;
 
 @Service
 public class UsuarioService {
@@ -94,8 +97,5 @@ public class UsuarioService {
         return usuarioFinded;
     }
 
-    private boolean isValidUserType(String userType) {
-        return "admin".equalsIgnoreCase(userType) || "cliente".equalsIgnoreCase(userType);
-    }
 
 }
