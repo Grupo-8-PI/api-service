@@ -2,6 +2,8 @@ package school.sptech.hub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import school.sptech.hub.adapter.ChatGptAdapter;
+import school.sptech.hub.controller.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.controller.dto.livro.LivroCreateDto;
 import school.sptech.hub.controller.dto.livro.LivroMapper;
 import school.sptech.hub.controller.dto.livro.LivroResponseDto;
@@ -23,6 +25,9 @@ public class LivroService {
 
     @Autowired
     private AcabamentoRepository acabamentoRepository;
+
+    @Autowired
+    private ChatGptAdapter chatGptAdapter;
 
     @Autowired
     private CategoriaRepository categoriaRepository;
@@ -53,9 +58,16 @@ public class LivroService {
     }
 
 
+    public LivroComSinopseResponseDto buscarLivroPorIdComSinopse(Integer id) {
+        Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
+        String sinopse = chatGptAdapter.gerarSinopse(livro.getTitulo(), livro.getAutor());
+
+       return LivroMapper.toComSinopseResponseDto(livro,sinopse);
+    }
     public LivroResponseDto buscarLivroPorId(Integer id) {
         Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
-       return LivroMapper.toResponseDto(livro);
+
+        return LivroMapper.toResponseDto(livro);
     }
 
     public Livro atualizarLivro(Integer id, Livro livro) {

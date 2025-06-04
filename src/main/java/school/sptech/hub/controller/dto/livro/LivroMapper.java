@@ -35,6 +35,23 @@ public class LivroMapper {
         dto.setCategoria(livro.getCategoria());
         return dto;
     }
+    public static LivroComSinopseResponseDto toComSinopseResponseDto(Livro livro, String sinopse) {
+        LivroComSinopseResponseDto dto = new LivroComSinopseResponseDto();
+        dto.setId(livro.getId());
+        dto.setIsbn(livro.getIsbn());
+        dto.setTitulo(livro.getTitulo());
+        dto.setAutor(livro.getAutor());
+        dto.setEditora(livro.getEditora());
+        dto.setAnoPublicacao(livro.getAnoPublicacao().getValue());
+        dto.setPaginas(livro.getPaginas());
+        dto.setAcabamento(livro.getAcabamento());
+        dto.setEstadoConservacao(livro.getEstadoConservacao());
+        dto.setCapa(livro.getCapa());
+        dto.setPreco(livro.getPreco());
+        dto.setCategoria(livro.getCategoria());
+        dto.setSinopse(sinopse);
+        return dto;
+    }
 
     public static Livro updateLivroFields(Livro existingLivro, Livro updatedLivro) {
 

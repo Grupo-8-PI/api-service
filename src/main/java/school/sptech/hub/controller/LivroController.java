@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import school.sptech.hub.controller.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.controller.dto.livro.LivroCreateDto;
 import school.sptech.hub.controller.dto.livro.LivroErroResponseSwgDto;
 import school.sptech.hub.controller.dto.livro.LivroResponseDto;
@@ -96,6 +97,14 @@ public class LivroController {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
 
             return ResponseEntity.status(200).body(livro);
+
+    }
+
+    @GetMapping("/com-sinopse/{id}")
+    public ResponseEntity<LivroComSinopseResponseDto> buscarLivroPorIdComSinopse(@PathVariable Integer id) {
+        LivroComSinopseResponseDto livro = livroService.buscarLivroPorIdComSinopse(id);
+
+        return ResponseEntity.status(200).body(livro);
 
     }
 
