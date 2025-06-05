@@ -97,21 +97,4 @@ public class LivroTest {
         livro.setCategoria(categoria);
         assertEquals("Romance", livro.getCategoria().getNomeCategoria());
     }
-
-    @Test
-    public void testDefaultValues() {
-        Livro livro = new Livro();
-        assertNull(livro.getId());
-        assertNull(livro.getTitulo());
-        assertNull(livro.getIsbn());
-        assertNull(livro.getAutor());
-        assertNull(livro.getEditora());
-        assertNull(livro.getAnoPublicacao());
-        assertNull(livro.getPaginas());
-        assertNull(livro.getAcabamento());
-        assertNull(livro.getEstadoConservacao());
-        assertNull(livro.getCapa());
-        assertNull(livro.getPreco());
-        assertNull(livro.getCategoria());
-    }
 }

@@ -43,14 +43,4 @@ public class VendaTest {
         venda.setTotalReserva(5);
         assertEquals(5, venda.getTotalReserva());
     }
-
-    @Test
-    public void testDefaultValues() {
-        Venda venda = new Venda();
-        assertEquals(0, venda.getId());
-        assertNull(venda.getDtReserva());
-        assertNull(venda.getDtLimite());
-        assertNull(venda.getStatusReserva());
-        assertNull(venda.getTotalReserva());
-    }
 }

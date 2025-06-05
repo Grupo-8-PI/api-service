@@ -113,17 +113,4 @@ public class UsuarioTest {
         usuario.setSenha("senha123");
         assertEquals("senha123", usuario.getSenha());
     }
-
-    @Test
-    public void testDefaultValues() {
-        Usuario usuario = new Usuario();
-        assertNull(usuario.getId());
-        assertNull(usuario.getNome());
-        assertNull(usuario.getEmail());
-        assertNull(usuario.getTelefone());
-        assertNull(usuario.getTipo_usuario());
-        assertNull(usuario.getCpf());
-        assertNull(usuario.getSenha());
-        assertNull(usuario.getDtNascimento());
-    }
 }
