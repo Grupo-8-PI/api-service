@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.hub.controller.dto.venda.VendaErroResponseSwgDto;
 import school.sptech.hub.controller.dto.venda.VendaResponseDto;
@@ -41,6 +42,7 @@ public class VendaController {
             )
     })
     @PostMapping
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<Venda> createReserva(@RequestBody Venda venda) {
         Venda createdVenda = service.createReserva(venda);
 
@@ -65,6 +67,7 @@ public class VendaController {
             )
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
     public ResponseEntity<Venda> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
         Venda updatedVenda = service.updateReserva(id, vendaToUpdate);
 
@@ -88,6 +91,7 @@ public class VendaController {
             )
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
     public ResponseEntity<Venda> getReservaById(@PathVariable Integer id){
         Venda venda = service.getReservaById(id);
 
@@ -112,6 +116,7 @@ public class VendaController {
             )
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
     public ResponseEntity<Venda> deleteReservaById(@PathVariable Integer id){
         Venda venda = service.deleteReservaById(id);
 

@@ -7,6 +7,8 @@ import school.sptech.hub.exceptions.VendaExceptions.VendaInvalidaException;
 import school.sptech.hub.exceptions.VendaExceptions.VendaNaoEncontradaException;
 import school.sptech.hub.repository.ReservaRepository;
 
+import java.util.Optional;
+
 import static school.sptech.hub.validators.VendaValidator.isValidVenda;
 
 @Service
@@ -43,5 +45,10 @@ public class VendaService {
         Venda vendaFinded = repository.findById(id).orElseThrow(() -> new VendaNaoEncontradaException("Reserva não encontrada"));
         repository.deleteById(id);
         return vendaFinded;
+    }
+
+    public boolean reservaPertenceAoUsuario(Integer idReserva, String emailUsuario) {
+        Optional<Venda> vendaOpt = repository.findById(idReserva);
+        return vendaOpt.isPresent() && vendaOpt.get().getUsuarios().getEmail().equals(emailUsuario);
     }
 }

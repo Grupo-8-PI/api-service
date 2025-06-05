@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.hub.controller.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.controller.dto.livro.LivroCreateDto;
@@ -45,6 +46,7 @@ public class LivroController {
     })
     @PostMapping
     @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Livro> cadastrarLivro(@RequestBody LivroCreateDto livro) {
         Livro livroPostado = livroService.createNewLivro(livro);
 
@@ -125,6 +127,8 @@ public class LivroController {
             )
     })
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Livro> atualizarLivro(@PathVariable Integer id, @RequestBody Livro livro) {
         Livro livroUpdated = livroService.atualizarLivro(id, livro);
 
@@ -149,6 +153,8 @@ public class LivroController {
             )
     })
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletarLivro(@PathVariable Integer id) {
         Livro livroDeleted = livroService.deletarLivro(id);
 

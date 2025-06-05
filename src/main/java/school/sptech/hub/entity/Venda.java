@@ -61,4 +61,8 @@ public class Venda {
     public void setTotalReserva(Integer totalReserva) {
         this.totalReserva = totalReserva;
     }
+
+    public Usuario getUsuarios() {
+        return usuarios;
+    }
 }
