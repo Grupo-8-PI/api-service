@@ -13,7 +13,7 @@ import static school.sptech.hub.validators.VendaValidator.isValidVenda;
 public class VendaService {
 
     @Autowired
-    private ReservaRepository repository;
+    ReservaRepository repository;
 
     public Venda createReserva(Venda venda) {
         boolean isReservaValid = isValidVenda(venda);

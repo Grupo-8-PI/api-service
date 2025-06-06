@@ -64,7 +64,7 @@ public class UsuarioTest {
     @Test
     public void testCpfValidationTooLong() {
         Usuario usuario = new Usuario();
-        usuario.setCpf("123456789012345"); // 15 chars (limite é 14)
+        usuario.setCpf("123456789012345");
         usuario.setDtNascimento(LocalDate.of(1990, 1, 1));
 
         Set<ConstraintViolation<Usuario>> violations = validator.validate(usuario);
@@ -79,7 +79,7 @@ public class UsuarioTest {
     @Test
     public void testDtNascimentoNotNull() {
         Usuario usuario = new Usuario();
-        usuario.setCpf("12345678900"); // válido
+        usuario.setCpf("12345678900");
         usuario.setDtNascimento(null);
 
         Set<ConstraintViolation<Usuario>> violations = validator.validate(usuario);

@@ -1,8 +1,6 @@
-package entity_test;
+package school.sptech.hub.entity;
 
 import org.junit.jupiter.api.Test;
-import school.sptech.hub.entity.Acabamento;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AcabamentoTest {
