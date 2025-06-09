@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.hub.controller.dto.usuario.*;
 import school.sptech.hub.entity.Usuario;
@@ -70,6 +72,8 @@ public class UsuarioController {
             )
     })
     @GetMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioResponseDto> getUserById(@PathVariable Integer id) {
         UsuarioResponseDto usuario = service.getUserById(id);
 
@@ -94,6 +98,8 @@ public class UsuarioController {
             )
     })
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("#id == principal.id or hasRole('ADMIN')")
     public ResponseEntity<UsuarioUpdateTokenDto> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
         UsuarioUpdateTokenDto updateUser = service.updateUserById(id, usuario);
 
@@ -118,6 +124,8 @@ public class UsuarioController {
             )
     })
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("#id == principal.id or hasRole('ADMIN')")
     public ResponseEntity<Usuario> deleteUserById(@PathVariable Integer id){
         Usuario deletedUser = service.deleteUserById(id);
 

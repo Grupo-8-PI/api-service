@@ -1,29 +1,39 @@
 package school.sptech.hub.controller.dto.usuario;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import school.sptech.hub.entity.Usuario;
 
 import java.util.Collection;
+import java.util.List;
 
 public class UsuarioDetalhesDto implements UserDetails {
+    private final Integer id;
     private final String nome;
     private final String email;
+    private final String tipoUsuario;
     private final String senha;
 
     public UsuarioDetalhesDto(Usuario usuario) {
+        this.id = usuario.getId();
         this.nome = usuario.getNome();
         this.email = usuario.getEmail();
         this.senha = usuario.getSenha();
+        this.tipoUsuario = usuario.getTipo_usuario() != null ? usuario.getTipo_usuario().toUpperCase() : "USER";
     }
+
+    public Integer getId() {return id;}
 
     public String getNome() {
         return nome;
     }
 
+    public String getTipoUsuario() {return tipoUsuario;}
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(new SimpleGrantedAuthority("ROLE_" + tipoUsuario.toUpperCase()));
     }
 
     @Override
