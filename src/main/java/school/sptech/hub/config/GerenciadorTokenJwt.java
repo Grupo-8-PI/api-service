@@ -52,7 +52,7 @@ public class GerenciadorTokenJwt {
                 .claim("roles", "ROLE_" + usuarioDetalhes.getTipoUsuario())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 3600000))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(parseSecret(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
