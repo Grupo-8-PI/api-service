@@ -59,7 +59,6 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // addUsernameInContext(request, username, jwtToken);
 
             UserDetails userDetails = autenticacaoService.loadUserByUsername(username);
 

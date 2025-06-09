@@ -65,13 +65,6 @@ public class SecurityConfiguracao {
                 .cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer<HttpSecurity>::disable)
 
-                // Configuração antiga que permitia tudo
-//                .authorizeHttpRequests(authorize -> authorize.requestMatchers(URLS_PERMITIDAS)
-//                        .permitAll()
-//                        .anyRequest()
-//                        .authenticated()
-//                )
-
                 // Configuração de segurança através de urls
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(URLS_PERMITIDAS).permitAll()
