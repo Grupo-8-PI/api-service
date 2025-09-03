@@ -3,10 +3,12 @@ package school.sptech.hub.service;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import school.sptech.hub.entity.Venda;
-import school.sptech.hub.exceptions.VendaExceptions.VendaInvalidaException;
-import school.sptech.hub.exceptions.VendaExceptions.VendaNaoEncontradaException;
-import school.sptech.hub.repository.ReservaRepository;
+import school.sptech.hub.application.service.VendaService;
+import school.sptech.hub.application.validators.VendaValidator;
+import school.sptech.hub.domain.entity.Venda;
+import school.sptech.hub.application.exceptions.VendaExceptions.VendaInvalidaException;
+import school.sptech.hub.application.exceptions.VendaExceptions.VendaNaoEncontradaException;
+import school.sptech.hub.infraestructure.persistance.ReservaRepository;
 
 import java.util.Optional;
 
@@ -34,8 +36,8 @@ public class VendaServiceTest {
     void deveCriarReservaComSucesso() {
         Venda venda = criarVenda();
 
-        try (MockedStatic<?> mockStatic = Mockito.mockStatic(school.sptech.hub.validators.VendaValidator.class)) {
-            mockStatic.when(() -> school.sptech.hub.validators.VendaValidator.isValidVenda(venda)).thenReturn(true);
+        try (MockedStatic<?> mockStatic = Mockito.mockStatic(VendaValidator.class)) {
+            mockStatic.when(() -> VendaValidator.isValidVenda(venda)).thenReturn(true);
 
             when(repository.save(venda)).thenReturn(venda);
 
@@ -50,8 +52,8 @@ public class VendaServiceTest {
     void deveLancarExceptionAoCriarReservaInvalida() {
         Venda venda = criarVenda();
 
-        try (MockedStatic<?> mockStatic = Mockito.mockStatic(school.sptech.hub.validators.VendaValidator.class)) {
-            mockStatic.when(() -> school.sptech.hub.validators.VendaValidator.isValidVenda(venda)).thenReturn(false);
+        try (MockedStatic<?> mockStatic = Mockito.mockStatic(VendaValidator.class)) {
+            mockStatic.when(() -> VendaValidator.isValidVenda(venda)).thenReturn(false);
 
             assertThrows(VendaInvalidaException.class, () -> vendaService.createReserva(venda));
             verify(repository, never()).save(any());
@@ -62,8 +64,8 @@ public class VendaServiceTest {
     void deveAtualizarReservaComSucesso() {
         Venda venda = criarVenda();
 
-        try (MockedStatic<?> mockStatic = Mockito.mockStatic(school.sptech.hub.validators.VendaValidator.class)) {
-            mockStatic.when(() -> school.sptech.hub.validators.VendaValidator.isValidVenda(venda)).thenReturn(true);
+        try (MockedStatic<?> mockStatic = Mockito.mockStatic(VendaValidator.class)) {
+            mockStatic.when(() -> VendaValidator.isValidVenda(venda)).thenReturn(true);
 
             when(repository.save(venda)).thenReturn(venda);
 
@@ -78,8 +80,8 @@ public class VendaServiceTest {
     void deveLancarExceptionAoAtualizarReservaInvalida() {
         Venda venda = criarVenda();
 
-        try (MockedStatic<?> mockStatic = Mockito.mockStatic(school.sptech.hub.validators.VendaValidator.class)) {
-            mockStatic.when(() -> school.sptech.hub.validators.VendaValidator.isValidVenda(venda)).thenReturn(false);
+        try (MockedStatic<?> mockStatic = Mockito.mockStatic(VendaValidator.class)) {
+            mockStatic.when(() -> VendaValidator.isValidVenda(venda)).thenReturn(false);
 
             assertThrows(VendaInvalidaException.class, () -> vendaService.updateReserva(venda.getId(), venda));
             verify(repository, never()).save(any());

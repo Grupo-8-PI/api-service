@@ -9,12 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import school.sptech.hub.controller.LivroController;
-import school.sptech.hub.controller.dto.livro.LivroComSinopseResponseDto;
-import school.sptech.hub.controller.dto.livro.LivroCreateDto;
-import school.sptech.hub.controller.dto.livro.LivroResponseDto;
-import school.sptech.hub.entity.Livro;
-import school.sptech.hub.service.LivroService;
+import school.sptech.hub.infraestructure.controller.LivroController;
+import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
+import school.sptech.hub.domain.dto.livro.LivroCreateDto;
+import school.sptech.hub.domain.dto.livro.LivroResponseDto;
+import school.sptech.hub.domain.entity.Livro;
+import school.sptech.hub.application.service.LivroService;
 
 import java.util.Arrays;
 import java.util.Collections;

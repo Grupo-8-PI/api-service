@@ -1,7 +1,8 @@
 package school.sptech.hub.repository;
 
 import org.junit.jupiter.api.Test;
-import school.sptech.hub.entity.Usuario;
+import school.sptech.hub.domain.entity.Usuario;
+import school.sptech.hub.infraestructure.persistance.usuarioPersistance.UsuarioRepository;
 
 import java.util.Optional;
 

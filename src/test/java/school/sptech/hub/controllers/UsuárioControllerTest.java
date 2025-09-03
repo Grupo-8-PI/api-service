@@ -10,10 +10,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import school.sptech.hub.controller.UsuarioController;
-import school.sptech.hub.controller.dto.usuario.*;
-import school.sptech.hub.entity.Usuario;
-import school.sptech.hub.service.UsuarioService;
+import school.sptech.hub.domain.dto.usuario.*;
+import school.sptech.hub.infraestructure.controller.UsuarioController;
+import school.sptech.hub.domain.entity.Usuario;
+import school.sptech.hub.application.service.UsuarioService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

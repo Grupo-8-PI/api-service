@@ -9,9 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import school.sptech.hub.controller.VendaController;
-import school.sptech.hub.entity.Venda;
-import school.sptech.hub.service.VendaService;
+import school.sptech.hub.infraestructure.controller.VendaController;
+import school.sptech.hub.domain.entity.Venda;
+import school.sptech.hub.application.service.VendaService;
 
 import java.time.LocalDateTime;
 
