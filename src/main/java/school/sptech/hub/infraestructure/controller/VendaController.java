@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import school.sptech.hub.domain.dto.venda.VendaErroResponseSwgDto;
 import school.sptech.hub.domain.dto.venda.VendaResponseDto;
 import school.sptech.hub.domain.entity.Venda;
-import school.sptech.hub.application.service.VendaService;
+import school.sptech.hub.application.usecases.venda.CreateVendaUseCase;
 import school.sptech.hub.application.usecases.venda.UpdateVendaReservaUseCase;
+import school.sptech.hub.application.usecases.venda.GetVendaByIdUseCase;
+import school.sptech.hub.application.usecases.venda.DeleteVendaUseCase;
+import school.sptech.hub.application.usecases.venda.CheckVendaOwnershipUseCase;
 
 @Tag(name = "reservas", description = "Operações relacionadas a venda/reserva dos livros")
 @RestController
@@ -23,10 +26,19 @@ import school.sptech.hub.application.usecases.venda.UpdateVendaReservaUseCase;
 public class VendaController {
 
     @Autowired
-    private VendaService service;
+    private CreateVendaUseCase createVendaUseCase;
 
     @Autowired
     private UpdateVendaReservaUseCase updateVendaReservaUseCase;
+
+    @Autowired
+    private GetVendaByIdUseCase getVendaByIdUseCase;
+
+    @Autowired
+    private DeleteVendaUseCase deleteVendaUseCase;
+
+    @Autowired
+    private CheckVendaOwnershipUseCase checkVendaOwnershipUseCase;
 
 
     @Operation(
@@ -48,9 +60,9 @@ public class VendaController {
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<Venda> createReserva(@RequestBody Venda venda) {
-        Venda createdVenda = service.createReserva(venda);
+        Venda createdVenda = createVendaUseCase.execute(venda);
 
-            return ResponseEntity.status(200).body(createdVenda);
+        return ResponseEntity.status(200).body(createdVenda);
 
     }
 
@@ -71,7 +83,7 @@ public class VendaController {
             )
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
+    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<Venda> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
         Venda updatedVenda = updateVendaReservaUseCase.execute(id, vendaToUpdate);
 
@@ -95,9 +107,9 @@ public class VendaController {
             )
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
+    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<Venda> getReservaById(@PathVariable Integer id){
-        Venda venda = service.getReservaById(id);
+        Venda venda = getVendaByIdUseCase.execute(id);
 
         return ResponseEntity.status(200).body(venda);
     }
@@ -120,9 +132,9 @@ public class VendaController {
             )
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
+    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<Venda> deleteReservaById(@PathVariable Integer id){
-        Venda venda = service.deleteReservaById(id);
+        Venda venda = deleteVendaUseCase.execute(id);
 
         return ResponseEntity.status(200).body(venda);
     }

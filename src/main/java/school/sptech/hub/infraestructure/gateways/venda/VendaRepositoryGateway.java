@@ -1,33 +1,50 @@
 package school.sptech.hub.infraestructure.gateways.venda;
 
+import school.sptech.hub.application.gateways.venda.VendaGateway;
 import school.sptech.hub.domain.entity.Venda;
-import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaRepository;
 import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaEntity;
+import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaRepository;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public class VendaRepositoryGateway {
-    public static Venda save(Venda venda, VendaRepository vendaRepository) {
-        VendaEntity entity = VendaEntityMapper.toEntity(venda);
-        VendaEntity saved = vendaRepository.save(entity);
-        return VendaEntityMapper.toDomain(saved);
+public class VendaRepositoryGateway implements VendaGateway {
+    private final VendaRepository vendaRepository;
+    private final VendaEntityMapper vendaMapper;
+
+    public VendaRepositoryGateway(VendaRepository vendaRepository, VendaEntityMapper vendaMapper) {
+        this.vendaRepository = vendaRepository;
+        this.vendaMapper = vendaMapper;
     }
 
-    public static Optional<Venda> findById(Integer id, VendaRepository vendaRepository) {
-        return vendaRepository.findById(id)
-                .map(VendaEntityMapper::toDomain);
+    @Override
+    public Optional<Venda> createVenda(Venda venda) {
+        VendaEntity vendaEntity = vendaMapper.toEntity(venda);
+        VendaEntity savedEntity = vendaRepository.save(vendaEntity);
+        return Optional.of(vendaMapper.toDomain(savedEntity));
     }
 
-    public static List<Venda> findAll(VendaRepository vendaRepository) {
-        return vendaRepository.findAll().stream()
-                .map(VendaEntityMapper::toDomain)
-                .collect(Collectors.toList());
+    @Override
+    public Optional<Venda> findById(Integer id) {
+        Optional<VendaEntity> vendaEntity = vendaRepository.findById(id);
+        return vendaEntity.map(vendaMapper::toDomain);
     }
 
-    public static void delete(Venda venda, VendaRepository vendaRepository) {
-        VendaEntity entity = VendaEntityMapper.toEntity(venda);
-        vendaRepository.delete(entity);
+    @Override
+    public Optional<Venda> updateVenda(Venda venda) {
+        VendaEntity vendaEntity = vendaMapper.toEntity(venda);
+        VendaEntity savedEntity = vendaRepository.save(vendaEntity);
+        return Optional.of(vendaMapper.toDomain(savedEntity));
+    }
+
+    @Override
+    public void deleteVenda(Venda venda) {
+        VendaEntity vendaEntity = vendaMapper.toEntity(venda);
+        vendaRepository.delete(vendaEntity);
+    }
+
+    @Override
+    public boolean reservaPertenceAoUsuario(Integer idReserva, String emailUsuario) {
+        Optional<VendaEntity> vendaEntity = vendaRepository.findById(idReserva);
+        return vendaEntity.isPresent() && vendaEntity.get().getUsuarios().getEmail().equals(emailUsuario);
     }
 }

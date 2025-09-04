@@ -3,7 +3,6 @@ package school.sptech.hub.service;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import school.sptech.hub.application.service.VendaService;
 import school.sptech.hub.application.validators.VendaValidator;
 import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.application.exceptions.VendaExceptions.VendaInvalidaException;

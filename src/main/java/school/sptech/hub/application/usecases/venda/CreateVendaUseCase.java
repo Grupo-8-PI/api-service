@@ -1,29 +1,29 @@
 package school.sptech.hub.application.usecases.venda;
 
 import org.springframework.stereotype.Component;
-import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.application.exceptions.VendaExceptions.VendaInvalidaException;
 import school.sptech.hub.application.exceptions.VendaExceptions.VendaNaoEncontradaException;
 import school.sptech.hub.application.gateways.venda.VendaGateway;
+import school.sptech.hub.domain.entity.Venda;
 
 import static school.sptech.hub.application.validators.VendaValidator.isValidVenda;
 
 @Component
-public class UpdateVendaReservaUseCase {
+public class CreateVendaUseCase {
+
     private final VendaGateway gateway;
 
-    public UpdateVendaReservaUseCase(VendaGateway gateway) {
+    public CreateVendaUseCase(VendaGateway gateway) {
         this.gateway = gateway;
     }
 
-    public Venda execute(Integer id, Venda vendaToBeUpdated) {
-        boolean isReservaValid = isValidVenda(vendaToBeUpdated);
+    public Venda execute(Venda venda) {
+        boolean isReservaValid = isValidVenda(venda);
         if (!isReservaValid) {
             throw new VendaInvalidaException("Reserva inválida.");
         }
-        vendaToBeUpdated.setId(id);
-
-        return gateway.updateVenda(vendaToBeUpdated)
-                .orElseThrow(() -> new VendaNaoEncontradaException("Erro ao atualizar reserva"));
+        
+        return gateway.createVenda(venda)
+                .orElseThrow(() -> new VendaNaoEncontradaException("Erro ao criar reserva"));
     }
 }
