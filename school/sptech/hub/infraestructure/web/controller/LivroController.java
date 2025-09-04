@@ -1,4 +1,4 @@
-package school.sptech.hub.controller;
+package school.sptech.hub.infraestructure.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,12 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.hub.controller.dto.livro.LivroComSinopseResponseDto;
-import school.sptech.hub.controller.dto.livro.LivroCreateDto;
-import school.sptech.hub.controller.dto.livro.LivroErroResponseSwgDto;
-import school.sptech.hub.controller.dto.livro.LivroResponseDto;
-import school.sptech.hub.entity.Livro;
-import school.sptech.hub.service.LivroService;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
+import school.sptech.hub.domain.dto.livro.LivroCreateDto;
+import school.sptech.hub.domain.dto.livro.LivroErroResponseSwgDto;
+import school.sptech.hub.domain.dto.livro.LivroResponseDto;
+import school.sptech.hub.application.service.LivroService;
 
 import java.util.List;
 
@@ -39,9 +40,13 @@ public class LivroController {
     @PostMapping
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Livro> cadastrarLivro(@Valid @RequestBody LivroCreateDto livro) {
-        Livro livroPostado = livroService.createNewLivro(livro);
-        return ResponseEntity.status(201).body(livroPostado); // Status correto para criação
+    public ResponseEntity<LivroResponseDto> cadastrarLivro(@Valid @RequestBody LivroCreateDto livroDto) {
+        try {
+            LivroResponseDto livroPostado = livroService.createNewLivro(livroDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(livroPostado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @Operation(summary = "Listar todos os livros", description = "Retorna uma lista com todos os livros disponíveis no sistema")
@@ -67,12 +72,18 @@ public class LivroController {
     @GetMapping("/{id}")
     public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
+        if (livro == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado");
+        }
         return ResponseEntity.ok(livro);
     }
 
     @GetMapping("/com-sinopse/{id}")
     public ResponseEntity<LivroComSinopseResponseDto> buscarLivroPorIdComSinopse(@PathVariable Integer id) {
         LivroComSinopseResponseDto livro = livroService.buscarLivroPorIdComSinopse(id);
+        if (livro == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado");
+        }
         return ResponseEntity.ok(livro);
     }
 
@@ -86,9 +97,16 @@ public class LivroController {
     @PutMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Livro> atualizarLivro(@PathVariable Integer id, @Valid @RequestBody Livro livro) {
-        Livro livroUpdated = livroService.atualizarLivro(id, livro);
-        return ResponseEntity.ok(livroUpdated);
+    public ResponseEntity<LivroResponseDto> atualizarLivro(@PathVariable Integer id, @Valid @RequestBody LivroCreateDto livroDto) {
+        try {
+            LivroResponseDto livroUpdated = livroService.atualizarLivro(id, livroDto);
+            if (livroUpdated == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado");
+            }
+            return ResponseEntity.ok(livroUpdated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @Operation(summary = "Deletar um livro", description = "Remove um livro do sistema com base no ID fornecido")
@@ -101,7 +119,10 @@ public class LivroController {
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletarLivro(@PathVariable Integer id) {
-        livroService.deletarLivro(id);
-        return ResponseEntity.noContent().build(); // 204 é mais adequado para exclusão
+        boolean deletado = livroService.deletarLivro(id);
+        if (!deletado) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado");
+        }
+        return ResponseEntity.noContent().build();
     }
-}
+

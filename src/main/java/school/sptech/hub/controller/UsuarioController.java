@@ -40,6 +40,11 @@ public class UsuarioController {
                     responseCode = "400",
                     description = "Dados inválidos - erro de validação",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflito - email já cadastrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseSwgDto.class))
             )
     })
     @PostMapping
@@ -77,7 +82,7 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDto> getUserById(@PathVariable Integer id) {
         UsuarioResponseDto usuario = service.getUserById(id);
 
-        return ResponseEntity.status(200).body(usuario);
+        return ResponseEntity.ok(usuario);
     }
 
 
@@ -103,7 +108,7 @@ public class UsuarioController {
     public ResponseEntity<UsuarioUpdateTokenDto> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
         UsuarioUpdateTokenDto updateUser = service.updateUserById(id, usuario);
 
-        return ResponseEntity.status(200).body(updateUser);
+        return ResponseEntity.ok(updateUser);
     }
 
 
@@ -113,7 +118,7 @@ public class UsuarioController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "204",
                     description = "Usuário deletado com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))
             ),
@@ -127,16 +132,31 @@ public class UsuarioController {
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("#id == principal.id or hasRole('ADMIN')")
     public ResponseEntity<Usuario> deleteUserById(@PathVariable Integer id){
-        Usuario deletedUser = service.deleteUserById(id);
-
-        return ResponseEntity.status(200).body(deletedUser);
+        service.deleteUserById(id);
+        return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Login de usuário",
+            description = "Autentica o usuário com base nas credenciais fornecidas e retorna um token JWT em caso de sucesso."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Login bem-sucedido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioTokenDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Credenciais inválidas",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseSwgDto.class))
+            )})
+
     @PostMapping("/login")
-    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
+    public ResponseEntity<UsuarioTokenDto> login(@Valid @RequestBody UsuarioLoginDto usuarioLoginDto) {
         final Usuario usuario = UsuarioMapper.toUsuarioLoginDto(usuarioLoginDto);
         UsuarioTokenDto usuarioTokenDto = this.service.autenticar(usuario);
 
-        return ResponseEntity.status(200).body(usuarioTokenDto);
+        return ResponseEntity.ok(usuarioTokenDto);
     }
 }

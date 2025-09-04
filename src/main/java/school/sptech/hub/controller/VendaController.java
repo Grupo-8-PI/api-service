@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,22 +33,23 @@ public class VendaController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "Reserva efetuada co sucesso",
+                    responseCode = "201",
+                    description = "Reserva efetuada com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Processo de reserva não finalizado.",
+                    description = "Dados inválidos ou processo de reserva não finalizado.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
             )
     })
     @PostMapping
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<Venda> createReserva(@RequestBody Venda venda) {
+    public ResponseEntity<Venda> createReserva(@Valid @RequestBody Venda venda) {
         Venda createdVenda = service.createReserva(venda);
 
-            return ResponseEntity.status(200).body(createdVenda);
+            return ResponseEntity.status(201).body(createdVenda);
 
     }
 
@@ -62,16 +65,17 @@ public class VendaController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Reserva com este id não encontrada.",
+                    description = "Reserva não encontrada.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
             )
     })
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
-    public ResponseEntity<Venda> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
+    public ResponseEntity<Venda> updateReservaById(@PathVariable Integer id, @Valid @RequestBody Venda vendaToUpdate){
         Venda updatedVenda = service.updateReserva(id, vendaToUpdate);
 
-        return ResponseEntity.status(200).body(updatedVenda);
+        return ResponseEntity.ok(updatedVenda);
     }
 
     @Operation(
@@ -91,11 +95,12 @@ public class VendaController {
             )
     })
     @GetMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
     public ResponseEntity<Venda> getReservaById(@PathVariable Integer id){
         Venda venda = service.getReservaById(id);
 
-        return ResponseEntity.status(200).body(venda);
+        return ResponseEntity.ok(venda);
     }
 
 
@@ -105,7 +110,7 @@ public class VendaController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "204",
                     description = "Reserva deletada com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
             ),
@@ -116,11 +121,11 @@ public class VendaController {
             )
     })
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
     public ResponseEntity<Venda> deleteReservaById(@PathVariable Integer id){
         Venda venda = service.deleteReservaById(id);
 
-        return ResponseEntity.status(200).body(venda);
+        return ResponseEntity.noContent().build();
     }
-
 }
