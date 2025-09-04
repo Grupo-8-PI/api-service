@@ -15,6 +15,7 @@ import school.sptech.hub.domain.dto.venda.VendaErroResponseSwgDto;
 import school.sptech.hub.domain.dto.venda.VendaResponseDto;
 import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.application.service.VendaService;
+import school.sptech.hub.application.usecases.venda.UpdateVendaReservaUseCase;
 
 @Tag(name = "reservas", description = "Operações relacionadas a venda/reserva dos livros")
 @RestController
@@ -23,6 +24,9 @@ public class VendaController {
 
     @Autowired
     private VendaService service;
+
+    @Autowired
+    private UpdateVendaReservaUseCase updateVendaReservaUseCase;
 
 
     @Operation(
@@ -69,7 +73,7 @@ public class VendaController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('CLIENTE') and @vendaService.reservaPertenceAoUsuario(#id, authentication.name)")
     public ResponseEntity<Venda> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
-        Venda updatedVenda = service.updateReserva(id, vendaToUpdate);
+        Venda updatedVenda = updateVendaReservaUseCase.execute(id, vendaToUpdate);
 
         return ResponseEntity.status(200).body(updatedVenda);
     }

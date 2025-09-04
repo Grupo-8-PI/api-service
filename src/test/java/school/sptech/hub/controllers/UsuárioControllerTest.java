@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import school.sptech.hub.domain.dto.usuario.*;
 import school.sptech.hub.infraestructure.controller.UsuarioController;
 import school.sptech.hub.domain.entity.Usuario;
-import school.sptech.hub.application.service.UsuarioService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

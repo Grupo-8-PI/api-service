@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
-import school.sptech.hub.application.service.UsuarioService;
 import school.sptech.hub.utils.config.GerenciadorTokenJwt;
 import school.sptech.hub.domain.dto.usuario.UsuarioResponseDto;
 import school.sptech.hub.domain.dto.usuario.UsuarioTokenDto;

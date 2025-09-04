@@ -15,7 +15,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.hub.domain.dto.usuario.*;
 import school.sptech.hub.domain.entity.Usuario;
-import school.sptech.hub.application.service.UsuarioService;
+import school.sptech.hub.application.usecases.usuario.AuthenticateUsuarioUseCase;
+import school.sptech.hub.application.usecases.usuario.CreateUsuarioUseCase;
+import school.sptech.hub.application.usecases.usuario.GetUsuarioByIdUseCase;
+import school.sptech.hub.application.usecases.usuario.UpdateUsuarioUseCase;
+import school.sptech.hub.application.usecases.usuario.DeleteUsuarioUseCase;
 
 @Tag(name = "usuarios", description = "Operações relacionadas a usuários")
 @RestController
@@ -23,8 +27,19 @@ import school.sptech.hub.application.service.UsuarioService;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioService service;
+    private CreateUsuarioUseCase createUsuarioUseCase;
 
+    @Autowired
+    private GetUsuarioByIdUseCase getUserByIdUseCase;
+
+    @Autowired
+    private AuthenticateUsuarioUseCase authenticateUsuarioUseCase;
+
+    @Autowired
+    private UpdateUsuarioUseCase updateUsuarioUseCase;
+
+    @Autowired
+    private DeleteUsuarioUseCase deleteUsuarioUseCase;
 
     @Operation(
             summary = "Criar novo usuário",
@@ -46,7 +61,7 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDto> createUser(@Valid @RequestBody UsuarioCreateDto usuario) {
 
         try {
-            UsuarioResponseDto createdUser = service.createUser(usuario);
+            UsuarioResponseDto createdUser = createUsuarioUseCase.execute(usuario);
             return ResponseEntity.status(201).body(createdUser);
 
         } catch (DataIntegrityViolationException e) {
@@ -75,7 +90,7 @@ public class UsuarioController {
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioResponseDto> getUserById(@PathVariable Integer id) {
-        UsuarioResponseDto usuario = service.getUserById(id);
+        UsuarioResponseDto usuario = getUserByIdUseCase.execute(id);
 
         return ResponseEntity.status(200).body(usuario);
     }
@@ -101,7 +116,7 @@ public class UsuarioController {
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("#id == principal.id or hasRole('ADMIN')")
     public ResponseEntity<UsuarioUpdateTokenDto> updateUserById(@PathVariable Integer id, @Valid @RequestBody Usuario usuario) {
-        UsuarioUpdateTokenDto updateUser = service.updateUserById(id, usuario);
+        UsuarioUpdateTokenDto updateUser = updateUsuarioUseCase.execute(id, usuario);
 
         return ResponseEntity.status(200).body(updateUser);
     }
@@ -127,7 +142,7 @@ public class UsuarioController {
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("#id == principal.id or hasRole('ADMIN')")
     public ResponseEntity<Usuario> deleteUserById(@PathVariable Integer id){
-        Usuario deletedUser = service.deleteUserById(id);
+        Usuario deletedUser = deleteUsuarioUseCase.execute(id);
 
         return ResponseEntity.status(200).body(deletedUser);
     }
@@ -135,7 +150,7 @@ public class UsuarioController {
     @PostMapping("/login")
     public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
         final Usuario usuario = UsuarioMapper.toUsuarioLoginDto(usuarioLoginDto);
-        UsuarioTokenDto usuarioTokenDto = this.service.autenticar(usuario);
+        UsuarioTokenDto usuarioTokenDto = this.authenticateUsuarioUseCase.execute(usuario);
 
         return ResponseEntity.status(200).body(usuarioTokenDto);
     }
