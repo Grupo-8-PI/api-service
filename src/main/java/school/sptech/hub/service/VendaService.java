@@ -2,6 +2,7 @@ package school.sptech.hub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import school.sptech.hub.entity.Venda;
 import school.sptech.hub.exceptions.VendaExceptions.VendaInvalidaException;
 import school.sptech.hub.exceptions.VendaExceptions.VendaNaoEncontradaException;
@@ -17,38 +18,70 @@ public class VendaService {
     @Autowired
     ReservaRepository repository;
 
+    @Transactional
     public Venda createReserva(Venda venda) {
-        boolean isReservaValid = isValidVenda(venda);
-        if (!isReservaValid) {
+
+        if (venda == null || !isValidVenda(venda)) {
             throw new VendaInvalidaException("Reserva inválida.");
         }
+
         return repository.save(venda);
     }
 
+    @Transactional
     public Venda updateReserva(Integer id, Venda vendaToBeUpdated) {
-        boolean isReservaValid = isValidVenda(vendaToBeUpdated);
-        if (!isReservaValid) {
+
+        if (id == null || id <= 0 || vendaToBeUpdated == null || !isValidVenda(vendaToBeUpdated)) {
             throw new VendaInvalidaException("Reserva inválida.");
         }
+
+        repository.findById(id)
+                .orElseThrow(() -> new VendaNaoEncontradaException("Reserva não encontrada"));
+
         vendaToBeUpdated.setId(id);
 
         return repository.save(vendaToBeUpdated);
-
     }
 
+    @Transactional(readOnly = true)
     public Venda getReservaById(Integer id) {
-        Venda venda = repository.findById(id).orElseThrow(() -> new VendaNaoEncontradaException("Reserva não encontrada"));
-        return venda;
+
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido.");
+        }
+
+        return repository.findById(id)
+                .orElseThrow(() -> new VendaNaoEncontradaException("Reserva não encontrada"));
+
     }
 
+    @Transactional
     public Venda deleteReservaById(Integer id) {
-        Venda vendaFinded = repository.findById(id).orElseThrow(() -> new VendaNaoEncontradaException("Reserva não encontrada"));
+
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido.");
+        }
+
+        Venda vendaFinded = repository.findById(id)
+                .orElseThrow(() -> new VendaNaoEncontradaException("Reserva não encontrada"));
+
         repository.deleteById(id);
+
+        vendaFinded.setUsuarios(null);
         return vendaFinded;
     }
 
+    @Transactional(readOnly = true)
     public boolean reservaPertenceAoUsuario(Integer idReserva, String emailUsuario) {
+
+        if (idReserva == null || idReserva <= 0 || emailUsuario == null || emailUsuario.isBlank()) {
+            return false;
+        }
+
         Optional<Venda> vendaOpt = repository.findById(idReserva);
-        return vendaOpt.isPresent() && vendaOpt.get().getUsuarios().getEmail().equals(emailUsuario);
+
+       return vendaOpt.isPresent() &&
+               vendaOpt.get().getUsuarios() != null &&
+               emailUsuario.equalsIgnoreCase(vendaOpt.get().getUsuarios().getEmail());
     }
 }

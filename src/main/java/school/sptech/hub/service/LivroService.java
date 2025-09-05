@@ -2,6 +2,7 @@ package school.sptech.hub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import school.sptech.hub.adapter.ChatGptAdapter;
 import school.sptech.hub.controller.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.controller.dto.livro.LivroCreateDto;
@@ -36,51 +37,84 @@ public class LivroService {
     private ConservacaoRepository conservacaoRepository;
 
 
+    @Transactional
     public Livro createNewLivro(LivroCreateDto livro) {
-        Livro livroEntity = LivroMapper.toEntity(livro);
-        if(livroEntity == null) {
-            return null;
-        }
-        Livro livroPostado = repository.save(livroEntity);
-        return livroPostado;
 
+        if (livro == null || livro.getTitulo() == null || livro.getTitulo().isBlank()){
+            throw new IllegalArgumentException("Dados do livro inválidos.");
+        }
+
+        Livro livroEntity = LivroMapper.toEntity(livro);
+        return repository.save(livroEntity);
     }
 
+    @Transactional(readOnly = true)
     public List<LivroResponseDto> listarLivros() {
         List<Livro> livros = repository.findAll();
         List<LivroResponseDto> livrosResponse = new ArrayList<>();
-        for (int i = 0; i < livros.size(); i++) {
-            Livro livroActual = livros.get(i);
-            LivroResponseDto livroResponseDto = LivroMapper.toResponseDto(livroActual);
-            livrosResponse.add(livroResponseDto);
+
+        for (Livro livroAtual : livros){
+            if (livroAtual != null){
+                livrosResponse.add(LivroMapper.toResponseDto(livroAtual));
+            }
         }
         return livrosResponse;
     }
 
 
+    @Transactional(readOnly = true)
     public LivroComSinopseResponseDto buscarLivroPorIdComSinopse(Integer id) {
-        Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
-        String sinopse = chatGptAdapter.gerarSinopse(livro.getTitulo(), livro.getAutor());
 
-       return LivroMapper.toComSinopseResponseDto(livro,sinopse);
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido.");
+        }
+
+        Livro livro = repository.findById(id)
+                .orElseThrow(()-> new LivroNaoEncontradoException("Livro não encontrado."));
+
+        String sinopse = chatGptAdapter.gerarSinopse(livro.getTitulo(), livro.getAutor());
+        if (sinopse == null || sinopse.isBlank()) {
+            sinopse = "Sinopse indisponível no momento.";
+        }
+
+        return LivroMapper.toComSinopseResponseDto(livro, sinopse);
     }
+
+    @Transactional(readOnly = true)
     public LivroResponseDto buscarLivroPorId(Integer id) {
-        Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido.");
+        }
+
+        Livro livro = repository.findById(id)
+                .orElseThrow(()-> new LivroNaoEncontradoException("Livro não encontrado."));
 
         return LivroMapper.toResponseDto(livro);
     }
 
+    @Transactional
     public Livro atualizarLivro(Integer id, Livro livro) {
-        Livro existingLivro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
-        if(existingLivro == null){
-            return null;
+
+        if (id == null || id <= 0 || livro == null) {
+            throw new IllegalArgumentException("Dados inválidos para atualização.");
         }
-        Livro updatedLivro = LivroMapper.updateLivroFields(existingLivro, livro);
-        return repository.save(updatedLivro);
+
+        Livro livroExistente = repository.findById(id)
+                .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado."));
+
+        Livro livroAtualizado = LivroMapper.updateLivroFields(livroExistente, livro);
+        return repository.save(livroAtualizado);
     }
 
+    @Transactional
     public Livro deletarLivro(Integer id) {
-            Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
+            if (id == null || id <= 0) {
+                throw new IllegalArgumentException("ID inválido.");
+            }
+
+            Livro livro = repository.findById(id)
+                    .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado."));
+
             repository.deleteById(id);
             return livro;
     }

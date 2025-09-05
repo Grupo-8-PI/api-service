@@ -65,4 +65,8 @@ public class Venda {
     public Usuario getUsuarios() {
         return usuarios;
     }
+
+    public void setUsuarios(Usuario usuarios) {
+        this.usuarios = usuarios;
+    }
 }
