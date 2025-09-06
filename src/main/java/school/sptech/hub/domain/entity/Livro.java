@@ -1,145 +1,242 @@
 package school.sptech.hub.domain.entity;
 
 
-import jakarta.persistence.*;
-
 import java.time.Year;
+import java.util.Objects;
 
-@Entity
 public class Livro {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Integer id;
+    private Integer id;
+    private String titulo;
+    private String isbn;
+    private String autor;
+    private String editora;
+    private Year anoPublicacao;
+    private Integer paginas;
+    private Acabamento acabamento;
+    private Conservacao estadoConservacao;
+    private String capa;
+    private Double preco;
+    private Categoria categoria;
 
-@Column(length = 60)
-private String titulo;
+    public Livro() {}
 
-@Column(length = 45)
-private String isbn;
-
-@Column(length = 45)
-private String autor;
-
-@Column(length = 45)
-private String editora;
-
-private Year anoPublicacao;
-
-private Integer paginas;
-
-
-@ManyToOne
-private Acabamento acabamento;
-
-@ManyToOne
-private Conservacao estadoConservacao;
-
-@Lob
-private String capa;
-
-private Double preco;
-
-@ManyToOne
-private Categoria categoria;
-
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
+    public Livro(Integer id, String titulo, String isbn, String autor, String editora,
+                 Year anoPublicacao, Integer paginas, Acabamento acabamento,
+                 Conservacao estadoConservacao, String capa, Double preco, Categoria categoria) {
         this.id = id;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public String getAutor() {
-        return autor;
-    }
-
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
-
-    public String getEditora() {
-        return editora;
-    }
-
-    public void setEditora(String editora) {
-        this.editora = editora;
-    }
-
-    public Year getAnoPublicacao() {
-        return anoPublicacao;
-    }
-
-    public void setAnoPublicacao(Year anoPublicacao) {
-        this.anoPublicacao = anoPublicacao;
-    }
-
-    public Integer getPaginas() {
-        return paginas;
-    }
-
-    public void setPaginas(Integer paginas) {
-        this.paginas = paginas;
-    }
-
-
-    public Acabamento getAcabamento() {
-        return acabamento;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
         this.titulo = titulo;
-    }
-
-    public void setAcabamento(Acabamento acabamento) {
+        this.isbn = isbn;
+        this.autor = autor;
+        this.editora = editora;
+        this.anoPublicacao = anoPublicacao;
+        this.paginas = paginas;
         this.acabamento = acabamento;
-    }
-
-    public Conservacao getEstadoConservacao() {
-        return estadoConservacao;
-    }
-
-    public void setEstadoConservacao(Conservacao estadoConservacao) {
         this.estadoConservacao = estadoConservacao;
-    }
-
-    public String getCapa() {
-        return capa;
-    }
-
-    public void setCapa(String capa) {
         this.capa = capa;
-    }
-
-    public Double getPreco() {
-        return preco;
-    }
-
-    public void setPreco(Double preco) {
         this.preco = preco;
-    }
-
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 
+    // Business Rules - Métodos de validação da entidade de domínio
+    public boolean isValidForCreation() {
+        return isValidIsbn(this.isbn) &&
+               isValidTitulo(this.titulo) &&
+               isValidAutor(this.autor) &&
+               isValidEditora(this.editora) &&
+               isValidAnoPublicacao(this.anoPublicacao) &&
+               isValidPaginas(this.paginas) &&
+               isValidPreco(this.preco) &&
+               isValidAcabamento(this.acabamento) &&
+               isValidEstadoConservacao(this.estadoConservacao) &&
+               isValidCategoria(this.categoria) &&
+               isValidCapa(this.capa);
+    }
+
+    public boolean isValidForUpdate() {
+        // Para update, os campos podem ser nulos (update parcial)
+        // Mas se fornecidos, devem ser válidos
+        if (this.isbn != null && !isValidIsbn(this.isbn)) return false;
+        if (this.titulo != null && !isValidTitulo(this.titulo)) return false;
+        if (this.autor != null && !isValidAutor(this.autor)) return false;
+        if (this.editora != null && !isValidEditora(this.editora)) return false;
+        if (this.anoPublicacao != null && !isValidAnoPublicacao(this.anoPublicacao)) return false;
+        if (this.paginas != null && !isValidPaginas(this.paginas)) return false;
+        if (this.preco != null && !isValidPreco(this.preco)) return false;
+        if (this.capa != null && !isValidCapa(this.capa)) return false;
+        if (this.acabamento != null && !isValidAcabamento(this.acabamento)) return false;
+        if (this.estadoConservacao != null && !isValidEstadoConservacao(this.estadoConservacao)) return false;
+        if (this.categoria != null && !isValidCategoria(this.categoria)) return false;
+
+        return true;
+    }
+
+    private boolean isValidIsbn(String isbn) {
+        if (isbn == null || isbn.trim().isEmpty()) {
+            return false;
+        }
+        // Remove hífens e espaços para validação
+        String cleanIsbn = isbn.replaceAll("[\\s-]", "");
+
+        // Verifica se contém apenas dígitos (e X para ISBN-10)
+        if (!cleanIsbn.matches("\\d{9}[\\dX]|\\d{13}")) {
+            return false;
+        }
+
+        // ISBN-10 tem 10 dígitos, ISBN-13 tem 13 dígitos
+        return cleanIsbn.length() == 10 || cleanIsbn.length() == 13;
+    }
+
+    private boolean isValidAnoPublicacao(Year year) {
+        if (year == null) {
+            return false;
+        }
+
+        Year currentYear = Year.now();
+        Year oldestYear = Year.of(1450); // Prensa de Gutenberg
+
+        return !year.isBefore(oldestYear) && !year.isAfter(currentYear);
+    }
+
+    private boolean isValidPaginas(Integer pages) {
+        return pages != null && pages > 0 && pages <= 10000;
+    }
+
+    private boolean isValidPreco(Double price) {
+        return price != null && price > 0 && price <= 999999.99;
+    }
+
+    private boolean isValidTitulo(String title) {
+        return title != null && !title.trim().isEmpty() && title.length() <= 255;
+    }
+
+    private boolean isValidAutor(String author) {
+        return author != null && !author.trim().isEmpty() && author.length() <= 100;
+    }
+
+    private boolean isValidEditora(String editora) {
+        return editora != null && !editora.trim().isEmpty() && editora.length() <= 100;
+    }
+
+    private boolean isValidCapa(String capa) {
+        return capa != null && !capa.trim().isEmpty();
+    }
+
+    private boolean isValidAcabamento(Acabamento acabamento) {
+        return acabamento != null &&
+               acabamento.getId() != null &&
+               acabamento.getId() > 0 &&
+               acabamento.getTipoAcabamento() != null &&
+               !acabamento.getTipoAcabamento().trim().isEmpty();
+    }
+
+    private boolean isValidEstadoConservacao(Conservacao conservacao) {
+        return conservacao != null &&
+               conservacao.getId() != null &&
+               conservacao.getId() > 0 &&
+               conservacao.getEstadoConservacao() != null &&
+               !conservacao.getEstadoConservacao().trim().isEmpty();
+    }
+
+    private boolean isValidCategoria(Categoria categoria) {
+        return categoria != null &&
+               categoria.getId() != null &&
+               categoria.getId() > 0 &&
+               categoria.getNome() != null &&
+               !categoria.getNome().trim().isEmpty();
+    }
+
+    // Método para validar regra de negócio específica
+    public void validateBusinessRules() {
+        if (!isValidForCreation()) {
+            throw new IllegalArgumentException("Dados do livro não atendem às regras de negócio");
+        }
+    }
+
+    // Método para aplicar regras de negócio durante atualização
+    public void validateUpdateRules() {
+        if (!isValidForUpdate()) {
+            throw new IllegalArgumentException("Dados de atualização do livro não atendem às regras de negócio");
+        }
+    }
+
+    // Getters and Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+
+    public String getIsbn() { return isbn; }
+    public void setIsbn(String isbn) { this.isbn = isbn; }
+
+    public String getAutor() { return autor; }
+    public void setAutor(String autor) { this.autor = autor; }
+
+    public String getEditora() { return editora; }
+    public void setEditora(String editora) { this.editora = editora; }
+
+    public Year getAnoPublicacao() { return anoPublicacao; }
+    public void setAnoPublicacao(Year anoPublicacao) { this.anoPublicacao = anoPublicacao; }
+
+    public Integer getPaginas() { return paginas; }
+    public void setPaginas(Integer paginas) { this.paginas = paginas; }
+
+    public Acabamento getAcabamento() { return acabamento; }
+    public void setAcabamento(Acabamento acabamento) { this.acabamento = acabamento; }
+
+    public Conservacao getEstadoConservacao() { return estadoConservacao; }
+    public void setEstadoConservacao(Conservacao estadoConservacao) { this.estadoConservacao = estadoConservacao; }
+
+    public String getCapa() { return capa; }
+    public void setCapa(String capa) { this.capa = capa; }
+
+    public Double getPreco() { return preco; }
+    public void setPreco(Double preco) { this.preco = preco; }
+
+    public Categoria getCategoria() { return categoria; }
+    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Livro livro = (Livro) o;
+        return Objects.equals(id, livro.id) &&
+                Objects.equals(titulo, livro.titulo) &&
+                Objects.equals(isbn, livro.isbn) &&
+                Objects.equals(autor, livro.autor) &&
+                Objects.equals(editora, livro.editora) &&
+                Objects.equals(anoPublicacao, livro.anoPublicacao) &&
+                Objects.equals(paginas, livro.paginas) &&
+                Objects.equals(acabamento, livro.acabamento) &&
+                Objects.equals(estadoConservacao, livro.estadoConservacao) &&
+                Objects.equals(capa, livro.capa) &&
+                Objects.equals(preco, livro.preco) &&
+                Objects.equals(categoria, livro.categoria);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, titulo, isbn, autor, editora, anoPublicacao, paginas,
+                acabamento, estadoConservacao, capa, preco, categoria);
+    }
+
+    @Override
+    public String toString() {
+        return "Livro{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", autor='" + autor + '\'' +
+                ", editora='" + editora + '\'' +
+                ", anoPublicacao=" + anoPublicacao +
+                ", paginas=" + paginas +
+                ", acabamento=" + acabamento +
+                ", estadoConservacao=" + estadoConservacao +
+                ", capa='" + capa + '\'' +
+                ", preco=" + preco +
+                ", categoria=" + categoria +
+                '}';
+    }
 }

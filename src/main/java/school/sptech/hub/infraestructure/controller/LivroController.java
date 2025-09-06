@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +16,7 @@ import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroErroResponseSwgDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
-import school.sptech.hub.domain.entity.Livro;
+import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 import school.sptech.hub.application.service.LivroService;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class LivroController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "Livro cadastrado com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
             ),
@@ -47,11 +48,9 @@ public class LivroController {
     @PostMapping
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Livro> cadastrarLivro(@RequestBody LivroCreateDto livro) {
-        Livro livroPostado = livroService.createNewLivro(livro);
-
-            return ResponseEntity.status(200).body(livroPostado);
-
+    public ResponseEntity<LivroResponseDto> cadastrarLivro(@Valid @RequestBody LivroCreateDto livro) {
+        LivroResponseDto livroPostado = livroService.createNewLivro(livro);
+        return ResponseEntity.status(201).body(livroPostado);
     }
 
     @Operation(
@@ -73,9 +72,7 @@ public class LivroController {
     @GetMapping
     public ResponseEntity<List<LivroResponseDto>> listarLivros() {
         List<LivroResponseDto> livros = livroService.listarLivros();
-
-            return ResponseEntity.status(200).body(livros);
-
+        return ResponseEntity.status(200).body(livros);
     }
 
     @Operation(
@@ -97,17 +94,29 @@ public class LivroController {
     @GetMapping("/{id}")
     public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
-
-            return ResponseEntity.status(200).body(livro);
-
+        return ResponseEntity.status(200).body(livro);
     }
 
+    @Operation(
+            summary = "Buscar livro por ID com sinopse",
+            description = "Retorna os dados de um livro com sinopse gerada por IA"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Livro encontrado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroComSinopseResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Livro não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
     @GetMapping("/com-sinopse/{id}")
     public ResponseEntity<LivroComSinopseResponseDto> buscarLivroPorIdComSinopse(@PathVariable Integer id) {
         LivroComSinopseResponseDto livro = livroService.buscarLivroPorIdComSinopse(id);
-
         return ResponseEntity.status(200).body(livro);
-
     }
 
     @Operation(
@@ -129,11 +138,9 @@ public class LivroController {
     @PutMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Livro> atualizarLivro(@PathVariable Integer id, @RequestBody Livro livro) {
-        Livro livroUpdated = livroService.atualizarLivro(id, livro);
-
-            return ResponseEntity.status(200).body(livroUpdated);
-
+    public ResponseEntity<LivroResponseDto> atualizarLivro(@PathVariable Integer id, @Valid @RequestBody LivroUpdateDto livroUpdateDto) {
+        LivroResponseDto livroUpdated = livroService.atualizarLivro(id, livroUpdateDto);
+        return ResponseEntity.status(200).body(livroUpdated);
     }
 
     @Operation(
@@ -155,10 +162,8 @@ public class LivroController {
     @DeleteMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deletarLivro(@PathVariable Integer id) {
-        Livro livroDeleted = livroService.deletarLivro(id);
-
-            return ResponseEntity.status(200).build();
-
+    public ResponseEntity<LivroResponseDto> deletarLivro(@PathVariable Integer id) {
+        LivroResponseDto livroDeleted = livroService.deletarLivro(id);
+        return ResponseEntity.status(200).body(livroDeleted);
     }
 }

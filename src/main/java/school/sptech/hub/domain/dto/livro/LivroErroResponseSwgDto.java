@@ -1,12 +1,12 @@
 package school.sptech.hub.domain.dto.livro;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import school.sptech.hub.domain.dto.venda.VendaErroResponseSwgDto;
 
 @Schema(description = "DTO utilizado para mensagens de erro nas operações relacionadas aos livros")
 public class LivroErroResponseSwgDto {
+
     @Schema(description = "Código do erro", example = "404")
-private int status;
+    private int status;
 
     @Schema(description = "Mensagem de erro", example = "Recurso não encontrado")
     private String mensagem;
@@ -14,14 +14,7 @@ private int status;
     @Schema(description = "Timestamp do erro", example = "2025-04-23T14:55:00")
     private String timestamp;
 
-    @Schema(description = "Código do erro", example = "400")
-    private int status400;
-
-    @Schema(description = "Mensagem de erro", example = "Recurso estruturado incorretamente")
-    private String mensagem400;
-
-    @Schema(description = "Timestamp do erro", example = "2025-04-23T14:55:00")
-    private String timestamp400;
+    public LivroErroResponseSwgDto() {}
 
     public LivroErroResponseSwgDto(int status, String mensagem, String timestamp) {
         this.status = status;
@@ -29,23 +22,28 @@ private int status;
         this.timestamp = timestamp;
     }
 
-    public static VendaErroResponseSwgDto erro404(String detalhe) {
-        return new VendaErroResponseSwgDto(
-                404,
-                detalhe != null ? detalhe : "Recurso não encontrado",
-                java.time.LocalDateTime.now().toString()
-        );
-    }
-
+    // Getters and Setters
     public int getStatus() {
         return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getMensagem() {
         return mensagem;
     }
 
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
+    }
+
     public String getTimestamp() {
         return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 }

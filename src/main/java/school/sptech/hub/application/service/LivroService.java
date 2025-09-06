@@ -1,88 +1,59 @@
 package school.sptech.hub.application.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import school.sptech.hub.application.adapter.ChatGptAdapter;
+import school.sptech.hub.application.usecases.livro.*;
 import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
-import school.sptech.hub.domain.dto.livro.LivroMapper;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
-import school.sptech.hub.domain.entity.Livro;
-import school.sptech.hub.application.exceptions.LivroExceptions.LivroNaoEncontradoException;
-import school.sptech.hub.infraestructure.persistance.AcabamentoRepository;
-import school.sptech.hub.infraestructure.persistance.CategoriaRepository;
-import school.sptech.hub.infraestructure.persistance.ConservacaoRepository;
-import school.sptech.hub.infraestructure.persistance.LivroRepository;
+import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class LivroService {
 
-    @Autowired
-    private LivroRepository repository;
+    private final CreateLivroUseCase createLivroUseCase;
+    private final FindLivroByIdUseCase findLivroByIdUseCase;
+    private final ListAllLivrosUseCase listAllLivrosUseCase;
+    private final FindLivroWithSinopseUseCase findLivroWithSinopseUseCase;
+    private final UpdateLivroUseCase updateLivroUseCase;
+    private final DeleteLivroUseCase deleteLivroUseCase;
 
-    @Autowired
-    private AcabamentoRepository acabamentoRepository;
+    public LivroService(CreateLivroUseCase createLivroUseCase,
+                       FindLivroByIdUseCase findLivroByIdUseCase,
+                       ListAllLivrosUseCase listAllLivrosUseCase,
+                       FindLivroWithSinopseUseCase findLivroWithSinopseUseCase,
+                       UpdateLivroUseCase updateLivroUseCase,
+                       DeleteLivroUseCase deleteLivroUseCase) {
+        this.createLivroUseCase = createLivroUseCase;
+        this.findLivroByIdUseCase = findLivroByIdUseCase;
+        this.listAllLivrosUseCase = listAllLivrosUseCase;
+        this.findLivroWithSinopseUseCase = findLivroWithSinopseUseCase;
+        this.updateLivroUseCase = updateLivroUseCase;
+        this.deleteLivroUseCase = deleteLivroUseCase;
+    }
 
-    @Autowired
-    private ChatGptAdapter chatGptAdapter;
-
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-
-    @Autowired
-    private ConservacaoRepository conservacaoRepository;
-
-
-    public Livro createNewLivro(LivroCreateDto livro) {
-        Livro livroEntity = LivroMapper.toEntity(livro);
-        if(livroEntity == null) {
-            return null;
-        }
-        Livro livroPostado = repository.save(livroEntity);
-        return livroPostado;
-
+    public LivroResponseDto createNewLivro(LivroCreateDto livro) {
+        return createLivroUseCase.execute(livro);
     }
 
     public List<LivroResponseDto> listarLivros() {
-        List<Livro> livros = repository.findAll();
-        List<LivroResponseDto> livrosResponse = new ArrayList<>();
-        for (int i = 0; i < livros.size(); i++) {
-            Livro livroActual = livros.get(i);
-            LivroResponseDto livroResponseDto = LivroMapper.toResponseDto(livroActual);
-            livrosResponse.add(livroResponseDto);
-        }
-        return livrosResponse;
+        return listAllLivrosUseCase.execute();
     }
-
 
     public LivroComSinopseResponseDto buscarLivroPorIdComSinopse(Integer id) {
-        Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
-        String sinopse = chatGptAdapter.gerarSinopse(livro.getTitulo(), livro.getAutor());
-
-       return LivroMapper.toComSinopseResponseDto(livro,sinopse);
+        return findLivroWithSinopseUseCase.execute(id);
     }
+
     public LivroResponseDto buscarLivroPorId(Integer id) {
-        Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
-
-        return LivroMapper.toResponseDto(livro);
+        return findLivroByIdUseCase.execute(id);
     }
 
-    public Livro atualizarLivro(Integer id, Livro livro) {
-        Livro existingLivro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
-        if(existingLivro == null){
-            return null;
-        }
-        Livro updatedLivro = LivroMapper.updateLivroFields(existingLivro, livro);
-        return repository.save(updatedLivro);
+    public LivroResponseDto atualizarLivro(Integer id, LivroUpdateDto livroUpdateDto) {
+        return updateLivroUseCase.execute(id, livroUpdateDto);
     }
 
-    public Livro deletarLivro(Integer id) {
-            Livro livro = repository.findById(id).orElseThrow(()-> new LivroNaoEncontradoException("O id especificado não foi encontrado"));
-            repository.deleteById(id);
-            return livro;
+    public LivroResponseDto deletarLivro(Integer id) {
+        return deleteLivroUseCase.execute(id);
     }
-
 }

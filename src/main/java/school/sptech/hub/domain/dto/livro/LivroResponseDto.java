@@ -1,9 +1,6 @@
 package school.sptech.hub.domain.dto.livro;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import school.sptech.hub.domain.entity.Acabamento;
-import school.sptech.hub.domain.entity.Categoria;
-import school.sptech.hub.domain.entity.Conservacao;
 
 @Schema(description = "DTO de resposta com os dados de um livro")
 public class LivroResponseDto {
@@ -29,11 +26,17 @@ public class LivroResponseDto {
     @Schema(description = "Número de páginas do livro", example = "320")
     private Integer paginas;
 
+    @Schema(description = "ID do acabamento do livro", example = "1")
+    private Integer acabamentoId;
+
     @Schema(description = "Tipo de acabamento do livro", example = "BROCHURA")
-    private Acabamento acabamento;
+    private String tipoAcabamento;
+
+    @Schema(description = "ID do estado de conservação do livro", example = "2")
+    private Integer conservacaoId;
 
     @Schema(description = "Estado de conservação do livro", example = "OTIMO")
-    private Conservacao estadoConservacao;
+    private String estadoConservacao;
 
     @Schema(description = "URL da imagem da capa do livro", example = "https://m.media-amazon.com/images/I/91GAAzBixYL._UF894,1000_QL80_.jpg")
     private String capa;
@@ -41,103 +44,56 @@ public class LivroResponseDto {
     @Schema(description = "Preço do livro", example = "49.90")
     private Double preco;
 
-    @Schema(description = "Categoria do livro", example = "ROMANCE")
-    private Categoria categoria;
+    @Schema(description = "ID da categoria do livro", example = "3")
+    private Integer categoriaId;
+
+    @Schema(description = "Nome da categoria do livro", example = "ROMANCE")
+    private String nomeCategoria;
 
 
-    public String getTitulo() {
-        return titulo;
-    }
+    // Getters and Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
+    public String getIsbn() { return isbn; }
+    public void setIsbn(String isbn) { this.isbn = isbn; }
 
-    public String getIsbn() {
-        return isbn;
-    }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
+    public String getAutor() { return autor; }
+    public void setAutor(String autor) { this.autor = autor; }
 
-    public String getAutor() {
-        return autor;
-    }
+    public String getEditora() { return editora; }
+    public void setEditora(String editora) { this.editora = editora; }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
+    public Integer getAnoPublicacao() { return anoPublicacao; }
+    public void setAnoPublicacao(Integer anoPublicacao) { this.anoPublicacao = anoPublicacao; }
 
-    public String getEditora() {
-        return editora;
-    }
+    public Integer getPaginas() { return paginas; }
+    public void setPaginas(Integer paginas) { this.paginas = paginas; }
 
-    public void setEditora(String editora) {
-        this.editora = editora;
-    }
+    public Integer getAcabamentoId() { return acabamentoId; }
+    public void setAcabamentoId(Integer acabamentoId) { this.acabamentoId = acabamentoId; }
 
-    public Integer getAnoPublicacao() {
-        return anoPublicacao;
-    }
+    public String getTipoAcabamento() { return tipoAcabamento; }
+    public void setTipoAcabamento(String tipoAcabamento) { this.tipoAcabamento = tipoAcabamento; }
 
-    public void setAnoPublicacao(Integer anoPublicacao) {
-        this.anoPublicacao = anoPublicacao;
-    }
+    public Integer getConservacaoId() { return conservacaoId; }
+    public void setConservacaoId(Integer conservacaoId) { this.conservacaoId = conservacaoId; }
 
-    public Integer getPaginas() {
-        return paginas;
-    }
+    public String getEstadoConservacao() { return estadoConservacao; }
+    public void setEstadoConservacao(String estadoConservacao) { this.estadoConservacao = estadoConservacao; }
 
-    public void setPaginas(Integer paginas) {
-        this.paginas = paginas;
-    }
+    public String getCapa() { return capa; }
+    public void setCapa(String capa) { this.capa = capa; }
 
-    public Acabamento getAcabamento() {
-        return acabamento;
-    }
+    public Double getPreco() { return preco; }
+    public void setPreco(Double preco) { this.preco = preco; }
 
-    public void setAcabamento(Acabamento acabamento) {
-        this.acabamento = acabamento;
-    }
+    public Integer getCategoriaId() { return categoriaId; }
+    public void setCategoriaId(Integer categoriaId) { this.categoriaId = categoriaId; }
 
-    public Conservacao getEstadoConservacao() {
-        return estadoConservacao;
-    }
-
-    public void setEstadoConservacao(Conservacao estadoConservacao) {
-        this.estadoConservacao = estadoConservacao;
-    }
-
-    public String getCapa() {
-        return capa;
-    }
-
-    public void setCapa(String capa) {
-        this.capa = capa;
-    }
-
-    public Double getPreco() {
-        return preco;
-    }
-
-    public void setPreco(Double preco) {
-        this.preco = preco;
-    }
-
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public String getNomeCategoria() { return nomeCategoria; }
+    public void setNomeCategoria(String nomeCategoria) { this.nomeCategoria = nomeCategoria; }
 }
