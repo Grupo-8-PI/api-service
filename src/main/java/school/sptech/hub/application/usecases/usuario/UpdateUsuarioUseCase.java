@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import school.sptech.hub.application.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
 import school.sptech.hub.application.gateways.usuario.UsuarioGateway;
+import school.sptech.hub.domain.dto.usuario.UsuarioDetalhesDto;
 import school.sptech.hub.domain.dto.usuario.UsuarioMapper;
 import school.sptech.hub.domain.dto.usuario.UsuarioResponseDto;
 import school.sptech.hub.domain.dto.usuario.UsuarioUpdateTokenDto;
