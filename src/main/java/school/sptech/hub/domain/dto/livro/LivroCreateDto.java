@@ -2,6 +2,10 @@ package school.sptech.hub.domain.dto.livro;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+import school.sptech.hub.domain.entity.Acabamento;
+import school.sptech.hub.domain.entity.Categoria;
+import school.sptech.hub.domain.entity.Conservacao;
 
 import java.time.Year;
 
@@ -10,6 +14,7 @@ public class LivroCreateDto {
 
     @Schema(description = "ISBN do livro", example = "978-3-16-148410-0")
     @NotBlank(message = "O ISBN é obrigatório")
+    @Size(max = 45, message = "O ISBN deve ter no máximo 45 caracteres")
     private String isbn;
 
     @Schema(description = "Título do livro", example = "Dom Casmurro")
@@ -18,10 +23,12 @@ public class LivroCreateDto {
 
     @Schema(description = "Nome do autor", example = "Machado de Assis")
     @NotBlank(message = "O nome do autor é obrigatório")
+    @Size(max = 45, message = "O nome do autor deve ter no máximo 45 caracteres")
     private String autor;
 
     @Schema(description = "Nome da editora", example = "Companhia das Letras")
     @NotBlank(message = "O nome da editora é obrigatório")
+    @Size(max = 45, message = "O nome da editora deve ter no máximo 45 caracteres")
     private String editora;
 
     @Schema(description = "Ano de publicação", example = "2001")
@@ -33,13 +40,15 @@ public class LivroCreateDto {
     @Min(value = 1, message = "O número de páginas deve ser maior que 0")
     private Integer paginas;
 
-    @Schema(description = "ID do acabamento do livro", example = "1")
-    @NotNull(message = "O ID do acabamento é obrigatório")
-    private Integer acabamentoId;
+    @Schema(description = "Tipo de acabamento do livro")
+    @NotNull(message = "O acabamento é obrigatório")
+    @Valid
+    private Acabamento acabamento;
 
-    @Schema(description = "ID do estado de conservação do livro", example = "2")
-    @NotNull(message = "O ID do estado de conservação é obrigatório")
-    private Integer conservacaoId;
+    @Schema(description = "Estado de conservação do livro")
+    @NotNull(message = "O estado de conservação é obrigatório")
+    @Valid
+    private Conservacao estadoConservacao;
 
     @Schema(description = "URL da imagem da capa do livro", example = "https://m.media-amazon.com/images/I/91GAAzBixYL._UF894,1000_QL80_.jpg")
     @NotBlank(message = "A capa é obrigatória")
@@ -50,9 +59,10 @@ public class LivroCreateDto {
     @Positive(message = "O preço deve ser maior que zero")
     private Double preco;
 
-    @Schema(description = "ID da categoria do livro", example = "3")
-    @NotNull(message = "O ID da categoria é obrigatório")
-    private Integer categoriaId;
+    @Schema(description = "Categoria do livro")
+    @NotNull(message = "A categoria é obrigatória")
+    @Valid
+    private Categoria categoria;
 
     // Getters and Setters
     public String getIsbn() {
@@ -103,20 +113,20 @@ public class LivroCreateDto {
         this.paginas = paginas;
     }
 
-    public Integer getAcabamentoId() {
-        return acabamentoId;
+    public Acabamento getAcabamento() {
+        return acabamento;
     }
 
-    public void setAcabamentoId(Integer acabamentoId) {
-        this.acabamentoId = acabamentoId;
+    public void setAcabamento(Acabamento acabamento) {
+        this.acabamento = acabamento;
     }
 
-    public Integer getConservacaoId() {
-        return conservacaoId;
+    public Conservacao getEstadoConservacao() {
+        return estadoConservacao;
     }
 
-    public void setConservacaoId(Integer conservacaoId) {
-        this.conservacaoId = conservacaoId;
+    public void setEstadoConservacao(Conservacao estadoConservacao) {
+        this.estadoConservacao = estadoConservacao;
     }
 
     public String getCapa() {
@@ -135,11 +145,11 @@ public class LivroCreateDto {
         this.preco = preco;
     }
 
-    public Integer getCategoriaId() {
-        return categoriaId;
+    public Categoria getCategoria() {
+        return categoria;
     }
 
-    public void setCategoriaId(Integer categoriaId) {
-        this.categoriaId = categoriaId;
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 }

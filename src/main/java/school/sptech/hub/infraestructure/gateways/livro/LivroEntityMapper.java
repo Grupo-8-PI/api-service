@@ -2,6 +2,9 @@ package school.sptech.hub.infraestructure.gateways.livro;
 
 import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.infraestructure.persistance.livroPersistance.LivroEntity;
+import school.sptech.hub.infraestructure.persistance.acabamentoPersistance.AcabamentoEntity;
+import school.sptech.hub.infraestructure.persistance.categoriaPersistance.CategoriaEntity;
+import school.sptech.hub.infraestructure.persistance.conservacaoPersistance.ConservacaoEntity;
 import school.sptech.hub.infraestructure.gateways.acabamento.AcabamentoEntityMapper;
 import school.sptech.hub.infraestructure.gateways.categoria.CategoriaEntityMapper;
 import school.sptech.hub.infraestructure.gateways.conservacao.ConservacaoEntityMapper;
@@ -22,7 +25,7 @@ public class LivroEntityMapper {
         entity.setCapa(livro.getCapa());
         entity.setPreco(livro.getPreco());
 
-        // Converter relacionamentos
+        // Inserir entidades completas (permitindo duplicação)
         if (livro.getAcabamento() != null) {
             entity.setAcabamento(AcabamentoEntityMapper.toEntity(livro.getAcabamento()));
         }

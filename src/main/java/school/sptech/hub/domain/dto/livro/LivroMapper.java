@@ -7,7 +7,7 @@ import school.sptech.hub.domain.entity.Conservacao;
 
 public class LivroMapper {
 
-    public static Livro toEntity(LivroCreateDto dto, Acabamento acabamento, Conservacao conservacao, Categoria categoria) {
+    public static Livro toEntity(LivroCreateDto dto) {
         if (dto == null) return null;
 
         Livro livro = new Livro();
@@ -17,12 +17,17 @@ public class LivroMapper {
         livro.setEditora(dto.getEditora());
         livro.setAnoPublicacao(dto.getAnoPublicacao());
         livro.setPaginas(dto.getPaginas());
-        livro.setAcabamento(acabamento);
-        livro.setEstadoConservacao(conservacao);
+        livro.setAcabamento(dto.getAcabamento());
+        livro.setEstadoConservacao(dto.getEstadoConservacao());
         livro.setCapa(dto.getCapa());
         livro.setPreco(dto.getPreco());
-        livro.setCategoria(categoria);
+        livro.setCategoria(dto.getCategoria());
         return livro;
+    }
+
+    // Método compatível com a assinatura anterior (para não quebrar outros códigos)
+    public static Livro toEntity(LivroCreateDto dto, Acabamento acabamento, Conservacao conservacao, Categoria categoria) {
+        return toEntity(dto);
     }
 
     public static LivroResponseDto toResponseDto(Livro livro) {

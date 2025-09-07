@@ -30,10 +30,13 @@ public class UpdateUsuarioUseCase {
                 .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
 
         Usuario updatedUser = UsuarioMapper.updateUserFields(existingUser, usuario);
-        UsuarioResponseDto usuarioResponseDto = UsuarioMapper.toResponseDto(updatedUser);
 
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         updatedUser.setSenha(senhaCriptografada);
+
+        gateway.updateUsuario(updatedUser);
+
+        UsuarioResponseDto usuarioResponseDto = UsuarioMapper.toResponseDto(updatedUser);
 
         UsuarioDetalhesDto usuarioDetalhes = new UsuarioDetalhesDto(updatedUser);
 
@@ -41,8 +44,6 @@ public class UpdateUsuarioUseCase {
                 new UsernamePasswordAuthenticationToken(usuarioDetalhes, null, usuarioDetalhes.getAuthorities());
 
         final String token = gerenciadorTokenJwt.generateToken(authentication);
-
-        gateway.updateUsuario(updatedUser);
 
         return UsuarioMapper.toUsuarioUpdateDto(usuarioResponseDto, token);
     }
