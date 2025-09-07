@@ -10,10 +10,6 @@ import school.sptech.hub.application.exceptions.LivroExceptions.LivroNaoEncontra
 import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
-import school.sptech.hub.infraestructure.persistance.AcabamentoRepository;
-import school.sptech.hub.infraestructure.persistance.CategoriaRepository;
-import school.sptech.hub.infraestructure.persistance.ConservacaoRepository;
-import school.sptech.hub.infraestructure.persistance.LivroRepository;
 
 import java.util.List;
 import java.util.Optional;

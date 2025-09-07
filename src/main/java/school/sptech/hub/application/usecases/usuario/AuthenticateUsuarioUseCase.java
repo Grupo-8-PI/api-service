@@ -4,6 +4,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import school.sptech.hub.application.gateways.usuario.UsuarioGateway;
 import school.sptech.hub.domain.dto.usuario.UsuarioTokenDto;
@@ -11,6 +12,7 @@ import school.sptech.hub.domain.entity.Usuario;
 import school.sptech.hub.utils.config.GerenciadorTokenJwt;
 import school.sptech.hub.domain.dto.usuario.UsuarioMapper;
 
+@Service
 public class AuthenticateUsuarioUseCase {
     private final UsuarioGateway gateway;
     private final AuthenticationManager authenticationManager;

@@ -57,7 +57,7 @@ public class LivroEntity {
     @NotBlank
     private String capa;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false)
     @NotNull
     @Positive
     private Double preco;

@@ -7,7 +7,6 @@ import school.sptech.hub.application.validators.VendaValidator;
 import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.application.exceptions.VendaExceptions.VendaInvalidaException;
 import school.sptech.hub.application.exceptions.VendaExceptions.VendaNaoEncontradaException;
-import school.sptech.hub.infraestructure.persistance.ReservaRepository;
 
 import java.util.Optional;
 
