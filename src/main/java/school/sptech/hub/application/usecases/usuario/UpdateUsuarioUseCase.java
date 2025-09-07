@@ -27,22 +27,22 @@ public class UpdateUsuarioUseCase {
     public UsuarioUpdateTokenDto execute(Integer id, Usuario usuario) {
         Usuario existingUser = gateway.findById(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
-        
+
         Usuario updatedUser = UsuarioMapper.updateUserFields(existingUser, usuario);
         UsuarioResponseDto usuarioResponseDto = UsuarioMapper.toResponseDto(updatedUser);
 
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         updatedUser.setSenha(senhaCriptografada);
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                updatedUser.getEmail(), updatedUser.getSenha()
-        );
+        UsuarioDetalhesDto usuarioDetalhes = new UsuarioDetalhesDto(updatedUser);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(usuarioDetalhes, null, usuarioDetalhes.getAuthorities());
 
         final String token = gerenciadorTokenJwt.generateToken(authentication);
 
         gateway.updateUsuario(updatedUser);
 
-        UsuarioUpdateTokenDto response = UsuarioMapper.toUsuarioUpdateDto(usuarioResponseDto, token);
-        return response;
+        return UsuarioMapper.toUsuarioUpdateDto(usuarioResponseDto, token);
     }
 }
