@@ -7,12 +7,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import school.sptech.hub.domain.dto.venda.VendaCreateDto;
 import school.sptech.hub.domain.dto.venda.VendaErroResponseSwgDto;
 import school.sptech.hub.domain.dto.venda.VendaResponseDto;
+import school.sptech.hub.domain.dto.venda.VendaMapper;
 import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.application.usecases.venda.CreateVendaUseCase;
 import school.sptech.hub.application.usecases.venda.UpdateVendaReservaUseCase;
@@ -47,8 +50,8 @@ public class VendaController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "Reserva efetuada co sucesso",
+                    responseCode = "201",
+                    description = "Reserva efetuada com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
             ),
             @ApiResponse(
@@ -59,10 +62,17 @@ public class VendaController {
     })
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<Venda> createReserva(@RequestBody Venda venda) {
+    public ResponseEntity<VendaResponseDto> createReserva(@Valid @RequestBody VendaCreateDto vendaDto) {
+        // Converter DTO para entidade usando o mapper
+        Venda venda = VendaMapper.toEntity(vendaDto);
+
+        // Executar o caso de uso
         Venda createdVenda = createVendaUseCase.execute(venda);
 
-        return ResponseEntity.status(200).body(createdVenda);
+        // Converter entidade para DTO de resposta
+        VendaResponseDto response = VendaMapper.toResponseDto(createdVenda);
+
+        return ResponseEntity.status(201).body(response);
 
     }
 

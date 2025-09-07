@@ -1,10 +1,13 @@
 package school.sptech.hub.domain.entity;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Categoria {
 
     private Integer id;
+
+    @JsonProperty("nomeCategoria")
     private String nome;
 
     public Categoria() {}
@@ -14,14 +17,11 @@ public class Categoria {
         this.nome = nome;
     }
 
-    // Business Rules - Métodos de validação da entidade de domínio
     public boolean isValidForCreation() {
         return isValidNome(this.nome);
     }
 
     public boolean isValidForUpdate() {
-        // Para update, o campo pode ser nulo (update parcial)
-        // Mas se fornecido, deve ser válido
         return this.nome == null || isValidNome(this.nome);
     }
 

@@ -1,6 +1,7 @@
 package school.sptech.hub.domain.dto.venda;
 
 import school.sptech.hub.domain.entity.Venda;
+import school.sptech.hub.domain.entity.Usuario;
 
 public class VendaMapper {
 
@@ -10,6 +11,13 @@ public class VendaMapper {
         venda.setDtReserva(dto.getDtReserva());
         venda.setStatusReserva(dto.getStatusReserva());
         venda.setTotalReserva(dto.getTotalReserva());
+        // Nota: O usuário deve ser associado no UseCase com base no contexto de autenticação
+        return venda;
+    }
+
+    public static Venda toEntity(VendaCreateDto dto, Usuario usuario){
+        Venda venda = toEntity(dto);
+        venda.setUsuarios(usuario);
         return venda;
     }
 
