@@ -1,5 +1,3 @@
-
-
 package school.sptech.hub.validators;
 
 import org.slf4j.Logger;
@@ -11,7 +9,7 @@ public class VendaValidator {
     public static final Logger logger = LoggerFactory.getLogger(VendaValidator.class);
     public static final int INVALID_TOTAL_RESERVA_QTD = 0;
 
-    public static boolean isValidTotalVenda(Venda venda){
+    public static boolean isValidVenda(Venda venda){
         if (venda == null) {
             logger.warn("Tentativa de validação de venda nula.");
             return false;
