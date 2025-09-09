@@ -1,9 +1,9 @@
 package school.sptech.hub.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class GerenciadorTokenJwt {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GerenciadorTokenJwt.class);
 
     @Value("${jwt.secret}")
     private String secret;
@@ -44,7 +46,7 @@ public class GerenciadorTokenJwt {
                 .claim("id", usuarioDetalhes.getId())
                 .claim("roles", "ROLE_" + usuarioDetalhes.getTipoUsuario())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtTokenValidity))
                 .signWith(parseSecret(), SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -55,8 +57,16 @@ public class GerenciadorTokenJwt {
     }
 
     public boolean validarToken(String token, UserDetails userDetails) {
-        String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        try{
+            String username = getUsernameFromToken(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (ExpiredJwtException e){
+            LOGGER.warn("Token expirado: {}", e.getMessage());
+        } catch (MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e){
+            LOGGER.error("Token inválido: {}", e.getMessage());
+        }
+
+        return false;
     }
 
     private boolean isTokenExpired(String token) {
@@ -68,7 +78,8 @@ public class GerenciadorTokenJwt {
         return Jwts.parserBuilder()
                 .setSigningKey(parseSecret())
                 .build()
-                .parseClaimsJws(token).getBody();
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private SecretKey parseSecret() {
