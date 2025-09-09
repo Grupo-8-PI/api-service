@@ -5,7 +5,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class VendaNaoEncontradaException extends RuntimeException{
+
+    private static final String MENSAGEM_PADRAO = "Venda ou reserva não encontrada.";
+
+    public VendaNaoEncontradaException() {
+        super(MENSAGEM_PADRAO);
+    }
+
     public VendaNaoEncontradaException(String message) {
-        super(message);
+        super(message != null && !message.isBlank() ? message : MENSAGEM_PADRAO);
     }
 }
