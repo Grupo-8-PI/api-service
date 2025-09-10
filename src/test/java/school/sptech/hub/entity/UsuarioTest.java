@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import jakarta.validation.*;
+import school.sptech.hub.domain.entity.Usuario;
+
 import java.time.LocalDate;
 import java.util.Set;
 

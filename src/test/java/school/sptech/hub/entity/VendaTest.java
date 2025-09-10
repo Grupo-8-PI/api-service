@@ -1,5 +1,6 @@
 package school.sptech.hub.entity;
 import org.junit.jupiter.api.Test;
+import school.sptech.hub.domain.entity.Venda;
 
 import java.time.LocalDateTime;
 

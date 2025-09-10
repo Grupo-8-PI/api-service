@@ -2,7 +2,8 @@ package school.sptech.hub.validators;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import school.sptech.hub.entity.Venda;
+import school.sptech.hub.application.validators.VendaValidator;
+import school.sptech.hub.domain.entity.Venda;
 
 import static org.junit.jupiter.api.Assertions.*;
 

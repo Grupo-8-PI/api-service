@@ -1,6 +1,8 @@
 package school.sptech.hub.entity;
 
 import org.junit.jupiter.api.Test;
+import school.sptech.hub.domain.entity.Categoria;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CategoriaTest {

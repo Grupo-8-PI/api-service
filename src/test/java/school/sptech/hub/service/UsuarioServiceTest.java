@@ -9,12 +9,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
-import school.sptech.hub.config.GerenciadorTokenJwt;
-import school.sptech.hub.controller.dto.usuario.UsuarioResponseDto;
-import school.sptech.hub.controller.dto.usuario.UsuarioTokenDto;
-import school.sptech.hub.entity.Usuario;
-import school.sptech.hub.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
-import school.sptech.hub.repository.UsuarioRepository;
+import school.sptech.hub.utils.config.GerenciadorTokenJwt;
+import school.sptech.hub.domain.dto.usuario.UsuarioResponseDto;
+import school.sptech.hub.domain.dto.usuario.UsuarioTokenDto;
+import school.sptech.hub.domain.entity.Usuario;
+import school.sptech.hub.application.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
+import school.sptech.hub.infraestructure.persistance.usuarioPersistance.UsuarioRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;
