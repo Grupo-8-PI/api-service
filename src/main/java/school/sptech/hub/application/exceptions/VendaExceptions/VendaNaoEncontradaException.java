@@ -1,4 +1,4 @@
-package school.sptech.hub.exceptions.VendaExceptions;
+package school.sptech.hub.application.exceptions.VendaExceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
