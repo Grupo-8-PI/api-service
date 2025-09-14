@@ -3,11 +3,13 @@ package school.sptech.hub.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import school.sptech.hub.adapter.ChatGptAdapter;
-import school.sptech.hub.controller.dto.livro.*;
-import school.sptech.hub.entity.Livro;
-import school.sptech.hub.exceptions.LivroExceptions.LivroNaoEncontradoException;
-import school.sptech.hub.repository.*;
+import school.sptech.hub.application.adapter.ChatGptAdapter;
+import school.sptech.hub.application.service.LivroService;
+import school.sptech.hub.domain.entity.Livro;
+import school.sptech.hub.application.exceptions.LivroExceptions.LivroNaoEncontradoException;
+import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
+import school.sptech.hub.domain.dto.livro.LivroCreateDto;
+import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,5 +1,9 @@
 package school.sptech.hub.entity;
 import org.junit.jupiter.api.Test;
+import school.sptech.hub.domain.entity.Acabamento;
+import school.sptech.hub.domain.entity.Categoria;
+import school.sptech.hub.domain.entity.Conservacao;
+import school.sptech.hub.domain.entity.Livro;
 
 import java.time.Year;
 

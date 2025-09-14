@@ -3,6 +3,8 @@ package school.sptech.hub.adapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import school.sptech.hub.application.adapter.ChatGptAdapter;
+
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 

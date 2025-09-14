@@ -5,10 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import school.sptech.hub.controller.dto.usuario.UsuarioDetalhesDto;
-import school.sptech.hub.entity.Usuario;
-import school.sptech.hub.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
-import school.sptech.hub.repository.UsuarioRepository;
+import school.sptech.hub.application.service.AutenticacaoService;
+import school.sptech.hub.domain.dto.usuario.UsuarioDetalhesDto;
+import school.sptech.hub.domain.entity.Usuario;
+import school.sptech.hub.application.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
+import school.sptech.hub.infraestructure.persistance.usuarioPersistance.UsuarioRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;

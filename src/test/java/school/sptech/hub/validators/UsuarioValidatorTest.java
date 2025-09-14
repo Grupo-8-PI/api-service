@@ -3,6 +3,7 @@ package school.sptech.hub.validators;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import school.sptech.hub.application.validators.UsuarioValidator;
 
 import static org.junit.jupiter.api.Assertions.*;
 

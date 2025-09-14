@@ -3,7 +3,8 @@ package school.sptech.hub.adapter.impl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import school.sptech.hub.adapter.ChatGptAdapter;
+import school.sptech.hub.application.adapter.ChatGptAdapter;
+import school.sptech.hub.application.adapter.impl.ChatGptAdapterImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
