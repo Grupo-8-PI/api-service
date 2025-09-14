@@ -3,9 +3,7 @@ package school.sptech.hub.domain.dto.livro;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-import school.sptech.hub.domain.entity.Acabamento;
 import school.sptech.hub.domain.entity.Categoria;
-import school.sptech.hub.domain.entity.Conservacao;
 
 import java.time.Year;
 
@@ -40,15 +38,17 @@ public class LivroCreateDto {
     @Min(value = 1, message = "O número de páginas deve ser maior que 0")
     private Integer paginas;
 
-    @Schema(description = "Tipo de acabamento do livro")
-    @NotNull(message = "O acabamento é obrigatório")
-    @Valid
-    private Acabamento acabamento;
+    @Schema(description = "ID do tipo de acabamento do livro", example = "1", allowableValues = {"1", "2"})
+    @NotNull(message = "O ID do acabamento é obrigatório")
+    @Min(value = 1, message = "ID do acabamento deve ser entre 1 e 2")
+    @Max(value = 2, message = "ID do acabamento deve ser entre 1 e 2")
+    private Integer acabamentoId;
 
-    @Schema(description = "Estado de conservação do livro")
-    @NotNull(message = "O estado de conservação é obrigatório")
-    @Valid
-    private Conservacao estadoConservacao;
+    @Schema(description = "ID do estado de conservação do livro", example = "1", allowableValues = {"1", "2", "3", "4"})
+    @NotNull(message = "O ID do estado de conservação é obrigatório")
+    @Min(value = 1, message = "ID da conservação deve ser entre 1 e 4")
+    @Max(value = 4, message = "ID da conservação deve ser entre 1 e 4")
+    private Integer conservacaoId;
 
     @Schema(description = "URL da imagem da capa do livro", example = "https://m.media-amazon.com/images/I/91GAAzBixYL._UF894,1000_QL80_.jpg")
     @NotBlank(message = "A capa é obrigatória")
@@ -113,20 +113,20 @@ public class LivroCreateDto {
         this.paginas = paginas;
     }
 
-    public Acabamento getAcabamento() {
-        return acabamento;
+    public Integer getAcabamentoId() {
+        return acabamentoId;
     }
 
-    public void setAcabamento(Acabamento acabamento) {
-        this.acabamento = acabamento;
+    public void setAcabamentoId(Integer acabamentoId) {
+        this.acabamentoId = acabamentoId;
     }
 
-    public Conservacao getEstadoConservacao() {
-        return estadoConservacao;
+    public Integer getConservacaoId() {
+        return conservacaoId;
     }
 
-    public void setEstadoConservacao(Conservacao estadoConservacao) {
-        this.estadoConservacao = estadoConservacao;
+    public void setConservacaoId(Integer conservacaoId) {
+        this.conservacaoId = conservacaoId;
     }
 
     public String getCapa() {

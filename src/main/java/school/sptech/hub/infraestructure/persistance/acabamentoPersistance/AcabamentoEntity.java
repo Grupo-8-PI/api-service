@@ -1,8 +1,7 @@
 package school.sptech.hub.infraestructure.persistance.acabamentoPersistance;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import school.sptech.hub.domain.entity.TipoAcabamento;
 
 import java.util.Objects;
 
@@ -11,19 +10,23 @@ import java.util.Objects;
 public class AcabamentoEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 45)
-    @NotBlank(message = "O tipo de acabamento é obrigatório")
-    @Size(max = 45, message = "O tipo de acabamento deve ter no máximo 45 caracteres")
-    private String tipoAcabamento;
+    private TipoAcabamento tipoAcabamento;
 
     public AcabamentoEntity() {}
 
-    public AcabamentoEntity(Integer id, String tipoAcabamento) {
+    public AcabamentoEntity(Integer id, TipoAcabamento tipoAcabamento) {
         this.id = id;
         this.tipoAcabamento = tipoAcabamento;
+    }
+
+    // Construtor para compatibilidade
+    public AcabamentoEntity(Integer id, String tipoAcabamentoStr) {
+        this.id = id;
+        this.tipoAcabamento = TipoAcabamento.fromDescricao(tipoAcabamentoStr);
     }
 
     // Getters and Setters
@@ -35,12 +38,24 @@ public class AcabamentoEntity {
         this.id = id;
     }
 
-    public String getTipoAcabamento() {
+    public TipoAcabamento getTipoAcabamento() {
         return tipoAcabamento;
     }
 
-    public void setTipoAcabamento(String tipoAcabamento) {
+    public void setTipoAcabamento(TipoAcabamento tipoAcabamento) {
         this.tipoAcabamento = tipoAcabamento;
+    }
+
+    // Método de compatibilidade
+    public String getTipoAcabamentoStr() {
+        return tipoAcabamento != null ? tipoAcabamento.getDescricao() : null;
+    }
+
+    // Método de compatibilidade
+    public void setTipoAcabamentoStr(String tipoAcabamentoStr) {
+        if (tipoAcabamentoStr != null) {
+            this.tipoAcabamento = TipoAcabamento.fromDescricao(tipoAcabamentoStr);
+        }
     }
 
     @Override
@@ -61,7 +76,7 @@ public class AcabamentoEntity {
     public String toString() {
         return "AcabamentoEntity{" +
                 "id=" + id +
-                ", tipoAcabamento='" + tipoAcabamento + '\'' +
+                ", tipoAcabamento=" + tipoAcabamento +
                 '}';
     }
 }

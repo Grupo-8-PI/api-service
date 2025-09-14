@@ -125,17 +125,17 @@ public class Livro {
     private boolean isValidAcabamento(Acabamento acabamento) {
         return acabamento != null &&
                acabamento.getId() != null &&
-               acabamento.getId() > 0 &&
-               acabamento.getTipoAcabamento() != null &&
-               !acabamento.getTipoAcabamento().trim().isEmpty();
+               acabamento.getId() >= 1 &&
+               acabamento.getId() <= 2 &&
+               acabamento.getTipoAcabamento() != null;
     }
 
     private boolean isValidEstadoConservacao(Conservacao conservacao) {
         return conservacao != null &&
                conservacao.getId() != null &&
-               conservacao.getId() > 0 &&
-               conservacao.getEstadoConservacao() != null &&
-               !conservacao.getEstadoConservacao().trim().isEmpty();
+               conservacao.getId() >= 1 &&
+               conservacao.getId() <= 4 &&
+               conservacao.getTipoConservacao() != null;
     }
 
     private boolean isValidCategoria(Categoria categoria) {

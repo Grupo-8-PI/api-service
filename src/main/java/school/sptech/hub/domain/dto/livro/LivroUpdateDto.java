@@ -30,7 +30,9 @@ public class LivroUpdateDto {
     @Schema(description = "ID do acabamento do livro", example = "1")
     private Integer acabamentoId;
 
-    @Schema(description = "ID do estado de conservação do livro", example = "2")
+    @Schema(description = "ID do estado de conservação do livro", example = "2", allowableValues = {"1", "2", "3", "4"})
+    @Min(value = 1, message = "ID da conservação deve ser entre 1 e 4")
+    @Max(value = 4, message = "ID da conservação deve ser entre 1 e 4")
     private Integer conservacaoId;
 
     @Schema(description = "URL da imagem da capa do livro")

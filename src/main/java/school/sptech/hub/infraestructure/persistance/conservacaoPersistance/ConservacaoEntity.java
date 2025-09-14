@@ -1,8 +1,7 @@
 package school.sptech.hub.infraestructure.persistance.conservacaoPersistance;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import school.sptech.hub.domain.entity.TipoConservacao;
 
 import java.util.Objects;
 
@@ -11,19 +10,23 @@ import java.util.Objects;
 public class ConservacaoEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 45)
-    @NotBlank(message = "O estado de conservação é obrigatório")
-    @Size(max = 45, message = "O estado de conservação deve ter no máximo 45 caracteres")
-    private String estadoConservacao;
+    private TipoConservacao tipoConservacao;
 
     public ConservacaoEntity() {}
 
+    public ConservacaoEntity(Integer id, TipoConservacao tipoConservacao) {
+        this.id = id;
+        this.tipoConservacao = tipoConservacao;
+    }
+
+    // Construtor para compatibilidade
     public ConservacaoEntity(Integer id, String estadoConservacao) {
         this.id = id;
-        this.estadoConservacao = estadoConservacao;
+        this.tipoConservacao = TipoConservacao.fromDescricao(estadoConservacao);
     }
 
     // Getters and Setters
@@ -35,12 +38,24 @@ public class ConservacaoEntity {
         this.id = id;
     }
 
-    public String getEstadoConservacao() {
-        return estadoConservacao;
+    public TipoConservacao getTipoConservacao() {
+        return tipoConservacao;
     }
 
+    public void setTipoConservacao(TipoConservacao tipoConservacao) {
+        this.tipoConservacao = tipoConservacao;
+    }
+
+    // Método de compatibilidade
+    public String getEstadoConservacao() {
+        return tipoConservacao != null ? tipoConservacao.getDescricao() : null;
+    }
+
+    // Método de compatibilidade
     public void setEstadoConservacao(String estadoConservacao) {
-        this.estadoConservacao = estadoConservacao;
+        if (estadoConservacao != null) {
+            this.tipoConservacao = TipoConservacao.fromDescricao(estadoConservacao);
+        }
     }
 
     @Override
@@ -49,19 +64,19 @@ public class ConservacaoEntity {
         if (o == null || getClass() != o.getClass()) return false;
         ConservacaoEntity that = (ConservacaoEntity) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(estadoConservacao, that.estadoConservacao);
+                Objects.equals(tipoConservacao, that.tipoConservacao);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, estadoConservacao);
+        return Objects.hash(id, tipoConservacao);
     }
 
     @Override
     public String toString() {
         return "ConservacaoEntity{" +
                 "id=" + id +
-                ", estadoConservacao='" + estadoConservacao + '\'' +
+                ", tipoConservacao=" + tipoConservacao +
                 '}';
     }
 }

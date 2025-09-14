@@ -5,53 +5,52 @@ import java.util.Objects;
 public class Conservacao {
 
     private Integer id;
-    private String estadoConservacao;
+    private TipoConservacao tipoConservacao;
 
     public Conservacao() {}
 
+    public Conservacao(Integer id) {
+        this.id = id;
+        this.tipoConservacao = TipoConservacao.fromId(id);
+    }
+
+    public Conservacao(Integer id, TipoConservacao tipoConservacao) {
+        this.id = id;
+        this.tipoConservacao = tipoConservacao;
+    }
+
+    // Construtor para compatibilidade com código existente
     public Conservacao(Integer id, String estadoConservacao) {
         this.id = id;
-        this.estadoConservacao = estadoConservacao;
+        this.tipoConservacao = TipoConservacao.fromDescricao(estadoConservacao);
     }
 
     // Business Rules - Métodos de validação da entidade de domínio
     public boolean isValidForCreation() {
-        return isValidEstadoConservacao(this.estadoConservacao) &&
-               isValidEstadoConservacaoValue();
+        return isValidId(this.id) && isValidTipoConservacao(this.tipoConservacao);
     }
 
     public boolean isValidForUpdate() {
-        return this.estadoConservacao == null ||
-               (isValidEstadoConservacao(this.estadoConservacao) && isValidEstadoConservacaoValue());
+        return this.id == null || (isValidId(this.id) && isValidTipoConservacao(this.tipoConservacao));
     }
 
-    private boolean isValidEstadoConservacao(String estadoConservacao) {
-        return estadoConservacao != null &&
-               !estadoConservacao.trim().isEmpty() &&
-               estadoConservacao.length() <= 45;
+    private boolean isValidId(Integer id) {
+        return id != null && id >= 1 && id <= 4;
     }
 
-    // Método para verificar se o estado de conservação está dentro dos valores aceitos
-    private boolean isValidEstadoConservacaoValue() {
-        if (this.estadoConservacao == null) return false;
-
-        String estado = this.estadoConservacao.trim().toUpperCase();
-        return estado.equals("EXCELENTE") ||
-               estado.equals("OTIMO") ||
-               estado.equals("BOM") ||
-               estado.equals("REGULAR") ||
-               estado.equals("RUIM");
+    private boolean isValidTipoConservacao(TipoConservacao tipo) {
+        return tipo != null;
     }
 
     public void validateBusinessRules() {
         if (!isValidForCreation()) {
-            throw new IllegalArgumentException("Dados da conservação não atendem às regras de negócio");
+            throw new IllegalArgumentException("Dados da conservação não atendem às regras de negócio. ID deve estar entre 1 e 4.");
         }
     }
 
     public void validateUpdateRules() {
         if (!isValidForUpdate()) {
-            throw new IllegalArgumentException("Dados de atualização da conservação não atendem às regras de negócio");
+            throw new IllegalArgumentException("Dados de atualização da conservação não atendem às regras de negócio. ID deve estar entre 1 e 4.");
         }
     }
 
@@ -62,14 +61,33 @@ public class Conservacao {
 
     public void setId(Integer id) {
         this.id = id;
+        if (id != null) {
+            this.tipoConservacao = TipoConservacao.fromId(id);
+        }
     }
 
+    public TipoConservacao getTipoConservacao() {
+        return tipoConservacao;
+    }
+
+    public void setTipoConservacao(TipoConservacao tipoConservacao) {
+        this.tipoConservacao = tipoConservacao;
+        if (tipoConservacao != null) {
+            this.id = tipoConservacao.getId();
+        }
+    }
+
+    // Método de compatibilidade para código existente
     public String getEstadoConservacao() {
-        return estadoConservacao;
+        return tipoConservacao != null ? tipoConservacao.getDescricao() : null;
     }
 
+    // Método de compatibilidade para código existente
     public void setEstadoConservacao(String estadoConservacao) {
-        this.estadoConservacao = estadoConservacao;
+        if (estadoConservacao != null) {
+            this.tipoConservacao = TipoConservacao.fromDescricao(estadoConservacao);
+            this.id = this.tipoConservacao.getId();
+        }
     }
 
     @Override
@@ -78,19 +96,19 @@ public class Conservacao {
         if (o == null || getClass() != o.getClass()) return false;
         Conservacao that = (Conservacao) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(estadoConservacao, that.estadoConservacao);
+                Objects.equals(tipoConservacao, that.tipoConservacao);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, estadoConservacao);
+        return Objects.hash(id, tipoConservacao);
     }
 
     @Override
     public String toString() {
         return "Conservacao{" +
                 "id=" + id +
-                ", estadoConservacao='" + estadoConservacao + '\'' +
+                ", tipoConservacao=" + tipoConservacao +
                 '}';
     }
 }

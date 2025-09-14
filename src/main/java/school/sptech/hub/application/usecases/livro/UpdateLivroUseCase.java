@@ -42,8 +42,13 @@ public class UpdateLivroUseCase {
         // Buscar entidades relacionadas pelos IDs apenas se fornecidos
         Acabamento acabamento = null;
         if (livroUpdateDto.getAcabamentoId() != null) {
-            acabamento = acabamentoGateway.findById(livroUpdateDto.getAcabamentoId())
-                    .orElseThrow(() -> new AcabamentoNaoEncontradoException("Acabamento não encontrado com ID: " + livroUpdateDto.getAcabamentoId()));
+            // Para acabamento, não precisamos buscar no banco - validamos o ID e criamos diretamente
+            // pois os IDs 1-2 são fixos conforme o enum TipoAcabamento
+            try {
+                acabamento = new Acabamento(livroUpdateDto.getAcabamentoId());
+            } catch (IllegalArgumentException e) {
+                throw new AcabamentoNaoEncontradoException("ID de acabamento inválido: " + livroUpdateDto.getAcabamentoId() + ". IDs válidos: 1-CAPA DURA, 2-BROCHURA");
+            }
         }
 
         Categoria categoria = null;
@@ -54,8 +59,13 @@ public class UpdateLivroUseCase {
 
         Conservacao conservacao = null;
         if (livroUpdateDto.getConservacaoId() != null) {
-            conservacao = conservacaoGateway.findById(livroUpdateDto.getConservacaoId())
-                    .orElseThrow(() -> new ConservacaoNaoEncontradaException("Conservação não encontrada com ID: " + livroUpdateDto.getConservacaoId()));
+            // Para conservação, não precisamos buscar no banco - validamos o ID e criamos diretamente
+            // pois os IDs 1-4 são fixos conforme o enum TipoConservacao
+            try {
+                conservacao = new Conservacao(livroUpdateDto.getConservacaoId());
+            } catch (IllegalArgumentException e) {
+                throw new ConservacaoNaoEncontradaException("ID de conservação inválido: " + livroUpdateDto.getConservacaoId() + ". IDs válidos: 1-EXCELENTE, 2-BOM, 3-RAZOÁVEL, 4-DEGRADADO");
+            }
         }
 
         // Converter DTO para entidade usando o mapper atualizado

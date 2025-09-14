@@ -17,8 +17,17 @@ public class LivroMapper {
         livro.setEditora(dto.getEditora());
         livro.setAnoPublicacao(dto.getAnoPublicacao());
         livro.setPaginas(dto.getPaginas());
-        livro.setAcabamento(dto.getAcabamento());
-        livro.setEstadoConservacao(dto.getEstadoConservacao());
+
+        // Criar acabamento a partir do ID
+        if (dto.getAcabamentoId() != null) {
+            livro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
+        }
+
+        // Criar conservação a partir do ID
+        if (dto.getConservacaoId() != null) {
+            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
+        }
+
         livro.setCapa(dto.getCapa());
         livro.setPreco(dto.getPreco());
         livro.setCategoria(dto.getCategoria());
@@ -48,7 +57,7 @@ public class LivroMapper {
         // Mapear dados do acabamento
         if (livro.getAcabamento() != null) {
             dto.setAcabamentoId(livro.getAcabamento().getId());
-            dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamento());
+            dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamentoStr());
         }
 
         // Mapear dados da conservação
@@ -109,7 +118,14 @@ public class LivroMapper {
         livro.setAnoPublicacao(dto.getAnoPublicacao());
         livro.setPaginas(dto.getPaginas());
         livro.setAcabamento(acabamento);
-        livro.setEstadoConservacao(conservacao);
+
+        // Criar conservação a partir do ID se fornecido
+        if (dto.getConservacaoId() != null) {
+            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
+        } else {
+            livro.setEstadoConservacao(conservacao);
+        }
+
         livro.setCapa(dto.getCapa());
         livro.setPreco(dto.getPreco());
         livro.setCategoria(categoria);

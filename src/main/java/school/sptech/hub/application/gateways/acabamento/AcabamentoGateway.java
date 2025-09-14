@@ -1,6 +1,7 @@
 package school.sptech.hub.application.gateways.acabamento;
 
 import school.sptech.hub.domain.entity.Acabamento;
+import school.sptech.hub.domain.entity.TipoAcabamento;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,5 +12,5 @@ public interface AcabamentoGateway {
     List<Acabamento> findAll();
     Optional<Acabamento> updateAcabamento(Acabamento acabamento);
     void deleteAcabamento(Integer id);
-    Optional<Acabamento> findByTipoAcabamento(String tipoAcabamento);
+    Optional<Acabamento> findByTipoAcabamento(TipoAcabamento tipoAcabamento);
 }
