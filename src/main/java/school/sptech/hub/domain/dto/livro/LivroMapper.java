@@ -118,14 +118,7 @@ public class LivroMapper {
         livro.setAnoPublicacao(dto.getAnoPublicacao());
         livro.setPaginas(dto.getPaginas());
         livro.setAcabamento(acabamento);
-
-        // Criar conservação a partir do ID se fornecido
-        if (dto.getConservacaoId() != null) {
-            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
-        } else {
-            livro.setEstadoConservacao(conservacao);
-        }
-
+        livro.setEstadoConservacao(conservacao);
         livro.setCapa(dto.getCapa());
         livro.setPreco(dto.getPreco());
         livro.setCategoria(categoria);

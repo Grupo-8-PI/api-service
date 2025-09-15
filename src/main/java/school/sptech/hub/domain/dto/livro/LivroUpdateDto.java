@@ -12,12 +12,15 @@ public class LivroUpdateDto {
     private String isbn;
 
     @Schema(description = "Título do livro", example = "Dom Casmurro")
+    @Size(max = 255, message = "O título deve ter no máximo 255 caracteres")
     private String titulo;
 
     @Schema(description = "Nome do autor", example = "Machado de Assis")
+    @Size(max = 100, message = "O nome do autor deve ter no máximo 100 caracteres")
     private String autor;
 
     @Schema(description = "Nome da editora", example = "Companhia das Letras")
+    @Size(max = 100, message = "O nome da editora deve ter no máximo 100 caracteres")
     private String editora;
 
     @Schema(description = "Ano de publicação", example = "2001")
@@ -25,9 +28,12 @@ public class LivroUpdateDto {
 
     @Schema(description = "Quantidade de páginas do livro", example = "320")
     @Min(value = 1, message = "O número de páginas deve ser maior que 0")
+    @Max(value = 10000, message = "O número de páginas deve ser no máximo 10.000")
     private Integer paginas;
 
-    @Schema(description = "ID do acabamento do livro", example = "1")
+    @Schema(description = "ID do acabamento do livro", example = "1", allowableValues = {"1", "2"})
+    @Min(value = 1, message = "ID do acabamento deve ser entre 1 e 2")
+    @Max(value = 2, message = "ID do acabamento deve ser entre 1 e 2")
     private Integer acabamentoId;
 
     @Schema(description = "ID do estado de conservação do livro", example = "2", allowableValues = {"1", "2", "3", "4"})

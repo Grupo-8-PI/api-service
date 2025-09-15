@@ -1,14 +1,12 @@
 package school.sptech.hub.application.usecases.livro;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import school.sptech.hub.application.exceptions.AcabamentoExceptions.AcabamentoNaoEncontradoException;
 import school.sptech.hub.application.exceptions.CategoriaExceptions.CategoriaNaoEncontradaException;
 import school.sptech.hub.application.exceptions.ConservacaoExceptions.ConservacaoNaoEncontradaException;
-import school.sptech.hub.application.exceptions.LivroExceptions.LivroJaExisteException;
 import school.sptech.hub.application.exceptions.LivroExceptions.LivroNaoEncontradoException;
-import school.sptech.hub.application.gateways.acabamento.AcabamentoGateway;
 import school.sptech.hub.application.gateways.categoria.CategoriaGateway;
-import school.sptech.hub.application.gateways.conservacao.ConservacaoGateway;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
 import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.domain.entity.Acabamento;
@@ -18,21 +16,16 @@ import school.sptech.hub.domain.dto.livro.LivroMapper;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 
-import java.util.Optional;
-
 @Component
+@Transactional
 public class UpdateLivroUseCase {
 
     private final LivroGateway livroGateway;
-    private final AcabamentoGateway acabamentoGateway;
     private final CategoriaGateway categoriaGateway;
-    private final ConservacaoGateway conservacaoGateway;
 
-    public UpdateLivroUseCase(LivroGateway livroGateway, AcabamentoGateway acabamentoGateway, CategoriaGateway categoriaGateway, ConservacaoGateway conservacaoGateway) {
+    public UpdateLivroUseCase(LivroGateway livroGateway, CategoriaGateway categoriaGateway) {
         this.livroGateway = livroGateway;
-        this.acabamentoGateway = acabamentoGateway;
         this.categoriaGateway = categoriaGateway;
-        this.conservacaoGateway = conservacaoGateway;
     }
 
     public LivroResponseDto execute(Integer id, LivroUpdateDto livroUpdateDto) {
@@ -42,8 +35,7 @@ public class UpdateLivroUseCase {
         // Buscar entidades relacionadas pelos IDs apenas se fornecidos
         Acabamento acabamento = null;
         if (livroUpdateDto.getAcabamentoId() != null) {
-            // Para acabamento, não precisamos buscar no banco - validamos o ID e criamos diretamente
-            // pois os IDs 1-2 são fixos conforme o enum TipoAcabamento
+            // Para acabamento, criamos diretamente pois os IDs são fixos (1-CAPA DURA, 2-BROCHURA)
             try {
                 acabamento = new Acabamento(livroUpdateDto.getAcabamentoId());
             } catch (IllegalArgumentException e) {
@@ -59,8 +51,7 @@ public class UpdateLivroUseCase {
 
         Conservacao conservacao = null;
         if (livroUpdateDto.getConservacaoId() != null) {
-            // Para conservação, não precisamos buscar no banco - validamos o ID e criamos diretamente
-            // pois os IDs 1-4 são fixos conforme o enum TipoConservacao
+            // Para conservação, criamos diretamente pois os IDs são fixos (1-4)
             try {
                 conservacao = new Conservacao(livroUpdateDto.getConservacaoId());
             } catch (IllegalArgumentException e) {

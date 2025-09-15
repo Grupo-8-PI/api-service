@@ -17,16 +17,17 @@ public class LivroCreateDto {
 
     @Schema(description = "Título do livro", example = "Dom Casmurro")
     @NotBlank(message = "O título é obrigatório")
+    @Size(max = 255, message = "O título deve ter no máximo 255 caracteres")
     private String titulo;
 
     @Schema(description = "Nome do autor", example = "Machado de Assis")
     @NotBlank(message = "O nome do autor é obrigatório")
-    @Size(max = 45, message = "O nome do autor deve ter no máximo 45 caracteres")
+    @Size(max = 100, message = "O nome do autor deve ter no máximo 100 caracteres")
     private String autor;
 
     @Schema(description = "Nome da editora", example = "Companhia das Letras")
     @NotBlank(message = "O nome da editora é obrigatório")
-    @Size(max = 45, message = "O nome da editora deve ter no máximo 45 caracteres")
+    @Size(max = 100, message = "O nome da editora deve ter no máximo 100 caracteres")
     private String editora;
 
     @Schema(description = "Ano de publicação", example = "2001")
@@ -36,6 +37,7 @@ public class LivroCreateDto {
     @Schema(description = "Quantidade de páginas do livro", example = "320")
     @NotNull(message = "O número de páginas é obrigatório")
     @Min(value = 1, message = "O número de páginas deve ser maior que 0")
+    @Max(value = 10000, message = "O número de páginas deve ser no máximo 10.000")
     private Integer paginas;
 
     @Schema(description = "ID do tipo de acabamento do livro", example = "1", allowableValues = {"1", "2"})

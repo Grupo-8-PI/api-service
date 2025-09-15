@@ -54,7 +54,35 @@ public class CategoriaRepositoryGateway implements CategoriaGateway {
 
     @Override
     public Optional<Categoria> findByNome(String nome) {
-        Optional<CategoriaEntity> entity = categoriaRepository.findByNomeCategoria(nome);
+        Optional<CategoriaEntity> entity = categoriaRepository.findByNomeCategoriaIgnoreCase(nome);
         return entity.map(CategoriaEntityMapper::toDomain);
+    }
+
+    @Override
+    public Categoria findOrCreateCategoria(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome da categoria não pode ser nulo ou vazio");
+        }
+
+        // Normalizar o nome (trim e capitalizar primeira letra)
+        String nomeNormalizado = nome.trim();
+        nomeNormalizado = nomeNormalizado.substring(0, 1).toUpperCase() +
+                         nomeNormalizado.substring(1).toLowerCase();
+
+        // Buscar categoria existente pelo nome normalizado
+        Optional<Categoria> categoriaExistente = findByNome(nomeNormalizado);
+
+        if (categoriaExistente.isPresent()) {
+            return categoriaExistente.get();
+        }
+
+        // Se não existir, criar nova categoria
+        Categoria novaCategoria = new Categoria(null, nomeNormalizado);
+        novaCategoria.validateBusinessRules();
+
+        // Criar variável final para uso na lambda
+        final String nomeFinal = nomeNormalizado;
+        return createCategoria(novaCategoria)
+                .orElseThrow(() -> new RuntimeException("Erro ao criar nova categoria: " + nomeFinal));
     }
 }
