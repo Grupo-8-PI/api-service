@@ -62,9 +62,16 @@ public class SecurityConfiguracao {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer<HttpSecurity>::disable)
 
                 // Configuração de segurança através de urls
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(URLS_PERMITIDAS).permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/clientes/**").hasRole("CLIENTE")
+                        .anyRequest().authenticated()
+                )
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(autenticacaoJwtEntryPoint))
                 .sessionManagement(management -> management
@@ -123,7 +130,7 @@ public class SecurityConfiguracao {
 
         configuracao.setAllowedHeaders(List.of(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE));
         configuracao.setExposedHeaders(List.of(HttpHeaders.CONTENT_DISPOSITION));
-
+        configuracao.addAllowedOrigin("http://localhost:3000");
         UrlBasedCorsConfigurationSource origem = new UrlBasedCorsConfigurationSource();
         origem.registerCorsConfiguration("/**", configuracao);
 
