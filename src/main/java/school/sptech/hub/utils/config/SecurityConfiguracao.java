@@ -62,7 +62,6 @@ public class SecurityConfiguracao {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer<HttpSecurity>::disable)
 
                 // Configuração de segurança através de urls
