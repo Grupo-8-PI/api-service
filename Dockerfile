@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline -B
 
 # Copiar código fonte e buildar
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
 
 # Etapa 2: Runtime (imagem menor)
 FROM amazoncorretto:21-alpine
