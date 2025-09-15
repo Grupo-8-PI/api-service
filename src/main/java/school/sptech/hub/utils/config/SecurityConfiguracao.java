@@ -65,12 +65,6 @@ public class SecurityConfiguracao {
                 .csrf(CsrfConfigurer<HttpSecurity>::disable)
 
                 // Configuração de segurança através de urls
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(URLS_PERMITIDAS).permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/clientes/**").hasRole("CLIENTE")
-                        .anyRequest().authenticated()
-                )
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(autenticacaoJwtEntryPoint))
                 .sessionManagement(management -> management
