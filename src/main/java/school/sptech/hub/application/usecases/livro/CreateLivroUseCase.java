@@ -27,8 +27,8 @@ public class CreateLivroUseCase {
 
     @Transactional
     public LivroResponseDto execute(LivroCreateDto livroCreateDto) {
-        // Processar categoria (buscar existente ou criar nova)
-        Categoria categoria = processarCategoria(livroCreateDto.getCategoria());
+        // Processar categoria (buscar existente ou criar nova) a partir do nome
+        Categoria categoria = processarCategoria(livroCreateDto.getNomeCategoria());
 
         // Converter DTO para entidade usando o mapper
         Livro livroEntity = LivroMapper.toEntity(livroCreateDto);
@@ -55,21 +55,13 @@ public class CreateLivroUseCase {
     /**
      * Processa a categoria do livro: se já existir, reutiliza; se não existir, cria uma nova
      */
-    private Categoria processarCategoria(Categoria categoriaDto) {
-        if (categoriaDto == null || categoriaDto.getNome() == null || categoriaDto.getNome().trim().isEmpty()) {
-            throw new IllegalArgumentException("Categoria é obrigatória e deve ter um nome válido");
+    private Categoria processarCategoria(String nomeCategoria) {
+        if (nomeCategoria == null || nomeCategoria.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome da categoria é obrigatório e deve ser válido");
         }
 
-        // Se o DTO tem ID válido, tenta buscar a categoria existente primeiro
-        if (categoriaDto.getId() != null && categoriaDto.getId() > 0) {
-            Optional<Categoria> categoriaExistente = categoriaGateway.findById(categoriaDto.getId());
-            if (categoriaExistente.isPresent()) {
-                return categoriaExistente.get();
-            }
-        }
-
-        // Busca ou cria categoria pelo nome normalizando primeiro
-        String nomeNormalizado = categoriaDto.getNome().trim();
+        // Normalizar o nome (trim e capitalizar primeira letra)
+        String nomeNormalizado = nomeCategoria.trim();
         nomeNormalizado = nomeNormalizado.substring(0, 1).toUpperCase() +
                          nomeNormalizado.substring(1).toLowerCase();
 

@@ -70,6 +70,8 @@ public class LivroController {
             )
     })
     @GetMapping
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     public ResponseEntity<List<LivroResponseDto>> listarLivros() {
         List<LivroResponseDto> livros = livroService.listarLivros();
         return ResponseEntity.status(200).body(livros);
@@ -92,6 +94,8 @@ public class LivroController {
             )
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
     public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
         return ResponseEntity.status(200).body(livro);
@@ -114,6 +118,8 @@ public class LivroController {
             )
     })
     @GetMapping("/com-sinopse/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
     public ResponseEntity<LivroComSinopseResponseDto> buscarLivroPorIdComSinopse(@PathVariable Integer id) {
         LivroComSinopseResponseDto livro = livroService.buscarLivroPorIdComSinopse(id);
         return ResponseEntity.status(200).body(livro);

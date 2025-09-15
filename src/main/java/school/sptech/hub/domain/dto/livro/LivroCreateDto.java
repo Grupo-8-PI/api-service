@@ -61,10 +61,10 @@ public class LivroCreateDto {
     @Positive(message = "O preço deve ser maior que zero")
     private Double preco;
 
-    @Schema(description = "Categoria do livro")
-    @NotNull(message = "A categoria é obrigatória")
-    @Valid
-    private Categoria categoria;
+    @Schema(description = "Nome da categoria do livro", example = "Romance")
+    @NotBlank(message = "O nome da categoria é obrigatório")
+    @Size(max = 100, message = "O nome da categoria deve ter no máximo 100 caracteres")
+    private String nomeCategoria;
 
     // Getters and Setters
     public String getIsbn() {
@@ -147,11 +147,11 @@ public class LivroCreateDto {
         this.preco = preco;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
+    public String getNomeCategoria() {
+        return nomeCategoria;
     }
 
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
+    public void setNomeCategoria(String nomeCategoria) {
+        this.nomeCategoria = nomeCategoria;
     }
 }

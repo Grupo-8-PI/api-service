@@ -48,8 +48,9 @@ public class LivroUpdateDto {
     @Positive(message = "O preço deve ser maior que zero")
     private Double preco;
 
-    @Schema(description = "ID da categoria do livro", example = "3")
-    private Integer categoriaId;
+    @Schema(description = "Nome da categoria do livro", example = "Romance")
+    @Size(max = 100, message = "O nome da categoria deve ter no máximo 100 caracteres")
+    private String nomeCategoria;
 
     // Getters and Setters
     public String getIsbn() {
@@ -132,11 +133,11 @@ public class LivroUpdateDto {
         this.preco = preco;
     }
 
-    public Integer getCategoriaId() {
-        return categoriaId;
+    public String getNomeCategoria() {
+        return nomeCategoria;
     }
 
-    public void setCategoriaId(Integer categoriaId) {
-        this.categoriaId = categoriaId;
+    public void setNomeCategoria(String nomeCategoria) {
+        this.nomeCategoria = nomeCategoria;
     }
 }

@@ -75,47 +75,12 @@ public class Livro {
         if (isbn == null || isbn.trim().isEmpty()) {
             return false;
         }
+
         // Remove hífens e espaços para validação
         String cleanIsbn = isbn.replaceAll("[\\s-]", "");
 
-        // Verifica se contém apenas dígitos (e X para ISBN-10)
-        if (!cleanIsbn.matches("\\d{9}[\\dX]|\\d{13}")) {
-            return false;
-        }
-
-        // ISBN-10 tem 10 dígitos, ISBN-13 tem 13 dígitos
-        if (cleanIsbn.length() == 10) {
-            return isValidIsbn10(cleanIsbn);
-        } else if (cleanIsbn.length() == 13) {
-            return isValidIsbn13(cleanIsbn);
-        }
-
-        return false;
-    }
-
-    private boolean isValidIsbn10(String isbn) {
-        int sum = 0;
-        for (int i = 0; i < 9; i++) {
-            sum += (10 - i) * Character.getNumericValue(isbn.charAt(i));
-        }
-
-        char checkChar = isbn.charAt(9);
-        int checkDigit = (checkChar == 'X') ? 10 : Character.getNumericValue(checkChar);
-
-        return (sum + checkDigit) % 11 == 0;
-    }
-
-    private boolean isValidIsbn13(String isbn) {
-        int sum = 0;
-        for (int i = 0; i < 12; i++) {
-            int digit = Character.getNumericValue(isbn.charAt(i));
-            sum += (i % 2 == 0) ? digit : digit * 3;
-        }
-
-        int checkDigit = Character.getNumericValue(isbn.charAt(12));
-        int calculatedCheck = (10 - (sum % 10)) % 10;
-
-        return checkDigit == calculatedCheck;
+        // Verifica se é ISBN-10 (10 caracteres, sendo o último podendo ser X) ou ISBN-13 (13 dígitos)
+        return cleanIsbn.matches("\\d{9}[\\dX]") || cleanIsbn.matches("\\d{13}");
     }
 
     private boolean isValidAnoPublicacao(Year year) {
