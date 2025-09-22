@@ -19,7 +19,7 @@ public class LivroMapper {
         livro.setPaginas(dto.getPaginas());
         livro.setAcabamento(dto.getAcabamento());
         livro.setEstadoConservacao(dto.getEstadoConservacao());
-        livro.setCapa(dto.getCapa());
+        // livro.setCapa() removido - será definido exclusivamente via PATCH
         livro.setPreco(dto.getPreco());
         livro.setCategoria(dto.getCategoria());
         return livro;

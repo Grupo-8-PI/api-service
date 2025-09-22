@@ -50,10 +50,6 @@ public class LivroCreateDto {
     @Valid
     private Conservacao estadoConservacao;
 
-    @Schema(description = "URL da imagem da capa do livro", example = "https://m.media-amazon.com/images/I/91GAAzBixYL._UF894,1000_QL80_.jpg")
-    @NotBlank(message = "A capa é obrigatória")
-    private String capa;
-
     @Schema(description = "Preço do livro", example = "49.90")
     @NotNull(message = "O preço é obrigatório")
     @Positive(message = "O preço deve ser maior que zero")
@@ -127,14 +123,6 @@ public class LivroCreateDto {
 
     public void setEstadoConservacao(Conservacao estadoConservacao) {
         this.estadoConservacao = estadoConservacao;
-    }
-
-    public String getCapa() {
-        return capa;
-    }
-
-    public void setCapa(String capa) {
-        this.capa = capa;
     }
 
     public Double getPreco() {
