@@ -3,11 +3,11 @@ FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Copiar pom.xml e baixar dependências antes (cache)
-COPY pom.xml .
+COPY api/pom.xml .
 RUN mvn dependency:go-offline -B
 
 # Copiar código fonte e buildar
-COPY src ./src
+COPY api/src ./src
 RUN mvn clean package -Dmaven.test.skip=true
 
 # Etapa 2: Runtime (imagem menor)
