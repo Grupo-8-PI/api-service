@@ -36,6 +36,8 @@ class LivroServiceTest {
 
     @Mock
     private DeleteLivroUseCase deleteLivroUseCase;
+    @Mock
+    private UploadImageUseCase uploadImageUseCase;
 
     private LivroService livroService;
     private LivroCreateDto livroCreateDto;
@@ -51,7 +53,8 @@ class LivroServiceTest {
             listAllLivrosUseCase,
             findLivroWithSinopseUseCase,
             updateLivroUseCase,
-            deleteLivroUseCase
+            deleteLivroUseCase,
+            uploadImageUseCase
         );
 
         // Setup test data

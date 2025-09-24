@@ -49,8 +49,7 @@ public class Livro {
                isValidPreco(this.preco) &&
                isValidAcabamento(this.acabamento) &&
                isValidEstadoConservacao(this.estadoConservacao) &&
-               isValidCategoria(this.categoria) &&
-               isValidCapa(this.capa);
+               isValidCategoria(this.categoria);
     }
 
     public boolean isValidForUpdate() {

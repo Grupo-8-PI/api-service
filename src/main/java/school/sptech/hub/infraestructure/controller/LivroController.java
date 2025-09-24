@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroErroResponseSwgDto;
@@ -19,6 +20,7 @@ import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 import school.sptech.hub.application.service.LivroService;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "livros", description = "Operações relacionadas aos livros disponíveis")
@@ -152,6 +154,21 @@ public class LivroController {
     public ResponseEntity<LivroResponseDto> atualizarLivro(@PathVariable Integer id, @Valid @RequestBody LivroUpdateDto livroUpdateDto) {
         LivroResponseDto livroUpdated = livroService.atualizarLivro(id, livroUpdateDto);
         return ResponseEntity.ok(livroUpdated);
+    }
+
+    @PatchMapping("/imagem")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<LivroResponseDto> atualizarImagemLivro(
+            @RequestParam Integer id,
+            @RequestParam("arquivo") MultipartFile arquivo) throws IOException {
+            // MultipartFile é uma interface do Spring para lidar com arquivos enviados em requisições HTTP
+        LivroResponseDto livroUpdated = livroService.atualizarImagemLivro(
+                id,
+                arquivo.getBytes(),
+                arquivo.getOriginalFilename(),
+                arquivo.getContentType()
+        );
+        return ResponseEntity.status(200).body(livroUpdated);
     }
 
     @Operation(

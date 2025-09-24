@@ -52,10 +52,6 @@ public class LivroCreateDto {
     @Max(value = 4, message = "ID da conservação deve ser entre 1 e 4")
     private Integer conservacaoId;
 
-    @Schema(description = "URL da imagem da capa do livro", example = "https://m.media-amazon.com/images/I/91GAAzBixYL._UF894,1000_QL80_.jpg")
-    @NotBlank(message = "A capa é obrigatória")
-    private String capa;
-
     @Schema(description = "Preço do livro", example = "49.90")
     @NotNull(message = "O preço é obrigatório")
     @Positive(message = "O preço deve ser maior que zero")
@@ -129,14 +125,6 @@ public class LivroCreateDto {
 
     public void setConservacaoId(Integer conservacaoId) {
         this.conservacaoId = conservacaoId;
-    }
-
-    public String getCapa() {
-        return capa;
-    }
-
-    public void setCapa(String capa) {
-        this.capa = capa;
     }
 
     public Double getPreco() {

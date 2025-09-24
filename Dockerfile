@@ -1,5 +1,5 @@
 # Etapa 1: Build (com Maven)
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Copiar pom.xml e baixar dependências antes (cache)
@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline -B
 
 # Copiar código fonte e buildar
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
 
 # Etapa 2: Runtime (imagem menor)
 FROM amazoncorretto:21-alpine
