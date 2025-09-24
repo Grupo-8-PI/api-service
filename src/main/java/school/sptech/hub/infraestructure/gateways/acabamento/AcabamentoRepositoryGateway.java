@@ -3,6 +3,7 @@ package school.sptech.hub.infraestructure.gateways.acabamento;
 import org.springframework.stereotype.Component;
 import school.sptech.hub.application.gateways.acabamento.AcabamentoGateway;
 import school.sptech.hub.domain.entity.Acabamento;
+import school.sptech.hub.domain.entity.TipoAcabamento;
 import school.sptech.hub.infraestructure.persistance.acabamentoPersistance.AcabamentoEntity;
 import school.sptech.hub.infraestructure.persistance.acabamentoPersistance.AcabamentoRepository;
 
@@ -53,7 +54,7 @@ public class AcabamentoRepositoryGateway implements AcabamentoGateway {
     }
 
     @Override
-    public Optional<Acabamento> findByTipoAcabamento(String tipoAcabamento) {
+    public Optional<Acabamento> findByTipoAcabamento(TipoAcabamento tipoAcabamento) {
         Optional<AcabamentoEntity> entity = acabamentoRepository.findByTipoAcabamento(tipoAcabamento);
         return entity.map(AcabamentoEntityMapper::toDomain);
     }

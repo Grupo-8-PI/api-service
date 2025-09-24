@@ -10,7 +10,7 @@ public class ConservacaoEntityMapper {
 
         ConservacaoEntity entity = new ConservacaoEntity();
         entity.setId(conservacao.getId());
-        entity.setEstadoConservacao(conservacao.getEstadoConservacao());
+        entity.setTipoConservacao(conservacao.getTipoConservacao());
 
         return entity;
     }
@@ -20,7 +20,7 @@ public class ConservacaoEntityMapper {
 
         Conservacao conservacao = new Conservacao();
         conservacao.setId(entity.getId());
-        conservacao.setEstadoConservacao(entity.getEstadoConservacao());
+        conservacao.setTipoConservacao(entity.getTipoConservacao());
 
         return conservacao;
     }

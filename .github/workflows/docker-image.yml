@@ -1,5 +1,9 @@
 name: Docker Build CI Workflow
 
+permissions:
+  contents: read
+  pull-requests: read
+
 on:
   push:
     branches: [ "main" ]

@@ -12,4 +12,5 @@ public interface CategoriaGateway {
     Optional<Categoria> updateCategoria(Categoria categoria);
     void deleteCategoria(Integer id);
     Optional<Categoria> findByNome(String nome);
+    Categoria findOrCreateCategoria(String nome);
 }

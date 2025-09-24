@@ -5,43 +5,52 @@ import java.util.Objects;
 public class Acabamento {
 
     private Integer id;
-    private String tipoAcabamento;
+    private TipoAcabamento tipoAcabamento;
 
     public Acabamento() {}
 
-    public Acabamento(Integer id, String tipoAcabamento) {
+    public Acabamento(Integer id) {
+        this.id = id;
+        this.tipoAcabamento = TipoAcabamento.fromId(id);
+    }
+
+    public Acabamento(Integer id, TipoAcabamento tipoAcabamento) {
         this.id = id;
         this.tipoAcabamento = tipoAcabamento;
     }
 
+    // Construtor para compatibilidade com código existente
+    public Acabamento(Integer id, String tipoAcabamentoStr) {
+        this.id = id;
+        this.tipoAcabamento = TipoAcabamento.fromDescricao(tipoAcabamentoStr);
+    }
+
     // Business Rules - Métodos de validação da entidade de domínio
     public boolean isValidForCreation() {
-        return isValidTipoAcabamento(this.tipoAcabamento);
+        return isValidId(this.id) && isValidTipoAcabamento(this.tipoAcabamento);
     }
 
     public boolean isValidForUpdate() {
-        // Para update, o campo pode ser nulo (update parcial)
-        // Mas se fornecido, deve ser válido
-        return this.tipoAcabamento == null || isValidTipoAcabamento(this.tipoAcabamento);
+        return this.id == null || (isValidId(this.id) && isValidTipoAcabamento(this.tipoAcabamento));
     }
 
-    private boolean isValidTipoAcabamento(String tipoAcabamento) {
-        return tipoAcabamento != null &&
-               !tipoAcabamento.trim().isEmpty() &&
-               tipoAcabamento.length() <= 45;
+    private boolean isValidId(Integer id) {
+        return id != null && id >= 1 && id <= 2;
     }
 
-    // Método para validar regra de negócio específica
+    private boolean isValidTipoAcabamento(TipoAcabamento tipo) {
+        return tipo != null;
+    }
+
     public void validateBusinessRules() {
         if (!isValidForCreation()) {
-            throw new IllegalArgumentException("Dados do acabamento não atendem às regras de negócio");
+            throw new IllegalArgumentException("Dados do acabamento não atendem às regras de negócio. ID deve estar entre 1 e 2.");
         }
     }
 
-    // Método para aplicar regras de negócio durante atualização
     public void validateUpdateRules() {
         if (!isValidForUpdate()) {
-            throw new IllegalArgumentException("Dados de atualização do acabamento não atendem às regras de negócio");
+            throw new IllegalArgumentException("Dados de atualização do acabamento não atendem às regras de negócio. ID deve estar entre 1 e 2.");
         }
     }
 
@@ -52,14 +61,33 @@ public class Acabamento {
 
     public void setId(Integer id) {
         this.id = id;
+        if (id != null) {
+            this.tipoAcabamento = TipoAcabamento.fromId(id);
+        }
     }
 
-    public String getTipoAcabamento() {
+    public TipoAcabamento getTipoAcabamento() {
         return tipoAcabamento;
     }
 
-    public void setTipoAcabamento(String tipoAcabamento) {
+    public void setTipoAcabamento(TipoAcabamento tipoAcabamento) {
         this.tipoAcabamento = tipoAcabamento;
+        if (tipoAcabamento != null) {
+            this.id = tipoAcabamento.getId();
+        }
+    }
+
+    // Método de compatibilidade para código existente
+    public String getTipoAcabamentoStr() {
+        return tipoAcabamento != null ? tipoAcabamento.getDescricao() : null;
+    }
+
+    // Método de compatibilidade para código existente
+    public void setTipoAcabamentoStr(String tipoAcabamentoStr) {
+        if (tipoAcabamentoStr != null) {
+            this.tipoAcabamento = TipoAcabamento.fromDescricao(tipoAcabamentoStr);
+            this.id = this.tipoAcabamento.getId();
+        }
     }
 
     @Override
@@ -80,7 +108,7 @@ public class Acabamento {
     public String toString() {
         return "Acabamento{" +
                 "id=" + id +
-                ", tipoAcabamento='" + tipoAcabamento + '\'' +
+                ", tipoAcabamento=" + tipoAcabamento +
                 '}';
     }
 }

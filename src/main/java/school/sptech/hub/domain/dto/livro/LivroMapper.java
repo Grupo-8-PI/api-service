@@ -17,11 +17,27 @@ public class LivroMapper {
         livro.setEditora(dto.getEditora());
         livro.setAnoPublicacao(dto.getAnoPublicacao());
         livro.setPaginas(dto.getPaginas());
-        livro.setAcabamento(dto.getAcabamento());
-        livro.setEstadoConservacao(dto.getEstadoConservacao());
-        // livro.setCapa() removido - será definido exclusivamente via PATCH
+
+        // Criar acabamento a partir do ID
+        if (dto.getAcabamentoId() != null) {
+            livro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
+        }
+
+        // Criar conservação a partir do ID
+        if (dto.getConservacaoId() != null) {
+            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
+        }
+
+        livro.setCapa(dto.getCapa());
         livro.setPreco(dto.getPreco());
-        livro.setCategoria(dto.getCategoria());
+
+        // Criar categoria temporária apenas com o nome para processamento posterior
+        if (dto.getNomeCategoria() != null) {
+            Categoria categoria = new Categoria();
+            categoria.setNome(dto.getNomeCategoria());
+            livro.setCategoria(categoria);
+        }
+
         return livro;
     }
 
@@ -48,7 +64,7 @@ public class LivroMapper {
         // Mapear dados do acabamento
         if (livro.getAcabamento() != null) {
             dto.setAcabamentoId(livro.getAcabamento().getId());
-            dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamento());
+            dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamentoStr());
         }
 
         // Mapear dados da conservação
@@ -102,17 +118,21 @@ public class LivroMapper {
         if (dto == null) return null;
 
         Livro livro = new Livro();
-        livro.setIsbn(dto.getIsbn());
-        livro.setTitulo(dto.getTitulo());
-        livro.setAutor(dto.getAutor());
-        livro.setEditora(dto.getEditora());
-        livro.setAnoPublicacao(dto.getAnoPublicacao());
-        livro.setPaginas(dto.getPaginas());
-        livro.setAcabamento(acabamento);
-        livro.setEstadoConservacao(conservacao);
-        livro.setCapa(dto.getCapa());
-        livro.setPreco(dto.getPreco());
-        livro.setCategoria(categoria);
+        // Aplicar apenas campos não nulos do DTO (update parcial)
+        if (dto.getIsbn() != null) livro.setIsbn(dto.getIsbn());
+        if (dto.getTitulo() != null) livro.setTitulo(dto.getTitulo());
+        if (dto.getAutor() != null) livro.setAutor(dto.getAutor());
+        if (dto.getEditora() != null) livro.setEditora(dto.getEditora());
+        if (dto.getAnoPublicacao() != null) livro.setAnoPublicacao(dto.getAnoPublicacao());
+        if (dto.getPaginas() != null) livro.setPaginas(dto.getPaginas());
+        if (dto.getCapa() != null) livro.setCapa(dto.getCapa());
+        if (dto.getPreco() != null) livro.setPreco(dto.getPreco());
+
+        // Aplicar entidades auxiliares apenas se fornecidas
+        if (acabamento != null) livro.setAcabamento(acabamento);
+        if (conservacao != null) livro.setEstadoConservacao(conservacao);
+        if (categoria != null) livro.setCategoria(categoria);
+
         return livro;
     }
 

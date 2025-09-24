@@ -74,16 +74,12 @@ public class Livro {
         if (isbn == null || isbn.trim().isEmpty()) {
             return false;
         }
+
         // Remove hífens e espaços para validação
         String cleanIsbn = isbn.replaceAll("[\\s-]", "");
 
-        // Verifica se contém apenas dígitos (e X para ISBN-10)
-        if (!cleanIsbn.matches("\\d{9}[\\dX]|\\d{13}")) {
-            return false;
-        }
-
-        // ISBN-10 tem 10 dígitos, ISBN-13 tem 13 dígitos
-        return cleanIsbn.length() == 10 || cleanIsbn.length() == 13;
+        // Verifica se é ISBN-10 (10 caracteres, sendo o último podendo ser X) ou ISBN-13 (13 dígitos)
+        return cleanIsbn.matches("\\d{9}[\\dX]") || cleanIsbn.matches("\\d{13}");
     }
 
     private boolean isValidAnoPublicacao(Year year) {
@@ -124,23 +120,21 @@ public class Livro {
     private boolean isValidAcabamento(Acabamento acabamento) {
         return acabamento != null &&
                acabamento.getId() != null &&
-               acabamento.getId() > 0 &&
-               acabamento.getTipoAcabamento() != null &&
-               !acabamento.getTipoAcabamento().trim().isEmpty();
+               acabamento.getId() >= 1 &&
+               acabamento.getId() <= 2 &&
+               acabamento.getTipoAcabamento() != null;
     }
 
     private boolean isValidEstadoConservacao(Conservacao conservacao) {
         return conservacao != null &&
                conservacao.getId() != null &&
-               conservacao.getId() > 0 &&
-               conservacao.getEstadoConservacao() != null &&
-               !conservacao.getEstadoConservacao().trim().isEmpty();
+               conservacao.getId() >= 1 &&
+               conservacao.getId() <= 4 &&
+               conservacao.getTipoConservacao() != null;
     }
 
     private boolean isValidCategoria(Categoria categoria) {
         return categoria != null &&
-               categoria.getId() != null &&
-               categoria.getId() > 0 &&
                categoria.getNome() != null &&
                !categoria.getNome().trim().isEmpty();
     }

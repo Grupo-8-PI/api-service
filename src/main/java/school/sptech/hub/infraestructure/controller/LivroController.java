@@ -43,7 +43,12 @@ public class LivroController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Erro ao cadastrar o livro",
+                    description = "Dados inválidos fornecidos",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Livro já existe (ISBN duplicado)",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
             )
     })
@@ -64,17 +69,14 @@ public class LivroController {
                     responseCode = "200",
                     description = "Lista de livros retornada com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Erro ao listar os livros",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
             )
     })
     @GetMapping
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     public ResponseEntity<List<LivroResponseDto>> listarLivros() {
         List<LivroResponseDto> livros = livroService.listarLivros();
-        return ResponseEntity.status(200).body(livros);
+        return ResponseEntity.ok(livros);
     }
 
     @Operation(
@@ -94,9 +96,11 @@ public class LivroController {
             )
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
     public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
-        return ResponseEntity.status(200).body(livro);
+        return ResponseEntity.ok(livro);
     }
 
     @Operation(
@@ -116,9 +120,11 @@ public class LivroController {
             )
     })
     @GetMapping("/com-sinopse/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
     public ResponseEntity<LivroComSinopseResponseDto> buscarLivroPorIdComSinopse(@PathVariable Integer id) {
         LivroComSinopseResponseDto livro = livroService.buscarLivroPorIdComSinopse(id);
-        return ResponseEntity.status(200).body(livro);
+        return ResponseEntity.ok(livro);
     }
 
     @Operation(
@@ -133,7 +139,12 @@ public class LivroController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Erro ao atualizar o livro",
+                    description = "Dados inválidos fornecidos",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Livro não encontrado",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
             )
     })
@@ -142,7 +153,7 @@ public class LivroController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LivroResponseDto> atualizarLivro(@PathVariable Integer id, @Valid @RequestBody LivroUpdateDto livroUpdateDto) {
         LivroResponseDto livroUpdated = livroService.atualizarLivro(id, livroUpdateDto);
-        return ResponseEntity.status(200).body(livroUpdated);
+        return ResponseEntity.ok(livroUpdated);
     }
 
     @PatchMapping("/imagem")
@@ -181,6 +192,6 @@ public class LivroController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LivroResponseDto> deletarLivro(@PathVariable Integer id) {
         LivroResponseDto livroDeleted = livroService.deletarLivro(id);
-        return ResponseEntity.status(200).body(livroDeleted);
+        return ResponseEntity.ok(livroDeleted);
     }
 }
