@@ -1,9 +1,12 @@
 package school.sptech.hub.application.usecases.livro;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import school.sptech.hub.application.exceptions.LivroExceptions.LivroJaExisteException;
 import school.sptech.hub.application.exceptions.LivroExceptions.LivroNaoEncontradoException;
+import school.sptech.hub.application.gateways.categoria.CategoriaGateway;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
+import school.sptech.hub.domain.entity.Categoria;
 import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroMapper;
@@ -15,15 +18,23 @@ import java.util.Optional;
 public class CreateLivroUseCase {
 
     private final LivroGateway livroGateway;
+    private final CategoriaGateway categoriaGateway;
 
-    public CreateLivroUseCase(LivroGateway livroGateway) {
+    public CreateLivroUseCase(LivroGateway livroGateway, CategoriaGateway categoriaGateway) {
         this.livroGateway = livroGateway;
+        this.categoriaGateway = categoriaGateway;
     }
 
+    @Transactional
     public LivroResponseDto execute(LivroCreateDto livroCreateDto) {
+        // Processar categoria (buscar existente ou criar nova) a partir do nome
+        Categoria categoria = processarCategoria(livroCreateDto.getNomeCategoria());
+
         // Converter DTO para entidade usando o mapper
-        // As entidades (acabamento, conservacao, categoria) vêm completas no DTO
         Livro livroEntity = LivroMapper.toEntity(livroCreateDto);
+
+        // Sobrescrever a categoria com a processada (garantindo que seja a categoria do banco)
+        livroEntity.setCategoria(categoria);
 
         // Validação usando regras de negócio da entidade de domínio
         livroEntity.validateBusinessRules();
@@ -39,5 +50,21 @@ public class CreateLivroUseCase {
                 .orElseThrow(() -> new LivroNaoEncontradoException("Erro ao criar livro"));
 
         return LivroMapper.toResponseDto(createdLivro);
+    }
+
+    /**
+     * Processa a categoria do livro: se já existir, reutiliza; se não existir, cria uma nova
+     */
+    private Categoria processarCategoria(String nomeCategoria) {
+        if (nomeCategoria == null || nomeCategoria.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome da categoria é obrigatório e deve ser válido");
+        }
+
+        // Normalizar o nome (trim e capitalizar primeira letra)
+        String nomeNormalizado = nomeCategoria.trim();
+        nomeNormalizado = nomeNormalizado.substring(0, 1).toUpperCase() +
+                         nomeNormalizado.substring(1).toLowerCase();
+
+        return categoriaGateway.findOrCreateCategoria(nomeNormalizado);
     }
 }

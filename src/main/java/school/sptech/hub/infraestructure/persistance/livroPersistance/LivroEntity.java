@@ -42,12 +42,12 @@ public class LivroEntity {
     @Min(1)
     private Integer paginas;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "acabamento_id", nullable = false)
     @NotNull
     private AcabamentoEntity acabamento;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "conservacao_id", nullable = false)
     @NotNull
     private ConservacaoEntity estadoConservacao;
@@ -62,7 +62,7 @@ public class LivroEntity {
     @Positive
     private Double preco;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id", nullable = false)
     @NotNull
     private CategoriaEntity categoria;

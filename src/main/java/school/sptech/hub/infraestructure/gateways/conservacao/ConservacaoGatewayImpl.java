@@ -3,6 +3,7 @@ package school.sptech.hub.infraestructure.gateways.conservacao;
 import org.springframework.stereotype.Component;
 import school.sptech.hub.application.gateways.conservacao.ConservacaoGateway;
 import school.sptech.hub.domain.entity.Conservacao;
+import school.sptech.hub.domain.entity.TipoConservacao;
 import school.sptech.hub.infraestructure.persistance.conservacaoPersistance.ConservacaoEntity;
 import school.sptech.hub.infraestructure.persistance.conservacaoPersistance.ConservacaoRepository;
 
@@ -55,8 +56,8 @@ public class ConservacaoGatewayImpl implements ConservacaoGateway {
     }
 
     @Override
-    public Optional<Conservacao> findByEstadoConservacao(String estadoConservacao) {
-        return conservacaoRepository.findByEstadoConservacao(estadoConservacao)
+    public Optional<Conservacao> findByTipoConservacao(TipoConservacao tipoConservacao) {
+        return conservacaoRepository.findByTipoConservacao(tipoConservacao)
                 .map(ConservacaoEntityMapper::toDomain);
     }
 }
