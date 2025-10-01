@@ -50,6 +50,7 @@ public class Livro {
                isValidAcabamento(this.acabamento) &&
                isValidEstadoConservacao(this.estadoConservacao) &&
                isValidCategoria(this.categoria);
+               // Capa não é obrigatória na criação - será adicionada via PATCH
     }
 
     public boolean isValidForUpdate() {
