@@ -9,4 +9,5 @@ public interface LivroRepository extends JpaRepository<LivroEntity, Integer> {
     Optional<LivroEntity> findByIsbn(String isbn);
     List<LivroEntity> findByAcabamento_Id(Integer acabamentoId);
     List<LivroEntity> findByEstadoConservacao_Id(Integer conservacaoId);
+    List<LivroEntity> findByCategoria_Id(Integer categoriaId);
 }

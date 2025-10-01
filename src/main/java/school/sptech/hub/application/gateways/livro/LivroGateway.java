@@ -14,4 +14,5 @@ public interface LivroGateway {
     Optional<Livro> findByIsbn(String isbn);
     List<Livro> findByAcabamentoId(Integer acabamentoId);
     List<Livro> findByConservacaoId(Integer conservacaoId);
+    List<Livro> findByCategoriaId(Integer categoriaId);
 }

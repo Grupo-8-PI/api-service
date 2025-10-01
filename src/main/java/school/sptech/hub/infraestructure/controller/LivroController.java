@@ -244,4 +244,34 @@ public class LivroController {
         List<LivroResponseDto> livros = livroService.buscarLivrosPorConservacao(conservacaoId);
         return ResponseEntity.ok(livros);
     }
+
+    @Operation(
+            summary = "Buscar livros por categoria",
+            description = "Retorna uma lista de livros filtrados por categoria"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de categoria inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Categoria não encontrada",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/categoria/{categoriaId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorCategoria(
+            @PathVariable @Schema(description = "ID da categoria", example = "1") Integer categoriaId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorCategoria(categoriaId);
+        return ResponseEntity.ok(livros);
+    }
 }
