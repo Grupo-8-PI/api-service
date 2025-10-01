@@ -72,4 +72,12 @@ public class LivroRepositoryGateway implements LivroGateway {
         Optional<LivroEntity> entity = livroRepository.findByIsbn(isbn);
         return entity.map(LivroEntityMapper::toDomain);
     }
+
+    @Override
+    public List<Livro> findByAcabamentoId(Integer acabamentoId) {
+        List<LivroEntity> entities = livroRepository.findByAcabamento_Id(acabamentoId);
+        return entities.stream()
+                .map(LivroEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }
