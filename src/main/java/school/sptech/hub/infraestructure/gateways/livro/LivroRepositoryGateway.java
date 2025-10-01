@@ -65,4 +65,12 @@ public class LivroRepositoryGateway implements LivroGateway {
                 .map(LivroEntityMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Livro> findByConservacaoId(Integer conservacaoId) {
+        List<LivroEntity> entities = livroRepository.findByEstadoConservacao_Id(conservacaoId);
+        return entities.stream()
+                .map(LivroEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }

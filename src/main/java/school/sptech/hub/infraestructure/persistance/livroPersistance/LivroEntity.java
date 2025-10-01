@@ -53,8 +53,7 @@ public class LivroEntity {
     private ConservacaoEntity estadoConservacao;
 
     @Lob
-    @Column(nullable = false)
-    @NotBlank
+    @Column(nullable = true)  // Permitir nulo durante criação
     private String capa;
 
     @Column(nullable = false)
