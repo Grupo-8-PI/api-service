@@ -193,5 +193,30 @@ public class LivroController {
         List<LivroResponseDto> livros = livroService.buscarLivrosPorAcabamento(acabamentoId);
         return ResponseEntity.ok(livros);
     }
+
+    @Operation(
+            summary = "Buscar livros por conservação",
+            description = "Retorna uma lista de livros filtrados por estado de conservação. IDs válidos: 1 (EXCELENTE), 2 (BOM), 3 (RAZOÁVEL), 4 (DEGRADADO)"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de conservação inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/conservacao/{conservacaoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorConservacao(
+            @PathVariable @Schema(description = "ID do estado de conservação", example = "1", allowableValues = {"1", "2", "3", "4"}) Integer conservacaoId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorConservacao(conservacaoId);
+        return ResponseEntity.ok(livros);
+    }
 }
 

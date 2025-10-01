@@ -18,6 +18,7 @@ public class LivroService {
     private final DeleteLivroUseCase deleteLivroUseCase;
     private final UploadImageUseCase uploadImageUseCase;
     private final FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase;
+    private final FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                        FindLivroByIdUseCase findLivroByIdUseCase,
@@ -25,7 +26,8 @@ public class LivroService {
                        UpdateLivroUseCase updateLivroUseCase,
                        DeleteLivroUseCase deleteLivroUseCase,
                        UploadImageUseCase uploadImageUseCase,
-                       FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase) {
+                       FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase,
+                       FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listAllLivrosUseCase = listAllLivrosUseCase;
@@ -33,6 +35,7 @@ public class LivroService {
         this.deleteLivroUseCase = deleteLivroUseCase;
         this.uploadImageUseCase = uploadImageUseCase;
         this.findLivrosByAcabamentoUseCase = findLivrosByAcabamentoUseCase;
+        this.findLivrosByConservacaoUseCase = findLivrosByConservacaoUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -61,5 +64,9 @@ public class LivroService {
 
     public List<LivroResponseDto> buscarLivrosPorAcabamento(Integer acabamentoId) {
         return findLivrosByAcabamentoUseCase.execute(acabamentoId);
+    }
+
+    public List<LivroResponseDto> buscarLivrosPorConservacao(Integer conservacaoId) {
+        return findLivrosByConservacaoUseCase.execute(conservacaoId);
     }
 }

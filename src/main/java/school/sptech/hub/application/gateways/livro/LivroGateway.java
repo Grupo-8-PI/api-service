@@ -13,4 +13,5 @@ public interface LivroGateway {
     void deleteLivro(Integer id);
     Optional<Livro> findByIsbn(String isbn);
     List<Livro> findByAcabamentoId(Integer acabamentoId);
+    List<Livro> findByConservacaoId(Integer conservacaoId);
 }
