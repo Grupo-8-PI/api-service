@@ -28,7 +28,6 @@ public class LivroMapper {
             livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
 
-        livro.setCapa(dto.getCapa());
         livro.setPreco(dto.getPreco());
 
         // Criar categoria temporária apenas com o nome para processamento posterior
