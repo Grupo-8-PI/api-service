@@ -19,6 +19,7 @@ public class LivroService {
     private final UploadImageUseCase uploadImageUseCase;
     private final FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase;
     private final FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase;
+    private final FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                        FindLivroByIdUseCase findLivroByIdUseCase,
@@ -27,7 +28,8 @@ public class LivroService {
                        DeleteLivroUseCase deleteLivroUseCase,
                        UploadImageUseCase uploadImageUseCase,
                        FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase,
-                       FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase) {
+                       FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase,
+                       FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listAllLivrosUseCase = listAllLivrosUseCase;
@@ -36,6 +38,7 @@ public class LivroService {
         this.uploadImageUseCase = uploadImageUseCase;
         this.findLivrosByAcabamentoUseCase = findLivrosByAcabamentoUseCase;
         this.findLivrosByConservacaoUseCase = findLivrosByConservacaoUseCase;
+        this.findLivrosByCategoriaUseCase = findLivrosByCategoriaUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -68,5 +71,9 @@ public class LivroService {
 
     public List<LivroResponseDto> buscarLivrosPorConservacao(Integer conservacaoId) {
         return findLivrosByConservacaoUseCase.execute(conservacaoId);
+    }
+
+    public List<LivroResponseDto> buscarLivrosPorCategoria(Integer categoriaId) {
+        return findLivrosByCategoriaUseCase.execute(categoriaId);
     }
 }
