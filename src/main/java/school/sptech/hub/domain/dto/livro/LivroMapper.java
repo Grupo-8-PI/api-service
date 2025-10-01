@@ -28,7 +28,8 @@ public class LivroMapper {
             livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
 
-        livro.setCapa(dto.getCapa());
+        // Capa será definida apenas via PATCH - não definir durante criação
+        livro.setCapa(null);
         livro.setPreco(dto.getPreco());
 
         // Criar categoria temporária apenas com o nome para processamento posterior
