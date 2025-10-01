@@ -1,13 +1,10 @@
 package school.sptech.hub.domain.entity;
 
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Categoria {
 
     private Integer id;
-
-    @JsonProperty("nomeCategoria")
     private String nome;
 
     public Categoria() {}
