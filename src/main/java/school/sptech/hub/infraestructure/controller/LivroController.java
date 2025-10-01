@@ -194,4 +194,29 @@ public class LivroController {
         LivroResponseDto livroDeleted = livroService.deletarLivro(id);
         return ResponseEntity.ok(livroDeleted);
     }
+
+    @Operation(
+            summary = "Buscar livros por acabamento",
+            description = "Retorna uma lista de livros filtrados por tipo de acabamento. IDs válidos: 1 (CAPA_DURA), 2 (BROCHURA)"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de acabamento inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/acabamento/{acabamentoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorAcabamento(
+            @PathVariable @Schema(description = "ID do tipo de acabamento", example = "1", allowableValues = {"1", "2"}) Integer acabamentoId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorAcabamento(acabamentoId);
+        return ResponseEntity.ok(livros);
+    }
 }
