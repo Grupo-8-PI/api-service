@@ -33,7 +33,7 @@ public class LivroController {
 
     @Operation(
             summary = "Cadastrar um novo livro",
-            description = "Cria um novo livro com os dados fornecidos no corpo da requisição"
+            description = "Cria um novo livro com os dados fornecidos no corpo da requisição. O campo 'dataAdicao' será preenchido automaticamente com a data/hora atual do sistema."
     )
     @ApiResponses(value = {
             @ApiResponse(
