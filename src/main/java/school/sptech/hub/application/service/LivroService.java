@@ -23,18 +23,19 @@ public class LivroService {
     private final FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase;
     private final FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase;
     private final ListAllCategoriesUseCase listAllCategoriesUseCase;
+    private final ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
-                       FindLivroByIdUseCase findLivroByIdUseCase,
-                       ListAllLivrosUseCase listAllLivrosUseCase,
-                       FindLivroWithSinopseUseCase findLivroWithSinopseUseCase,
-                       UpdateLivroUseCase updateLivroUseCase,
-                       DeleteLivroUseCase deleteLivroUseCase,
-                       UploadImageUseCase uploadImageUseCase,
-                       FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase,
-                       FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase,
-                       FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase,
-                       ListAllCategoriesUseCase listAllCategoriesUseCase) {
+                        FindLivroByIdUseCase findLivroByIdUseCase,
+                        ListAllLivrosUseCase listAllLivrosUseCase,
+                        FindLivroWithSinopseUseCase findLivroWithSinopseUseCase,
+                        UpdateLivroUseCase updateLivroUseCase,
+                        DeleteLivroUseCase deleteLivroUseCase,
+                        UploadImageUseCase uploadImageUseCase,
+                        FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase,
+                        FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase,
+                        FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase,
+                        ListAllCategoriesUseCase listAllCategoriesUseCase, ListRecommendedLivrosUseCase listRecommendedLivrosUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listAllLivrosUseCase = listAllLivrosUseCase;
@@ -46,6 +47,7 @@ public class LivroService {
         this.findLivrosByConservacaoUseCase = findLivrosByConservacaoUseCase;
         this.findLivrosByCategoriaUseCase = findLivrosByCategoriaUseCase;
         this.listAllCategoriesUseCase = listAllCategoriesUseCase;
+        this.listRecommendedLivrosUseCase = listRecommendedLivrosUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -90,5 +92,9 @@ public class LivroService {
 
     public List<String> listarCategorias() {
         return listAllCategoriesUseCase.execute();
+    }
+
+    public List<LivroResponseDto> listarLivrosRecomendados() {
+        return listRecommendedLivrosUseCase.execute();
     }
 }
