@@ -19,6 +19,7 @@ public class LivroService {
     private final UpdateLivroUseCase updateLivroUseCase;
     private final DeleteLivroUseCase deleteLivroUseCase;
     private final UploadImageUseCase uploadImageUseCase;
+    private final ListAllCategoriesUseCase listAllCategoriesUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                        FindLivroByIdUseCase findLivroByIdUseCase,
@@ -26,7 +27,8 @@ public class LivroService {
                        FindLivroWithSinopseUseCase findLivroWithSinopseUseCase,
                        UpdateLivroUseCase updateLivroUseCase,
                        DeleteLivroUseCase deleteLivroUseCase,
-                       UploadImageUseCase uploadImageUseCase) {
+                       UploadImageUseCase uploadImageUseCase,
+                       ListAllCategoriesUseCase listAllCategoriesUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listAllLivrosUseCase = listAllLivrosUseCase;
@@ -34,6 +36,7 @@ public class LivroService {
         this.updateLivroUseCase = updateLivroUseCase;
         this.deleteLivroUseCase = deleteLivroUseCase;
         this.uploadImageUseCase = uploadImageUseCase;
+        this.listAllCategoriesUseCase = listAllCategoriesUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -63,6 +66,8 @@ public class LivroService {
     public LivroResponseDto atualizarImagemLivro(Integer id, byte[] conteudoArquivo, String nomeArquivo, String contentType) {
         return uploadImageUseCase.execute(id, conteudoArquivo, nomeArquivo, contentType);
     }
+
+    public List<String> listarCategorias() {
+        return listAllCategoriesUseCase.execute();
+    }
 }
-
-
