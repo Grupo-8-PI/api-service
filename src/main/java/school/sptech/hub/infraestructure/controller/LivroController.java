@@ -248,5 +248,24 @@ public class LivroController {
         List<LivroResponseDto> livros = livroService.buscarLivrosPorCategoria(categoriaId);
         return ResponseEntity.ok(livros);
     }
+
+    @Operation(
+            summary = "Listar todas as categorias",
+            description = "Retorna uma lista com todas as categorias disponíveis no sistema"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de categorias retornada com sucesso",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    @GetMapping("/categorias")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<String>> listarCategorias() {
+        List<String> categorias = livroService.listarCategorias();
+        return ResponseEntity.ok(categorias);
+    }
 }
 
