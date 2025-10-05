@@ -1,6 +1,7 @@
 package school.sptech.hub.domain.entity;
 
 
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.Objects;
 
@@ -18,12 +19,14 @@ public class Livro {
     private String capa;
     private Double preco;
     private Categoria categoria;
+    private LocalDateTime dataAdicao;
 
     public Livro() {}
 
     public Livro(Integer id, String titulo, String isbn, String autor, String editora,
                  Year anoPublicacao, Integer paginas, Acabamento acabamento,
-                 Conservacao estadoConservacao, String capa, Double preco, Categoria categoria) {
+                 Conservacao estadoConservacao, String capa, Double preco, Categoria categoria,
+                 LocalDateTime dataAdicao) {
         this.id = id;
         this.titulo = titulo;
         this.isbn = isbn;
@@ -36,6 +39,7 @@ public class Livro {
         this.capa = capa;
         this.preco = preco;
         this.categoria = categoria;
+        this.dataAdicao = dataAdicao;
     }
 
     // Business Rules - Métodos de validação da entidade de domínio
@@ -49,7 +53,9 @@ public class Livro {
                isValidPreco(this.preco) &&
                isValidAcabamento(this.acabamento) &&
                isValidEstadoConservacao(this.estadoConservacao) &&
-               isValidCategoria(this.categoria);
+               isValidCategoria(this.categoria) &&
+               isValidDataAdicao(this.dataAdicao);
+               // Capa não é obrigatória na criação - será adicionada via PATCH
     }
 
     public boolean isValidForUpdate() {
@@ -66,6 +72,7 @@ public class Livro {
         if (this.acabamento != null && !isValidAcabamento(this.acabamento)) return false;
         if (this.estadoConservacao != null && !isValidEstadoConservacao(this.estadoConservacao)) return false;
         if (this.categoria != null && !isValidCategoria(this.categoria)) return false;
+        if (this.dataAdicao != null && !isValidDataAdicao(this.dataAdicao)) return false;
 
         return true;
     }
@@ -139,6 +146,17 @@ public class Livro {
                !categoria.getNome().trim().isEmpty();
     }
 
+    private boolean isValidDataAdicao(LocalDateTime dataAdicao) {
+        if (dataAdicao == null) {
+            return false;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime minDate = LocalDateTime.of(2020, 1, 1, 0, 0); // Data mínima razoável para o sebo
+
+        return !dataAdicao.isBefore(minDate) && !dataAdicao.isAfter(now);
+    }
+
     // Método para validar regra de negócio específica
     public void validateBusinessRules() {
         if (!isValidForCreation()) {
@@ -190,6 +208,14 @@ public class Livro {
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 
+    public LocalDateTime getDataAdicao() {
+        return dataAdicao;
+    }
+
+    public void setDataAdicao(LocalDateTime dataAdicao) {
+        this.dataAdicao = dataAdicao;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -206,13 +232,14 @@ public class Livro {
                 Objects.equals(estadoConservacao, livro.estadoConservacao) &&
                 Objects.equals(capa, livro.capa) &&
                 Objects.equals(preco, livro.preco) &&
-                Objects.equals(categoria, livro.categoria);
+                Objects.equals(categoria, livro.categoria) &&
+                Objects.equals(dataAdicao, livro.dataAdicao);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, titulo, isbn, autor, editora, anoPublicacao, paginas,
-                acabamento, estadoConservacao, capa, preco, categoria);
+                acabamento, estadoConservacao, capa, preco, categoria, dataAdicao);
     }
 
     @Override
@@ -230,6 +257,7 @@ public class Livro {
                 ", capa='" + capa + '\'' +
                 ", preco=" + preco +
                 ", categoria=" + categoria +
+                ", dataAdicao=" + dataAdicao +
                 '}';
     }
 }

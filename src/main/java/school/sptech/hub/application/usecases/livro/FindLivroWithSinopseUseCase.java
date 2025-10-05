@@ -25,6 +25,6 @@ public class FindLivroWithSinopseUseCase {
 
         String sinopse = chatGptAdapter.gerarSinopse(livro.getTitulo(), livro.getAutor());
 
-        return LivroMapper.toComSinopseResponseDto(livro, sinopse);
+        return LivroMapper.toResponseDtoWithSinopse(livro, sinopse);
     }
 }

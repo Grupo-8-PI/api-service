@@ -5,6 +5,8 @@ import school.sptech.hub.domain.entity.Acabamento;
 import school.sptech.hub.domain.entity.Categoria;
 import school.sptech.hub.domain.entity.Conservacao;
 
+import java.time.LocalDateTime;
+
 public class LivroMapper {
 
     public static Livro toEntity(LivroCreateDto dto) {
@@ -28,6 +30,8 @@ public class LivroMapper {
             livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
 
+        // Capa será definida apenas via PATCH - não definir durante criação
+        livro.setCapa(null);
         livro.setPreco(dto.getPreco());
 
         // Criar categoria temporária apenas com o nome para processamento posterior
@@ -36,6 +40,9 @@ public class LivroMapper {
             categoria.setNome(dto.getNomeCategoria());
             livro.setCategoria(categoria);
         }
+
+        // Definir dataAdicao: usar do DTO se fornecida, senão usar agora
+        livro.setDataAdicao(dto.getDataAdicao() != null ? dto.getDataAdicao() : LocalDateTime.now());
 
         return livro;
     }
@@ -54,42 +61,44 @@ public class LivroMapper {
         dto.setTitulo(livro.getTitulo());
         dto.setAutor(livro.getAutor());
         dto.setEditora(livro.getEditora());
-        // Tratamento seguro para Year
         dto.setAnoPublicacao(livro.getAnoPublicacao() != null ? livro.getAnoPublicacao().getValue() : null);
         dto.setPaginas(livro.getPaginas());
         dto.setCapa(livro.getCapa());
         dto.setPreco(livro.getPreco());
 
-        // Mapear dados do acabamento
+        // Mapear acabamento
         if (livro.getAcabamento() != null) {
             dto.setAcabamentoId(livro.getAcabamento().getId());
-            dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamentoStr());
+            dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamento() != null
+                ? livro.getAcabamento().getTipoAcabamento().name() : null);
         }
 
-        // Mapear dados da conservação
+        // Mapear conservação
         if (livro.getEstadoConservacao() != null) {
             dto.setConservacaoId(livro.getEstadoConservacao().getId());
-            dto.setEstadoConservacao(livro.getEstadoConservacao().getEstadoConservacao());
+            dto.setEstadoConservacao(livro.getEstadoConservacao().getTipoConservacao() != null
+                ? livro.getEstadoConservacao().getTipoConservacao().name() : null);
         }
 
-        // Mapear dados da categoria
+        // Mapear categoria
         if (livro.getCategoria() != null) {
             dto.setCategoriaId(livro.getCategoria().getId());
             dto.setNomeCategoria(livro.getCategoria().getNome());
         }
 
+        // Mapear dataAdicao
+        dto.setDataAdicao(livro.getDataAdicao());
+
         return dto;
     }
 
-    public static LivroComSinopseResponseDto toComSinopseResponseDto(Livro livro, String sinopse) {
+    public static LivroComSinopseResponseDto toResponseDtoWithSinopse(Livro livro, String sinopse) {
         if (livro == null) return null;
 
         LivroComSinopseResponseDto dto = new LivroComSinopseResponseDto();
 
-        // Usar o método base para preencher todos os campos herdados
+        // Copiar todos os campos do LivroResponseDto
         LivroResponseDto baseDto = toResponseDto(livro);
-
-        // Copiar todos os campos do DTO base
         dto.setId(baseDto.getId());
         dto.setIsbn(baseDto.getIsbn());
         dto.setTitulo(baseDto.getTitulo());
@@ -105,19 +114,17 @@ public class LivroMapper {
         dto.setPreco(baseDto.getPreco());
         dto.setCategoriaId(baseDto.getCategoriaId());
         dto.setNomeCategoria(baseDto.getNomeCategoria());
+        dto.setDataAdicao(baseDto.getDataAdicao());
 
-        // Adicionar o campo específico
+        // Adicionar sinopse
         dto.setSinopse(sinopse);
 
         return dto;
     }
 
-    // Método melhorado para update com DTO específico
-    public static Livro fromUpdateDto(LivroUpdateDto dto, Acabamento acabamento, Conservacao conservacao, Categoria categoria) {
-        if (dto == null) return null;
+    public static void updateEntityFromDto(Livro livro, LivroUpdateDto dto) {
+        if (livro == null || dto == null) return;
 
-        Livro livro = new Livro();
-        // Aplicar apenas campos não nulos do DTO (update parcial)
         if (dto.getIsbn() != null) livro.setIsbn(dto.getIsbn());
         if (dto.getTitulo() != null) livro.setTitulo(dto.getTitulo());
         if (dto.getAutor() != null) livro.setAutor(dto.getAutor());
@@ -127,51 +134,26 @@ public class LivroMapper {
         if (dto.getCapa() != null) livro.setCapa(dto.getCapa());
         if (dto.getPreco() != null) livro.setPreco(dto.getPreco());
 
-        // Aplicar entidades auxiliares apenas se fornecidas
-        if (acabamento != null) livro.setAcabamento(acabamento);
-        if (conservacao != null) livro.setEstadoConservacao(conservacao);
-        if (categoria != null) livro.setCategoria(categoria);
+        // Atualizar acabamento se fornecido
+        if (dto.getAcabamentoId() != null) {
+            livro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
+        }
 
-        return livro;
-    }
+        // Atualizar conservação se fornecida
+        if (dto.getConservacaoId() != null) {
+            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
+        }
 
-    public static Livro updateLivroFields(Livro existingLivro, Livro updatedLivro) {
-        if (existingLivro == null || updatedLivro == null) return existingLivro;
+        // Atualizar categoria se fornecida
+        if (dto.getNomeCategoria() != null) {
+            Categoria categoria = new Categoria();
+            categoria.setNome(dto.getNomeCategoria());
+            livro.setCategoria(categoria);
+        }
 
-        // Update apenas campos não nulos (partial update)
-        if (updatedLivro.getIsbn() != null) {
-            existingLivro.setIsbn(updatedLivro.getIsbn());
+        // Atualizar dataAdicao se fornecida
+        if (dto.getDataAdicao() != null) {
+            livro.setDataAdicao(dto.getDataAdicao());
         }
-        if (updatedLivro.getTitulo() != null) {
-            existingLivro.setTitulo(updatedLivro.getTitulo());
-        }
-        if (updatedLivro.getAutor() != null) {
-            existingLivro.setAutor(updatedLivro.getAutor());
-        }
-        if (updatedLivro.getEditora() != null) {
-            existingLivro.setEditora(updatedLivro.getEditora());
-        }
-        if (updatedLivro.getAnoPublicacao() != null) {
-            existingLivro.setAnoPublicacao(updatedLivro.getAnoPublicacao());
-        }
-        if (updatedLivro.getPaginas() != null) {
-            existingLivro.setPaginas(updatedLivro.getPaginas());
-        }
-        if (updatedLivro.getAcabamento() != null) {
-            existingLivro.setAcabamento(updatedLivro.getAcabamento());
-        }
-        if (updatedLivro.getEstadoConservacao() != null) {
-            existingLivro.setEstadoConservacao(updatedLivro.getEstadoConservacao());
-        }
-        if (updatedLivro.getCapa() != null) {
-            existingLivro.setCapa(updatedLivro.getCapa());
-        }
-        if (updatedLivro.getPreco() != null) {
-            existingLivro.setPreco(updatedLivro.getPreco());
-        }
-        if (updatedLivro.getCategoria() != null) {
-            existingLivro.setCategoria(updatedLivro.getCategoria());
-        }
-        return existingLivro;
     }
 }

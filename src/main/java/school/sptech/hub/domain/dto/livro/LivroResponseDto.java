@@ -2,31 +2,33 @@ package school.sptech.hub.domain.dto.livro;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.LocalDateTime;
+
 @Schema(description = "DTO de resposta com os dados de um livro")
 public class LivroResponseDto {
 
-    @Schema(description = "ID do Livro", example = "2")
+    @Schema(description = "ID do Livro", example = "1")
     private Integer id;
 
-    @Schema(description = "ISBN do livro", example = "978-3-16-148410-0")
+    @Schema(description = "ISBN do livro", example = "978-85-359-2982-4")
     private String isbn;
 
-    @Schema(description = "Título do livro", example = "Dom Casmurro")
+    @Schema(description = "Título do livro", example = "O Alquimista")
     private String titulo;
 
-    @Schema(description = "Nome do autor do livro", example = "Machado de Assis")
+    @Schema(description = "Nome do autor do livro", example = "Paulo Coelho")
     private String autor;
 
-    @Schema(description = "Nome da editora do livro", example = "Companhia das Letras")
+    @Schema(description = "Nome da editora do livro", example = "Rocco")
     private String editora;
 
-    @Schema(description = "Ano de publicação do livro", example = "2001")
+    @Schema(description = "Ano de publicação do livro", example = "2018")
     private Integer anoPublicacao;
 
-    @Schema(description = "Número de páginas do livro", example = "320")
+    @Schema(description = "Número de páginas do livro", example = "174")
     private Integer paginas;
 
-    @Schema(description = "ID do acabamento do livro", example = "1")
+    @Schema(description = "ID do acabamento do livro", example = "2")
     private Integer acabamentoId;
 
     @Schema(description = "Tipo de acabamento do livro", example = "BROCHURA")
@@ -35,20 +37,25 @@ public class LivroResponseDto {
     @Schema(description = "ID do estado de conservação do livro", example = "2")
     private Integer conservacaoId;
 
-    @Schema(description = "Estado de conservação do livro", example = "OTIMO")
+    @Schema(description = "Estado de conservação do livro", example = "BOM")
     private String estadoConservacao;
 
-    @Schema(description = "URL da imagem da capa do livro", example = "https://m.media-amazon.com/images/I/91GAAzBixYL._UF894,1000_QL80_.jpg")
+    @Schema(description = "URL da imagem da capa do livro",
+            example = "https://m.media-amazon.com/images/I/51X2XvgZ5PL._SY445_SX342_.jpg")
     private String capa;
 
-    @Schema(description = "Preço do livro", example = "49.90")
+    @Schema(description = "Preço do livro", example = "29.90")
     private Double preco;
 
-    @Schema(description = "ID da categoria do livro", example = "3")
+    @Schema(description = "ID da categoria do livro", example = "1")
     private Integer categoriaId;
 
-    @Schema(description = "Nome da categoria do livro", example = "ROMANCE")
+    @Schema(description = "Nome da categoria do livro", example = "Romance")
     private String nomeCategoria;
+
+    @Schema(description = "Data e hora em que o livro foi adicionado ao sebo",
+            example = "2024-12-05T14:30:00")
+    private LocalDateTime dataAdicao;
 
 
     // Getters and Setters
@@ -96,4 +103,12 @@ public class LivroResponseDto {
 
     public String getNomeCategoria() { return nomeCategoria; }
     public void setNomeCategoria(String nomeCategoria) { this.nomeCategoria = nomeCategoria; }
+
+    public LocalDateTime getDataAdicao() {
+        return dataAdicao;
+    }
+
+    public void setDataAdicao(LocalDateTime dataAdicao) {
+        this.dataAdicao = dataAdicao;
+    }
 }

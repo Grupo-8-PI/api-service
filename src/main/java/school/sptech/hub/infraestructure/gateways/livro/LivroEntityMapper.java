@@ -24,6 +24,7 @@ public class LivroEntityMapper {
         entity.setPaginas(livro.getPaginas());
         entity.setCapa(livro.getCapa());
         entity.setPreco(livro.getPreco());
+        entity.setDataAdicao(livro.getDataAdicao());
 
         // Inserir entidades completas (permitindo duplicação)
         if (livro.getAcabamento() != null) {
@@ -54,8 +55,9 @@ public class LivroEntityMapper {
         livro.setPaginas(entity.getPaginas());
         livro.setCapa(entity.getCapa());
         livro.setPreco(entity.getPreco());
+        livro.setDataAdicao(entity.getDataAdicao());
 
-        // Converter relacionamentos
+        // Mapear entidades relacionadas
         if (entity.getAcabamento() != null) {
             livro.setAcabamento(AcabamentoEntityMapper.toDomain(entity.getAcabamento()));
         }

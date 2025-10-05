@@ -33,7 +33,7 @@ public class LivroController {
 
     @Operation(
             summary = "Cadastrar um novo livro",
-            description = "Cria um novo livro com os dados fornecidos no corpo da requisição"
+            description = "Cria um novo livro com os dados fornecidos no corpo da requisição. O campo 'dataAdicao' será preenchido automaticamente com a data/hora atual do sistema."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -195,6 +195,84 @@ public class LivroController {
         return ResponseEntity.ok(livroDeleted);
     }
 
+    @Operation(
+            summary = "Buscar livros por acabamento",
+            description = "Retorna uma lista de livros filtrados por tipo de acabamento. IDs válidos: 1 (CAPA_DURA), 2 (BROCHURA)"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de acabamento inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/acabamento/{acabamentoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorAcabamento(
+            @PathVariable @Schema(description = "ID do tipo de acabamento", example = "1", allowableValues = {"1", "2"}) Integer acabamentoId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorAcabamento(acabamentoId);
+        return ResponseEntity.ok(livros);
+    }
+
+    @Operation(
+            summary = "Buscar livros por conservação",
+            description = "Retorna uma lista de livros filtrados por estado de conservação. IDs válidos: 1 (EXCELENTE), 2 (BOM), 3 (RAZOÁVEL), 4 (DEGRADADO)"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de conservação inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/conservacao/{conservacaoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorConservacao(
+            @PathVariable @Schema(description = "ID do estado de conservação", example = "1", allowableValues = {"1", "2", "3", "4"}) Integer conservacaoId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorConservacao(conservacaoId);
+        return ResponseEntity.ok(livros);
+    }
+
+    @Operation(
+            summary = "Buscar livros por categoria",
+            description = "Retorna uma lista de livros filtrados por categoria"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de categoria inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Categoria não encontrada",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/categoria/{categoriaId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorCategoria(
+            @PathVariable @Schema(description = "ID da categoria", example = "1") Integer categoriaId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorCategoria(categoriaId);
+        return ResponseEntity.ok(livros);
     @GetMapping("/categorias")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     @SecurityRequirement(name = "bearer")

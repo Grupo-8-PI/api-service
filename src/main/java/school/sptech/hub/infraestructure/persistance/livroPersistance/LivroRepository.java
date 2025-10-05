@@ -8,6 +8,9 @@ import java.util.Optional;
 
 public interface LivroRepository extends JpaRepository<LivroEntity, Integer> {
     Optional<LivroEntity> findByIsbn(String isbn);
+    List<LivroEntity> findByAcabamento_Id(Integer acabamentoId);
+    List<LivroEntity> findByEstadoConservacao_Id(Integer conservacaoId);
+    List<LivroEntity> findByCategoria_Id(Integer categoriaId);
 
     @Query("SELECT DISTINCT l.categoria.nomeCategoria FROM LivroEntity l ORDER BY l.categoria.nomeCategoria")
     List<String> findAllDistinctCategorias();
