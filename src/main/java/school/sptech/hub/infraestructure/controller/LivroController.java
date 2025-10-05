@@ -267,5 +267,13 @@ public class LivroController {
         List<String> categorias = livroService.listarCategorias();
         return ResponseEntity.ok(categorias);
     }
+    @GetMapping("/recomendados")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> listarLivrosRecomendados() {
+        List<LivroResponseDto> livros = livroService.listarLivrosRecomendados();
+        return ResponseEntity.ok(livros);
+    }
+
 }
 
