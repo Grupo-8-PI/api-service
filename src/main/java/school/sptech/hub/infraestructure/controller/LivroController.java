@@ -194,4 +194,12 @@ public class LivroController {
         LivroResponseDto livroDeleted = livroService.deletarLivro(id);
         return ResponseEntity.ok(livroDeleted);
     }
+
+    @GetMapping("/categorias")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<String>> listarCategorias() {
+        List<String> categorias = livroService.listarCategorias();
+        return ResponseEntity.ok(categorias);
+    }
 }

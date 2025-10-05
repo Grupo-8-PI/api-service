@@ -57,4 +57,24 @@ public class LivroRepositoryGateway implements LivroGateway {
         Optional<LivroEntity> entity = livroRepository.findByIsbn(isbn);
         return entity.map(LivroEntityMapper::toDomain);
     }
+
+    @Override
+    public List<String> findAllDistinctCategorias() {
+        return livroRepository.findAllDistinctCategorias();
+    }
+
+    @Override
+    public List<Livro> findRecommendedRandomLivros() {
+        List<LivroEntity> entities = livroRepository.findRecommendedRandomLivros();
+        return entities.stream()
+                .map(LivroEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Livro> findRandomLivro() {
+        Optional<LivroEntity> entity = livroRepository.findRandomLivro();
+        return entity.map(LivroEntityMapper::toDomain);
+    }
 }
+
