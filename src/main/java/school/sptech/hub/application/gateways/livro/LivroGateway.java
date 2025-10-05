@@ -16,3 +16,4 @@ public interface LivroGateway {
     List<Livro> findByConservacaoId(Integer conservacaoId);
     List<Livro> findByCategoriaId(Integer categoriaId);
 }
+
