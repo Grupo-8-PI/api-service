@@ -5,6 +5,8 @@ import school.sptech.hub.domain.entity.Acabamento;
 import school.sptech.hub.domain.entity.Categoria;
 import school.sptech.hub.domain.entity.Conservacao;
 
+import java.time.LocalDateTime;
+
 public class LivroMapper {
 
     public static Livro toEntity(LivroCreateDto dto) {
@@ -34,6 +36,9 @@ public class LivroMapper {
             livro.setCategoria(categoria);
         }
 
+        // Definir dataAdicao: usar do DTO se fornecida, senão usar agora
+        livro.setDataAdicao(dto.getDataAdicao() != null ? dto.getDataAdicao() : LocalDateTime.now());
+
         return livro;
     }
 
@@ -57,12 +62,14 @@ public class LivroMapper {
 
         if (livro.getAcabamento() != null) {
             dto.setAcabamentoId(livro.getAcabamento().getId());
-            dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamentoStr());
+            dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamento() != null
+                ? livro.getAcabamento().getTipoAcabamento().name() : null);
         }
 
         if (livro.getEstadoConservacao() != null) {
             dto.setConservacaoId(livro.getEstadoConservacao().getId());
-            dto.setEstadoConservacao(livro.getEstadoConservacao().getEstadoConservacao());
+            dto.setEstadoConservacao(livro.getEstadoConservacao().getTipoConservacao() != null
+                ? livro.getEstadoConservacao().getTipoConservacao().name() : null);
         }
 
         if (livro.getCategoria() != null) {
@@ -75,7 +82,7 @@ public class LivroMapper {
         return dto;
     }
 
-    public static LivroComSinopseResponseDto toComSinopseResponseDto(Livro livro, String sinopse) {
+    public static LivroComSinopseResponseDto toResponseDtoWithSinopse(Livro livro, String sinopse) {
         if (livro == null) return null;
 
         LivroComSinopseResponseDto dto = new LivroComSinopseResponseDto();
@@ -97,6 +104,7 @@ public class LivroMapper {
         dto.setPreco(baseDto.getPreco());
         dto.setCategoriaId(baseDto.getCategoriaId());
         dto.setNomeCategoria(baseDto.getNomeCategoria());
+        dto.setDataAdicao(baseDto.getDataAdicao());
 
         dto.setSinopse(sinopse);
 
@@ -130,35 +138,22 @@ public class LivroMapper {
         if (updatedLivro.getIsbn() != null) {
             existingLivro.setIsbn(updatedLivro.getIsbn());
         }
-        if (updatedLivro.getTitulo() != null) {
-            existingLivro.setTitulo(updatedLivro.getTitulo());
+
+        // Atualizar conservação se fornecida
+        if (dto.getConservacaoId() != null) {
+            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
-        if (updatedLivro.getAutor() != null) {
-            existingLivro.setAutor(updatedLivro.getAutor());
+
+        // Atualizar categoria se fornecida
+        if (dto.getNomeCategoria() != null) {
+            Categoria categoria = new Categoria();
+            categoria.setNome(dto.getNomeCategoria());
+            livro.setCategoria(categoria);
         }
-        if (updatedLivro.getEditora() != null) {
-            existingLivro.setEditora(updatedLivro.getEditora());
-        }
-        if (updatedLivro.getAnoPublicacao() != null) {
-            existingLivro.setAnoPublicacao(updatedLivro.getAnoPublicacao());
-        }
-        if (updatedLivro.getPaginas() != null) {
-            existingLivro.setPaginas(updatedLivro.getPaginas());
-        }
-        if (updatedLivro.getAcabamento() != null) {
-            existingLivro.setAcabamento(updatedLivro.getAcabamento());
-        }
-        if (updatedLivro.getEstadoConservacao() != null) {
-            existingLivro.setEstadoConservacao(updatedLivro.getEstadoConservacao());
-        }
-        if (updatedLivro.getCapa() != null) {
-            existingLivro.setCapa(updatedLivro.getCapa());
-        }
-        if (updatedLivro.getPreco() != null) {
-            existingLivro.setPreco(updatedLivro.getPreco());
-        }
-        if (updatedLivro.getCategoria() != null) {
-            existingLivro.setCategoria(updatedLivro.getCategoria());
+
+        // Atualizar dataAdicao se fornecida
+        if (dto.getDataAdicao() != null) {
+            livro.setDataAdicao(dto.getDataAdicao());
         }
         if (updatedLivro.getDescricao() != null) {
             existingLivro.setDescricao(updatedLivro.getDescricao());

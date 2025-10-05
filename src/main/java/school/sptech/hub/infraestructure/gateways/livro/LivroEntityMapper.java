@@ -24,6 +24,7 @@ public class LivroEntityMapper {
         entity.setPaginas(livro.getPaginas());
         entity.setCapa(livro.getCapa());
         entity.setPreco(livro.getPreco());
+        entity.setDataAdicao(livro.getDataAdicao());
 
         if (livro.getAcabamento() != null && livro.getAcabamento().getId() != null) {
             AcabamentoEntity acabamentoRef = new AcabamentoEntity();
@@ -65,6 +66,7 @@ public class LivroEntityMapper {
         livro.setPaginas(entity.getPaginas());
         livro.setCapa(entity.getCapa());
         livro.setPreco(entity.getPreco());
+        livro.setDataAdicao(entity.getDataAdicao());
 
         if (entity.getAcabamento() != null) {
             livro.setAcabamento(AcabamentoEntityMapper.toDomain(entity.getAcabamento()));
