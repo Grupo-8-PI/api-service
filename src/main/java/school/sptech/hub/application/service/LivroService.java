@@ -33,7 +33,7 @@ public class LivroService {
                        UploadImageUseCase uploadImageUseCase,
                        FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase,
                        FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase,
-                       FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase) {
+                       FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase,
                        ListAllCategoriesUseCase listAllCategoriesUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
@@ -86,6 +86,7 @@ public class LivroService {
 
     public List<LivroResponseDto> buscarLivrosPorCategoria(Integer categoriaId) {
         return findLivrosByCategoriaUseCase.execute(categoriaId);
+    }
 
     public List<String> listarCategorias() {
         return listAllCategoriesUseCase.execute();
