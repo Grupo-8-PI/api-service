@@ -69,6 +69,13 @@ public class LivroRepositoryGateway implements LivroGateway {
     @Override
     public List<Livro> findByConservacaoId(Integer conservacaoId) {
         List<LivroEntity> entities = livroRepository.findByEstadoConservacao_Id(conservacaoId);
+    public List<String> findAllDistinctCategorias() {
+        return livroRepository.findAllDistinctCategorias();
+    }
+
+    @Override
+    public List<Livro> findRecommendedRandomLivros() {
+        List<LivroEntity> entities = livroRepository.findRecommendedRandomLivros();
         return entities.stream()
                 .map(LivroEntityMapper::toDomain)
                 .collect(Collectors.toList());
@@ -81,4 +88,10 @@ public class LivroRepositoryGateway implements LivroGateway {
                 .map(LivroEntityMapper::toDomain)
                 .collect(Collectors.toList());
     }
+    @Override
+    public Optional<Livro> findRandomLivro() {
+        Optional<LivroEntity> entity = livroRepository.findRandomLivro();
+        return entity.map(LivroEntityMapper::toDomain);
+    }
 }
+

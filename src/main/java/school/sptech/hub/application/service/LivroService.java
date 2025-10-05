@@ -22,6 +22,7 @@ public class LivroService {
     private final FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase;
     private final FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase;
     private final FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase;
+    private final ListAllCategoriesUseCase listAllCategoriesUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                        FindLivroByIdUseCase findLivroByIdUseCase,
@@ -33,6 +34,7 @@ public class LivroService {
                        FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase,
                        FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase,
                        FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase) {
+                       ListAllCategoriesUseCase listAllCategoriesUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listAllLivrosUseCase = listAllLivrosUseCase;
@@ -43,6 +45,7 @@ public class LivroService {
         this.findLivrosByAcabamentoUseCase = findLivrosByAcabamentoUseCase;
         this.findLivrosByConservacaoUseCase = findLivrosByConservacaoUseCase;
         this.findLivrosByCategoriaUseCase = findLivrosByCategoriaUseCase;
+        this.listAllCategoriesUseCase = listAllCategoriesUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -83,5 +86,8 @@ public class LivroService {
 
     public List<LivroResponseDto> buscarLivrosPorCategoria(Integer categoriaId) {
         return findLivrosByCategoriaUseCase.execute(categoriaId);
+
+    public List<String> listarCategorias() {
+        return listAllCategoriesUseCase.execute();
     }
 }
