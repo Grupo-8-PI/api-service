@@ -12,4 +12,5 @@ public interface VendaGateway {
     void deleteVenda(Venda venda);
     boolean reservaPertenceAoUsuario(Integer idReserva, String emailUsuario);
     List<Venda> findVendasByClienteId(Integer clienteId);
+    List<Venda> findAll();
 }

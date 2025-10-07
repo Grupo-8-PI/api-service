@@ -19,6 +19,8 @@ import school.sptech.hub.domain.dto.venda.VendaResponseDto;
 import school.sptech.hub.domain.dto.venda.VendaMapper;
 import school.sptech.hub.domain.entity.Venda;
 
+import java.util.List;
+
 @Tag(name = "reservas", description = "Operações relacionadas a venda/reserva dos livros")
 @RestController
 @RequestMapping("/reservas")
@@ -41,6 +43,9 @@ public class VendaController {
 
     @Autowired
     private ListAllVendasByClienteUseCase listAllVendasByClienteUseCase;
+
+    @Autowired
+    private ListAllVendasUseCase listAllVendasUseCase;
 
 
     @Operation(
@@ -144,8 +149,15 @@ public class VendaController {
     }
     @GetMapping("/user/{id}")
     @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
-    public ResponseEntity<Venda[]> listAllReservasByClienteId(@PathVariable Integer id){
-        Venda[] vendas = ListAllVendasByClienteUseCase.
+    public ResponseEntity<List<Venda>> listAllReservasByClienteId(@PathVariable Integer id){
+        List<Venda> vendas  = listAllVendasByClienteUseCase.execute(id);
+
+        return ResponseEntity.status(200).body(vendas);
+    }
+    @GetMapping()
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Venda>> listAllReservas(){
+        List<Venda> vendas = listAllVendasUseCase.execute();
 
         return ResponseEntity.status(200).body(vendas);
     }
