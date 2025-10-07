@@ -57,4 +57,12 @@ public class VendaRepositoryGateway implements VendaGateway {
                 .map(VendaEntityMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Venda> findAll() {
+        List<VendaEntity> vendaEntities = vendaRepository.findAll();
+        return vendaEntities.stream()
+                .map(VendaEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }
