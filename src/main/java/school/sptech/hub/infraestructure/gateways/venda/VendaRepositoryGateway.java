@@ -6,7 +6,9 @@ import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaEntity;
 import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class VendaRepositoryGateway implements VendaGateway {
@@ -46,5 +48,13 @@ public class VendaRepositoryGateway implements VendaGateway {
     public boolean reservaPertenceAoUsuario(Integer idReserva, String emailUsuario) {
         Optional<VendaEntity> vendaEntity = vendaRepository.findById(idReserva);
         return vendaEntity.isPresent() && vendaEntity.get().getUsuarios().getEmail().equals(emailUsuario);
+    }
+
+    @Override
+    public List<Venda> findVendasByClienteId(Integer clienteId) {
+        List<VendaEntity> vendaEntities = vendaRepository.findByUsuariosId(clienteId);
+        return vendaEntities.stream()
+                .map(VendaEntityMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }
