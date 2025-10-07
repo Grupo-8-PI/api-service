@@ -12,16 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import school.sptech.hub.application.usecases.venda.*;
 import school.sptech.hub.domain.dto.venda.VendaCreateDto;
 import school.sptech.hub.domain.dto.venda.VendaErroResponseSwgDto;
 import school.sptech.hub.domain.dto.venda.VendaResponseDto;
 import school.sptech.hub.domain.dto.venda.VendaMapper;
 import school.sptech.hub.domain.entity.Venda;
-import school.sptech.hub.application.usecases.venda.CreateVendaUseCase;
-import school.sptech.hub.application.usecases.venda.UpdateVendaReservaUseCase;
-import school.sptech.hub.application.usecases.venda.GetVendaByIdUseCase;
-import school.sptech.hub.application.usecases.venda.DeleteVendaUseCase;
-import school.sptech.hub.application.usecases.venda.CheckVendaOwnershipUseCase;
 
 @Tag(name = "reservas", description = "Operações relacionadas a venda/reserva dos livros")
 @RestController
@@ -43,6 +39,9 @@ public class VendaController {
     @Autowired
     private CheckVendaOwnershipUseCase checkVendaOwnershipUseCase;
 
+    @Autowired
+    private ListAllVendasByClienteUseCase listAllVendasByClienteUseCase;
+
 
     @Operation(
             summary = "Criar nova reserva",
@@ -63,13 +62,8 @@ public class VendaController {
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<VendaResponseDto> createReserva(@Valid @RequestBody VendaCreateDto vendaDto) {
-        // Converter DTO para entidade usando o mapper
         Venda venda = VendaMapper.toEntity(vendaDto);
-
-        // Executar o caso de uso
         Venda createdVenda = createVendaUseCase.execute(venda);
-
-        // Converter entidade para DTO de resposta
         VendaResponseDto response = VendaMapper.toResponseDto(createdVenda);
 
         return ResponseEntity.status(201).body(response);
@@ -147,6 +141,13 @@ public class VendaController {
         Venda venda = deleteVendaUseCase.execute(id);
 
         return ResponseEntity.status(200).body(venda);
+    }
+    @GetMapping("/user/{id}")
+    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
+    public ResponseEntity<Venda[]> listAllReservasByClienteId(@PathVariable Integer id){
+        Venda[] vendas = ListAllVendasByClienteUseCase.
+
+        return ResponseEntity.status(200).body(vendas);
     }
 
 }

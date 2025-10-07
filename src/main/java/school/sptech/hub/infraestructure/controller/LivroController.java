@@ -274,6 +274,5 @@ public class LivroController {
         List<LivroResponseDto> livros = livroService.listarLivrosRecomendados();
         return ResponseEntity.ok(livros);
     }
-
 }
 
