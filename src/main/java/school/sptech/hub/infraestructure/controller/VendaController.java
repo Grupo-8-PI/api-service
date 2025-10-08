@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +66,7 @@ public class VendaController {
             )
     })
     @PostMapping
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<VendaResponseDto> createReserva(@Valid @RequestBody VendaCreateDto vendaDto) {
         Venda venda = VendaMapper.toEntity(vendaDto);
@@ -92,6 +94,7 @@ public class VendaController {
             )
     })
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<Venda> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
         Venda updatedVenda = updateVendaReservaUseCase.execute(id, vendaToUpdate);
@@ -116,6 +119,7 @@ public class VendaController {
             )
     })
     @GetMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<Venda> getReservaById(@PathVariable Integer id){
         Venda venda = getVendaByIdUseCase.execute(id);
@@ -141,20 +145,49 @@ public class VendaController {
             )
     })
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<Venda> deleteReservaById(@PathVariable Integer id){
         Venda venda = deleteVendaUseCase.execute(id);
 
         return ResponseEntity.status(200).body(venda);
     }
-    @GetMapping("/user/{id}")
-    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
-    public ResponseEntity<List<Venda>> listAllReservasByClienteId(@PathVariable Integer id){
-        List<Venda> vendas  = listAllVendasByClienteUseCase.execute(id);
 
-        return ResponseEntity.status(200).body(vendas);
+    @Operation(
+            summary = "Buscar reservas por ID do cliente",
+            description = "Retorna todas as reservas de um cliente específico com base no ID informado."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de reservas do cliente encontrada",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Cliente não encontrado ou sem reservas",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado - apenas clientes podem acessar suas próprias reservas",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/user/{id}")
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<List<VendaResponseDto>> getVendaPorIdCliente(@PathVariable Integer id){
+        List<Venda> vendas = listAllVendasByClienteUseCase.execute(id);
+        List<VendaResponseDto> response = vendas.stream()
+                .map(VendaMapper::toResponseDto)
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
+
     @GetMapping()
+    @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Venda>> listAllReservas(){
         List<Venda> vendas = listAllVendasUseCase.execute();
