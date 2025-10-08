@@ -22,6 +22,7 @@ public class LivroService {
     private final FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase;
     private final ListAllCategoriesUseCase listAllCategoriesUseCase;
     private final ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
+    private final ListRecentLivrosUseCase listRecentLivrosUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                         FindLivroByIdUseCase findLivroByIdUseCase,
@@ -33,7 +34,9 @@ public class LivroService {
                         FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase,
                         FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase,
                         FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase,
-                        ListAllCategoriesUseCase listAllCategoriesUseCase, ListRecommendedLivrosUseCase listRecommendedLivrosUseCase) {
+                        ListAllCategoriesUseCase listAllCategoriesUseCase,
+                        ListRecommendedLivrosUseCase listRecommendedLivrosUseCase,
+                        ListRecentLivrosUseCase listRecentLivrosUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listAllLivrosUseCase = listAllLivrosUseCase;
@@ -44,6 +47,7 @@ public class LivroService {
         this.findLivrosByConservacaoUseCase = findLivrosByConservacaoUseCase;
         this.findLivrosByCategoriaUseCase = findLivrosByCategoriaUseCase;
         this.listRecommendedLivrosUseCase = listRecommendedLivrosUseCase;
+        this.listRecentLivrosUseCase = listRecentLivrosUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -88,5 +92,9 @@ public class LivroService {
 
     public List<LivroResponseDto> listarLivrosRecomendados() {
         return listRecommendedLivrosUseCase.execute();
+    }
+
+    public List<LivroResponseDto> listarLivrosRecentes() {
+        return listRecentLivrosUseCase.execute();
     }
 }

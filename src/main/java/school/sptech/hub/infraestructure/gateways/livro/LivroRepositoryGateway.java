@@ -115,4 +115,12 @@ public class LivroRepositoryGateway implements LivroGateway {
         Optional<LivroEntity> entity = livroRepository.findRandomLivro();
         return entity.map(LivroEntityMapper::toDomain);
     }
+
+    @Override
+    public List<Livro> findTop3ByOrderByDataAdicaoDesc() {
+        List<LivroEntity> entities = livroRepository.findTop3ByOrderByDataAdicaoDesc();
+        return entities.stream()
+                .map(LivroEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }
