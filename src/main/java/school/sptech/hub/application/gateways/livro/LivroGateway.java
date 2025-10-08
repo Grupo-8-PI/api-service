@@ -18,5 +18,5 @@ public interface LivroGateway {
     List<String> findAllDistinctCategorias();
     List<Livro> findRecommendedRandomLivros();
     Optional<Livro> findRandomLivro();
+    List<Livro> findTop3ByOrderByDataAdicaoDesc();
 }
-

@@ -293,11 +293,42 @@ public class LivroController {
         List<String> categorias = livroService.listarCategorias();
         return ResponseEntity.ok(categorias);
     }
+
+    @Operation(
+            summary = "Listar livros recomendados",
+            description = "Retorna uma lista com livros recomendados de forma aleatória (até 3 livros)"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros recomendados retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            )
+    })
     @GetMapping("/recomendados")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     @SecurityRequirement(name = "bearer")
     public ResponseEntity<List<LivroResponseDto>> listarLivrosRecomendados() {
         List<LivroResponseDto> livros = livroService.listarLivrosRecomendados();
+        return ResponseEntity.ok(livros);
+    }
+
+    @Operation(
+            summary = "Listar livros recentes",
+            description = "Retorna uma lista com os 3 livros mais recentes adicionados ao sebo, ordenados pela data de adição em ordem decrescente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros recentes retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            )
+    })
+    @GetMapping("/recentes")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> listarLivrosRecentes() {
+        List<LivroResponseDto> livros = livroService.listarLivrosRecentes();
         return ResponseEntity.ok(livros);
     }
 }

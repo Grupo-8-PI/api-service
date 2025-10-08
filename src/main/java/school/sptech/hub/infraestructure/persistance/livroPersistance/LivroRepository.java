@@ -20,5 +20,6 @@ public interface LivroRepository extends JpaRepository<LivroEntity, Integer> {
 
     @Query(value = "SELECT * FROM livro ORDER BY RAND() LIMIT 1", nativeQuery = true)
     Optional<LivroEntity> findRandomLivro();
-}
 
+    List<LivroEntity> findTop3ByOrderByDataAdicaoDesc();
+}
