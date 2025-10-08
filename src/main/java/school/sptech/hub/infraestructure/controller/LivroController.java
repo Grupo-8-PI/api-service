@@ -306,8 +306,6 @@ public class LivroController {
             )
     })
     @GetMapping("/recomendados")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
     public ResponseEntity<List<LivroResponseDto>> listarLivrosRecomendados() {
         List<LivroResponseDto> livros = livroService.listarLivrosRecomendados();
         return ResponseEntity.ok(livros);
@@ -325,8 +323,6 @@ public class LivroController {
             )
     })
     @GetMapping("/recentes")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
     public ResponseEntity<List<LivroResponseDto>> listarLivrosRecentes() {
         List<LivroResponseDto> livros = livroService.listarLivrosRecentes();
         return ResponseEntity.ok(livros);
