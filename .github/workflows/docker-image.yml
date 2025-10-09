@@ -1,4 +1,4 @@
-name: Docker Build CI Workflow
+name: CI/CD workflow for JAVA
 
 
 on:
@@ -15,6 +15,29 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
+    - name: 1.Build the Docker image
       run: docker build -t api-service:latest .
+    - name: 2.JDK Setup
+      uses: actions/setup-java@v4
+        with:
+          distribution: 'amazon-coretto' # ou a distribuição que preferir
+          java-version: '21'
+          cache: 'maven' # Configura cache do Maven para acelerar builds futuros
+    - name: 3.Executar Testes automatizados(Desativado)
+        run: # mvn clean test     
+        working-directory: ./  
+    - name: 4.Renomear JAR para app_aej.jar
+        run: |
+          # Encontra o primeiro (e único) arquivo .jar gerado na pasta 'target'
+          # e o renomeia para o nome fixo.
+          # O comando 'ls target/*.jar' retorna o nome original.
+          
+          JAR_NAME=$(ls target/*.jar)
+          
+          # Renomeia o arquivo.
+          mv $JAR_NAME target/app_aej.jar
+          
+          echo "Renomeado para: target/app_aej.jar" 
+
+      
 
