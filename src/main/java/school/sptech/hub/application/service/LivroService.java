@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import school.sptech.hub.application.usecases.livro.*;
 import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
+import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 
@@ -14,7 +15,7 @@ public class LivroService {
 
     private final CreateLivroUseCase createLivroUseCase;
     private final FindLivroByIdUseCase findLivroByIdUseCase;
-    private final ListAllLivrosUseCase listAllLivrosUseCase;
+    private final ListLivrosPaginatedUseCase listLivrosPaginatedUseCase;
     private final FindLivroWithSinopseUseCase findLivroWithSinopseUseCase;
     private final UpdateLivroUseCase updateLivroUseCase;
     private final DeleteLivroUseCase deleteLivroUseCase;
@@ -28,7 +29,7 @@ public class LivroService {
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                         FindLivroByIdUseCase findLivroByIdUseCase,
-                        ListAllLivrosUseCase listAllLivrosUseCase,
+                        ListLivrosPaginatedUseCase listLivrosPaginatedUseCase,
                         FindLivroWithSinopseUseCase findLivroWithSinopseUseCase,
                         UpdateLivroUseCase updateLivroUseCase,
                         DeleteLivroUseCase deleteLivroUseCase,
@@ -41,7 +42,7 @@ public class LivroService {
                         ListRecentLivrosUseCase listRecentLivrosUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
-        this.listAllLivrosUseCase = listAllLivrosUseCase;
+        this.listLivrosPaginatedUseCase = listLivrosPaginatedUseCase;
         this.findLivroWithSinopseUseCase = findLivroWithSinopseUseCase;
         this.updateLivroUseCase = updateLivroUseCase;
         this.deleteLivroUseCase = deleteLivroUseCase;
@@ -56,10 +57,6 @@ public class LivroService {
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
         return createLivroUseCase.execute(livro);
-    }
-
-    public List<LivroResponseDto> listarLivros() {
-        return listAllLivrosUseCase.execute();
     }
 
     public LivroComSinopseResponseDto buscarLivroPorIdComSinopse(Integer id) {
@@ -104,5 +101,9 @@ public class LivroService {
 
     public List<LivroResponseDto> listarLivrosRecentes() {
         return listRecentLivrosUseCase.execute();
+    }
+
+    public LivroPaginatedResponseDto listarLivrosPaginado(int page, int size) {
+        return listLivrosPaginatedUseCase.execute(page, size);
     }
 }

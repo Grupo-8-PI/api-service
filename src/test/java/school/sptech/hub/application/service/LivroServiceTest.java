@@ -12,8 +12,8 @@ import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
+import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
 
-import java.time.Year;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +26,7 @@ class LivroServiceTest {
     private FindLivroByIdUseCase findLivroByIdUseCase;
 
     @Mock
-    private ListAllLivrosUseCase listAllLivrosUseCase;
+    private ListLivrosPaginatedUseCase listLivrosPaginatedUseCase;
 
     @Mock
     private FindLivroWithSinopseUseCase findLivroWithSinopseUseCase;
@@ -38,6 +38,12 @@ class LivroServiceTest {
     private DeleteLivroUseCase deleteLivroUseCase;
     @Mock
     private UploadImageUseCase uploadImageUseCase;
+    @Mock private FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase;
+    @Mock private FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase;
+    @Mock private FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase;
+    @Mock private ListAllCategoriesUseCase listAllCategoriesUseCase;
+    @Mock private ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
+    @Mock private ListRecentLivrosUseCase listRecentLivrosUseCase;
 
     private LivroService livroService;
     private LivroCreateDto livroCreateDto;
@@ -50,11 +56,17 @@ class LivroServiceTest {
         livroService = new LivroService(
             createLivroUseCase,
             findLivroByIdUseCase,
-            listAllLivrosUseCase,
+            listLivrosPaginatedUseCase,
             findLivroWithSinopseUseCase,
             updateLivroUseCase,
             deleteLivroUseCase,
-            uploadImageUseCase
+            uploadImageUseCase,
+            findLivrosByAcabamentoUseCase,
+            findLivrosByConservacaoUseCase,
+            findLivrosByCategoriaUseCase,
+            listAllCategoriesUseCase,
+            listRecommendedLivrosUseCase,
+            listRecentLivrosUseCase
         );
 
         // Setup test data
@@ -113,17 +125,18 @@ class LivroServiceTest {
         livro2.setTitulo("O Cortiço");
 
         List<LivroResponseDto> livros = Arrays.asList(livroResponseDto, livro2);
-        when(listAllLivrosUseCase.execute()).thenReturn(livros);
+        LivroPaginatedResponseDto paginatedResponse = new LivroPaginatedResponseDto(livros, 1, 2, 0);
+        when(listLivrosPaginatedUseCase.execute(0, 10)).thenReturn(paginatedResponse);
 
         // When
-        List<LivroResponseDto> result = livroService.listarLivros();
+        List<LivroResponseDto> result = livroService.listarLivrosPaginado(0, 10).getLivros();
 
         // Then
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("Dom Casmurro", result.get(0).getTitulo());
         assertEquals("O Cortiço", result.get(1).getTitulo());
-        verify(listAllLivrosUseCase).execute();
+        verify(listLivrosPaginatedUseCase).execute(0, 10);
     }
 
     @Test

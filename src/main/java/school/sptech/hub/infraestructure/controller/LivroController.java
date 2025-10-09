@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroErroResponseSwgDto;
+import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 import school.sptech.hub.application.service.LivroService;
@@ -74,8 +75,10 @@ public class LivroController {
     @GetMapping
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    public ResponseEntity<List<LivroResponseDto>> listarLivros() {
-        List<LivroResponseDto> livros = livroService.listarLivros();
+    public ResponseEntity<LivroPaginatedResponseDto> listarLivros(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        LivroPaginatedResponseDto livros = livroService.listarLivrosPaginado(page, size);
         return ResponseEntity.ok(livros);
     }
 
