@@ -1,5 +1,6 @@
 package school.sptech.hub.application.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import school.sptech.hub.application.usecases.livro.*;
 import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
@@ -15,6 +16,7 @@ public class LivroService {
     private final CreateLivroUseCase createLivroUseCase;
     private final FindLivroByIdUseCase findLivroByIdUseCase;
     private final ListAllLivrosUseCase listAllLivrosUseCase;
+    private final ListPaginatedLivrosUseCase listPaginatedLivrosUseCase;
     private final FindLivroWithSinopseUseCase findLivroWithSinopseUseCase;
     private final UpdateLivroUseCase updateLivroUseCase;
     private final DeleteLivroUseCase deleteLivroUseCase;
@@ -23,6 +25,7 @@ public class LivroService {
     public LivroService(CreateLivroUseCase createLivroUseCase,
                        FindLivroByIdUseCase findLivroByIdUseCase,
                        ListAllLivrosUseCase listAllLivrosUseCase,
+                       ListPaginatedLivrosUseCase listPaginatedLivrosUseCase,
                        FindLivroWithSinopseUseCase findLivroWithSinopseUseCase,
                        UpdateLivroUseCase updateLivroUseCase,
                        DeleteLivroUseCase deleteLivroUseCase,
@@ -30,6 +33,7 @@ public class LivroService {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listAllLivrosUseCase = listAllLivrosUseCase;
+        this.listPaginatedLivrosUseCase = listPaginatedLivrosUseCase;
         this.findLivroWithSinopseUseCase = findLivroWithSinopseUseCase;
         this.updateLivroUseCase = updateLivroUseCase;
         this.deleteLivroUseCase = deleteLivroUseCase;
@@ -37,11 +41,15 @@ public class LivroService {
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
-        return createLivroUseCase.execute(livro);
+          return createLivroUseCase.execute(livro);
     }
 
     public List<LivroResponseDto> listarLivros() {
         return listAllLivrosUseCase.execute();
+    }
+
+    public Page<LivroResponseDto> listarLivrosPaginados(int page, int size) {
+        return listPaginatedLivrosUseCase.execute(page, size);
     }
 
     public LivroComSinopseResponseDto buscarLivroPorIdComSinopse(Integer id) {

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -61,22 +62,25 @@ public class LivroController {
     }
 
     @Operation(
-            summary = "Listar todos os livros",
-            description = "Retorna uma lista com todos os livros disponíveis no sistema"
+            summary = "Listar todos os livros (com paginação)",
+            description = "Retorna uma lista paginada de livros disponíveis no sistema"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Lista de livros retornada com sucesso",
+                    description = "Lista de livros retornada com sucesso (paginada)",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
             )
     })
     @GetMapping
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    public ResponseEntity<List<LivroResponseDto>> listarLivros() {
-        List<LivroResponseDto> livros = livroService.listarLivros();
-        return ResponseEntity.ok(livros);
+    public ResponseEntity<Page<LivroResponseDto>> listarLivrosPaginado(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<LivroResponseDto> livrosPaginado = livroService.listarLivrosPaginados(page, size);
+        return ResponseEntity.ok(livrosPaginado);
     }
 
     @Operation(

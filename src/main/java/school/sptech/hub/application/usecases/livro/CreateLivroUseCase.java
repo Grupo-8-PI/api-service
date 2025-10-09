@@ -4,9 +4,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import school.sptech.hub.application.exceptions.LivroExceptions.LivroJaExisteException;
 import school.sptech.hub.application.exceptions.LivroExceptions.LivroNaoEncontradoException;
+import school.sptech.hub.application.gateways.acabamento.AcabamentoGateway;
 import school.sptech.hub.application.gateways.categoria.CategoriaGateway;
+import school.sptech.hub.application.gateways.conservacao.ConservacaoGateway;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
+import school.sptech.hub.domain.entity.Acabamento;
 import school.sptech.hub.domain.entity.Categoria;
+import school.sptech.hub.domain.entity.Conservacao;
 import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroMapper;
@@ -19,10 +23,14 @@ public class CreateLivroUseCase {
 
     private final LivroGateway livroGateway;
     private final CategoriaGateway categoriaGateway;
+    private final AcabamentoGateway acabamentoGateway;
+    private final ConservacaoGateway conservacaoGateway;
 
-    public CreateLivroUseCase(LivroGateway livroGateway, CategoriaGateway categoriaGateway) {
+    public CreateLivroUseCase(LivroGateway livroGateway, CategoriaGateway categoriaGateway, AcabamentoGateway acabamentoGateway, ConservacaoGateway conservacaoGateway) {
         this.livroGateway = livroGateway;
         this.categoriaGateway = categoriaGateway;
+        this.acabamentoGateway = acabamentoGateway;
+        this.conservacaoGateway = conservacaoGateway;
     }
 
     @Transactional
@@ -30,11 +38,23 @@ public class CreateLivroUseCase {
         // Processar categoria (buscar existente ou criar nova) a partir do nome
         Categoria categoria = processarCategoria(livroCreateDto.getNomeCategoria());
 
+        Acabamento acabamento = acabamentoGateway.findById(livroCreateDto.getAcabamentoId())
+                .orElseThrow(() -> new IllegalArgumentException("Acabamento não encontrado"));
+        Conservacao conservacao = conservacaoGateway.findById(livroCreateDto.getConservacaoId())
+                .orElseThrow(() -> new IllegalArgumentException("Conservação não encontrada"));
+
         // Converter DTO para entidade usando o mapper
         Livro livroEntity = LivroMapper.toEntity(livroCreateDto);
 
         // Sobrescrever a categoria com a processada (garantindo que seja a categoria do banco)
         livroEntity.setCategoria(categoria);
+        livroEntity.setAcabamento(acabamento);
+        livroEntity.setEstadoConservacao(conservacao);
+
+        // Garantir que o campo capa está preenchido
+        if (livroEntity.getCapa() == null || livroEntity.getCapa().isBlank()) {
+            throw new IllegalArgumentException("O campo capa é obrigatório");
+        }
 
         // Validação usando regras de negócio da entidade de domínio
         livroEntity.validateBusinessRules();
