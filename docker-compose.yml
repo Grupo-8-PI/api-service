@@ -17,6 +17,21 @@ services:
     networks:
       - app-network
 
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq-local
+    restart: unless-stopped
+    ports:
+      - "5672:5672"     # porta AMQP (para conexão com Spring Boot)
+      - "15672:15672"   # painel de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app-network
+
   app:
     build:
       context: .
@@ -34,13 +49,23 @@ services:
       AWS_BUCKET: ${AWS_BUCKET}
       JWT_SECRET: ${JWT_SECRET}
       JWT_VALIDITY: ${JWT_VALIDITY}
+
+      # Configuração do RabbitMQ para o Spring Boot
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: admin
+      SPRING_RABBITMQ_PASSWORD: admin
+
     depends_on:
       - mysql
+      - rabbitmq
     networks:
       - app-network
 
 volumes:
   mysql_data:
+    driver: local
+  rabbitmq_data:
     driver: local
 
 networks:
