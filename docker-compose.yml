@@ -25,8 +25,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-admin}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
@@ -49,12 +49,10 @@ services:
       AWS_BUCKET: ${AWS_BUCKET}
       JWT_SECRET: ${JWT_SECRET}
       JWT_VALIDITY: ${JWT_VALIDITY}
-
-      SPRING_RABBITMQ_HOST: ${RABBIT_MQ_HOST:-rabbitmq-local}
-      SPRING_RABBITMQ_PORT: ${RABBIT_MQ_PORT:-5672}
-      SPRING_RABBITMQ_USERNAME: ${RABBIT_MQ_USERNAME}
-      SPRING_RABBITMQ_PASSWORD: ${RABBIT_MQ_PASSWORD}
-
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq-local}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-admin}
     depends_on:
       - mysql
       - rabbitmq
