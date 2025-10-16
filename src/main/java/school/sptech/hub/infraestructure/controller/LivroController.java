@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroErroResponseSwgDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
@@ -104,30 +103,6 @@ public class LivroController {
     }
 
     @Operation(
-            summary = "Buscar livro por ID com sinopse",
-            description = "Retorna os dados de um livro com sinopse gerada por IA"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Livro encontrado com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroComSinopseResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Livro não encontrado",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
-            )
-    })
-    @GetMapping("/com-sinopse/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
-    public ResponseEntity<LivroComSinopseResponseDto> buscarLivroPorIdComSinopse(@PathVariable Integer id) {
-        LivroComSinopseResponseDto livro = livroService.buscarLivroPorIdComSinopse(id);
-        return ResponseEntity.ok(livro);
-    }
-
-    @Operation(
             summary = "Atualizar um livro existente",
             description = "Atualiza os dados de um livro com base no ID fornecido"
     )
@@ -161,7 +136,6 @@ public class LivroController {
     public ResponseEntity<LivroResponseDto> atualizarImagemLivro(
             @RequestParam Integer id,
             @RequestParam("arquivo") MultipartFile arquivo) throws IOException {
-            // MultipartFile é uma interface do Spring para lidar com arquivos enviados em requisições HTTP
         LivroResponseDto livroUpdated = livroService.atualizarImagemLivro(
                 id,
                 arquivo.getBytes(),
@@ -195,3 +169,4 @@ public class LivroController {
         return ResponseEntity.ok(livroDeleted);
     }
 }
+

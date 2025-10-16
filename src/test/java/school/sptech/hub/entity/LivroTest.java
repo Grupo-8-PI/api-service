@@ -67,6 +67,7 @@ public class LivroTest {
         Acabamento acabamento = new Acabamento();
         acabamento.setTipoAcabamento("Capa Dura");
         livro.setAcabamento(acabamento);
+    }
         assertEquals("Capa Dura", livro.getAcabamento().getTipoAcabamento());
     }
 
@@ -95,9 +96,9 @@ public class LivroTest {
 
     @Test
     public void testSetAndGetCategoria() {
-        Livro livro = new Livro();
+        categoria.setNome("Romance");
         Categoria categoria = new Categoria();
-        categoria.setNomeCategoria("Romance");
+        assertEquals("Romance", livro.getCategoria().getNome());
         livro.setCategoria(categoria);
         assertEquals("Romance", livro.getCategoria().getNomeCategoria());
     }

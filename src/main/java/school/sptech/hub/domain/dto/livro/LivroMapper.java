@@ -18,19 +18,16 @@ public class LivroMapper {
         livro.setAnoPublicacao(dto.getAnoPublicacao());
         livro.setPaginas(dto.getPaginas());
 
-        // Criar acabamento a partir do ID
         if (dto.getAcabamentoId() != null) {
             livro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
         }
 
-        // Criar conservação a partir do ID
         if (dto.getConservacaoId() != null) {
             livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
 
         livro.setPreco(dto.getPreco());
 
-        // Criar categoria temporária apenas com o nome para processamento posterior
         if (dto.getNomeCategoria() != null) {
             Categoria categoria = new Categoria();
             categoria.setNome(dto.getNomeCategoria());
@@ -40,7 +37,6 @@ public class LivroMapper {
         return livro;
     }
 
-    // Método compatível com a assinatura anterior (para não quebrar outros códigos)
     public static Livro toEntity(LivroCreateDto dto, Acabamento acabamento, Conservacao conservacao, Categoria categoria) {
         return toEntity(dto);
     }
@@ -54,29 +50,27 @@ public class LivroMapper {
         dto.setTitulo(livro.getTitulo());
         dto.setAutor(livro.getAutor());
         dto.setEditora(livro.getEditora());
-        // Tratamento seguro para Year
         dto.setAnoPublicacao(livro.getAnoPublicacao() != null ? livro.getAnoPublicacao().getValue() : null);
         dto.setPaginas(livro.getPaginas());
         dto.setCapa(livro.getCapa());
         dto.setPreco(livro.getPreco());
 
-        // Mapear dados do acabamento
         if (livro.getAcabamento() != null) {
             dto.setAcabamentoId(livro.getAcabamento().getId());
             dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamentoStr());
         }
 
-        // Mapear dados da conservação
         if (livro.getEstadoConservacao() != null) {
             dto.setConservacaoId(livro.getEstadoConservacao().getId());
             dto.setEstadoConservacao(livro.getEstadoConservacao().getEstadoConservacao());
         }
 
-        // Mapear dados da categoria
         if (livro.getCategoria() != null) {
             dto.setCategoriaId(livro.getCategoria().getId());
             dto.setNomeCategoria(livro.getCategoria().getNome());
         }
+
+        dto.setDescricao(livro.getDescricao());
 
         return dto;
     }
@@ -86,10 +80,8 @@ public class LivroMapper {
 
         LivroComSinopseResponseDto dto = new LivroComSinopseResponseDto();
 
-        // Usar o método base para preencher todos os campos herdados
         LivroResponseDto baseDto = toResponseDto(livro);
 
-        // Copiar todos os campos do DTO base
         dto.setId(baseDto.getId());
         dto.setIsbn(baseDto.getIsbn());
         dto.setTitulo(baseDto.getTitulo());
@@ -106,18 +98,15 @@ public class LivroMapper {
         dto.setCategoriaId(baseDto.getCategoriaId());
         dto.setNomeCategoria(baseDto.getNomeCategoria());
 
-        // Adicionar o campo específico
         dto.setSinopse(sinopse);
 
         return dto;
     }
 
-    // Método melhorado para update com DTO específico
     public static Livro fromUpdateDto(LivroUpdateDto dto, Acabamento acabamento, Conservacao conservacao, Categoria categoria) {
         if (dto == null) return null;
 
         Livro livro = new Livro();
-        // Aplicar apenas campos não nulos do DTO (update parcial)
         if (dto.getIsbn() != null) livro.setIsbn(dto.getIsbn());
         if (dto.getTitulo() != null) livro.setTitulo(dto.getTitulo());
         if (dto.getAutor() != null) livro.setAutor(dto.getAutor());
@@ -126,8 +115,8 @@ public class LivroMapper {
         if (dto.getPaginas() != null) livro.setPaginas(dto.getPaginas());
         if (dto.getCapa() != null) livro.setCapa(dto.getCapa());
         if (dto.getPreco() != null) livro.setPreco(dto.getPreco());
+        if (dto.getDescricao() != null) livro.setDescricao(dto.getDescricao());
 
-        // Aplicar entidades auxiliares apenas se fornecidas
         if (acabamento != null) livro.setAcabamento(acabamento);
         if (conservacao != null) livro.setEstadoConservacao(conservacao);
         if (categoria != null) livro.setCategoria(categoria);
@@ -138,7 +127,6 @@ public class LivroMapper {
     public static Livro updateLivroFields(Livro existingLivro, Livro updatedLivro) {
         if (existingLivro == null || updatedLivro == null) return existingLivro;
 
-        // Update apenas campos não nulos (partial update)
         if (updatedLivro.getIsbn() != null) {
             existingLivro.setIsbn(updatedLivro.getIsbn());
         }
@@ -172,6 +160,10 @@ public class LivroMapper {
         if (updatedLivro.getCategoria() != null) {
             existingLivro.setCategoria(updatedLivro.getCategoria());
         }
+        if (updatedLivro.getDescricao() != null) {
+            existingLivro.setDescricao(updatedLivro.getDescricao());
+        }
         return existingLivro;
     }
 }
+

@@ -52,7 +52,10 @@ public class LivroUpdateDto {
     @Size(max = 100, message = "O nome da categoria deve ter no máximo 100 caracteres")
     private String nomeCategoria;
 
-    // Getters and Setters
+    @Schema(description = "Descrição/sinopse do livro", example = "Uma história envolvente sobre...")
+    @Size(max = 1000, message = "A descrição deve ter no máximo 1000 caracteres")
+    private String descricao;
+
     public String getIsbn() {
         return isbn;
     }
@@ -140,4 +143,13 @@ public class LivroUpdateDto {
     public void setNomeCategoria(String nomeCategoria) {
         this.nomeCategoria = nomeCategoria;
     }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 }
+

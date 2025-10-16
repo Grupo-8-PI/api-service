@@ -50,8 +50,9 @@ public class LivroResponseDto {
     @Schema(description = "Nome da categoria do livro", example = "ROMANCE")
     private String nomeCategoria;
 
+    @Schema(description = "Descrição/sinopse do livro", example = "Uma história envolvente sobre...")
+    private String descricao;
 
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -96,4 +97,8 @@ public class LivroResponseDto {
 
     public String getNomeCategoria() { return nomeCategoria; }
     public void setNomeCategoria(String nomeCategoria) { this.nomeCategoria = nomeCategoria; }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 }
+

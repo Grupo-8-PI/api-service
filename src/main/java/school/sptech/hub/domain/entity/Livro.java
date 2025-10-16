@@ -11,6 +11,7 @@ public class Livro {
     private String isbn;
     private String autor;
     private String editora;
+    private String descricao;
     private Year anoPublicacao;
     private Integer paginas;
     private Acabamento acabamento;
@@ -38,7 +39,6 @@ public class Livro {
         this.categoria = categoria;
     }
 
-    // Business Rules - Métodos de validação da entidade de domínio
     public boolean isValidForCreation() {
         return isValidIsbn(this.isbn) &&
                isValidTitulo(this.titulo) &&
@@ -49,12 +49,11 @@ public class Livro {
                isValidPreco(this.preco) &&
                isValidAcabamento(this.acabamento) &&
                isValidEstadoConservacao(this.estadoConservacao) &&
-               isValidCategoria(this.categoria);
+               isValidCategoria(this.categoria) &&
+               isValidDescricao(this.descricao);
     }
 
     public boolean isValidForUpdate() {
-        // Para update, os campos podem ser nulos (update parcial)
-        // Mas se fornecidos, devem ser válidos
         if (this.isbn != null && !isValidIsbn(this.isbn)) return false;
         if (this.titulo != null && !isValidTitulo(this.titulo)) return false;
         if (this.autor != null && !isValidAutor(this.autor)) return false;
@@ -75,10 +74,8 @@ public class Livro {
             return false;
         }
 
-        // Remove hífens e espaços para validação
         String cleanIsbn = isbn.replaceAll("[\\s-]", "");
 
-        // Verifica se é ISBN-10 (10 caracteres, sendo o último podendo ser X) ou ISBN-13 (13 dígitos)
         return cleanIsbn.matches("\\d{9}[\\dX]") || cleanIsbn.matches("\\d{13}");
     }
 
@@ -88,7 +85,7 @@ public class Livro {
         }
 
         Year currentYear = Year.now();
-        Year oldestYear = Year.of(1450); // Prensa de Gutenberg
+        Year oldestYear = Year.of(1450);
 
         return !year.isBefore(oldestYear) && !year.isAfter(currentYear);
     }
@@ -139,21 +136,22 @@ public class Livro {
                !categoria.getNome().trim().isEmpty();
     }
 
-    // Método para validar regra de negócio específica
     public void validateBusinessRules() {
         if (!isValidForCreation()) {
             throw new IllegalArgumentException("Dados do livro não atendem às regras de negócio");
         }
     }
 
-    // Método para aplicar regras de negócio durante atualização
     public void validateUpdateRules() {
         if (!isValidForUpdate()) {
             throw new IllegalArgumentException("Dados de atualização do livro não atendem às regras de negócio");
         }
     }
 
-    // Getters and Setters
+    private boolean isValidDescricao(String descricao) {
+        return descricao != null && !descricao.trim().isEmpty() && descricao.length() <= 1000;
+    }
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -189,6 +187,9 @@ public class Livro {
 
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
     @Override
     public boolean equals(Object o) {
@@ -233,3 +234,4 @@ public class Livro {
                 '}';
     }
 }
+
