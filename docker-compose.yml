@@ -8,7 +8,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: aej_hub_db
-      MYSQL_USER: ${USER}
+      MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
@@ -21,7 +21,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 60s
 
   rabbitmq:
     image: rabbitmq:3.12-management
@@ -55,7 +55,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prd
       DB_NAME: aej_hub_db
-      USER: ${USER}
+      DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       AWS_REGION: ${AWS_REGION}

@@ -49,8 +49,7 @@ public class Livro {
                isValidPreco(this.preco) &&
                isValidAcabamento(this.acabamento) &&
                isValidEstadoConservacao(this.estadoConservacao) &&
-               isValidCategoria(this.categoria) &&
-               isValidDescricao(this.descricao);
+               isValidCategoria(this.categoria);
     }
 
     public boolean isValidForUpdate() {
@@ -65,6 +64,7 @@ public class Livro {
         if (this.acabamento != null && !isValidAcabamento(this.acabamento)) return false;
         if (this.estadoConservacao != null && !isValidEstadoConservacao(this.estadoConservacao)) return false;
         if (this.categoria != null && !isValidCategoria(this.categoria)) return false;
+        if (this.descricao != null && !isValidDescricao(this.descricao)) return false;
 
         return true;
     }
@@ -149,7 +149,7 @@ public class Livro {
     }
 
     private boolean isValidDescricao(String descricao) {
-        return descricao != null && !descricao.trim().isEmpty() && descricao.length() <= 1000;
+        return descricao instanceof String;
     }
 
     public Integer getId() { return id; }
