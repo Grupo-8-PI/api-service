@@ -22,8 +22,8 @@ services:
     container_name: rabbitmq-local
     restart: unless-stopped
     ports:
-      - "5672:5672"     # porta AMQP (para conexão com Spring Boot)
-      - "15672:15672"   # painel de gerenciamento
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
@@ -50,11 +50,10 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_VALIDITY: ${JWT_VALIDITY}
 
-      # Configuração do RabbitMQ para o Spring Boot
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: admin
-      SPRING_RABBITMQ_PASSWORD: admin
+      SPRING_RABBITMQ_HOST: ${RABBIT_MQ_HOST:-rabbitmq-local}
+      SPRING_RABBITMQ_PORT: ${RABBIT_MQ_PORT:-5672}
+      SPRING_RABBITMQ_USERNAME: ${RABBIT_MQ_USERNAME}
+      SPRING_RABBITMQ_PASSWORD: ${RABBIT_MQ_PASSWORD}
 
     depends_on:
       - mysql
