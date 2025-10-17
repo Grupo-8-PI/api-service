@@ -28,6 +28,9 @@ public class LivroEntityMapper {
         if (livro.getAcabamento() != null && livro.getAcabamento().getId() != null) {
             AcabamentoEntity acabamentoRef = new AcabamentoEntity();
             acabamentoRef.setId(livro.getAcabamento().getId());
+            if (livro.getAcabamento().getTipoAcabamento() != null) {
+                acabamentoRef.setTipoAcabamento(livro.getAcabamento().getTipoAcabamento());
+            }
             entity.setAcabamento(acabamentoRef);
         }
 
@@ -38,6 +41,9 @@ public class LivroEntityMapper {
         if (livro.getEstadoConservacao() != null && livro.getEstadoConservacao().getId() != null) {
             ConservacaoEntity conservacaoRef = new ConservacaoEntity();
             conservacaoRef.setId(livro.getEstadoConservacao().getId());
+            if (livro.getEstadoConservacao().getTipoConservacao() != null) {
+                conservacaoRef.setTipoConservacao(livro.getEstadoConservacao().getTipoConservacao());
+            }
             entity.setEstadoConservacao(conservacaoRef);
         }
 
