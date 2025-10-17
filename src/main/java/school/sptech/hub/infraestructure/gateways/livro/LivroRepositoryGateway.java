@@ -54,11 +54,9 @@ public class LivroRepositoryGateway implements LivroGateway {
         LivroEntity livroEntity = LivroEntityMapper.toEntity(livro);
         LivroEntity updatedEntity = livroRepository.save(livroEntity);
 
-        // Força o flush e limpa o cache para garantir reload completo
         livroRepository.flush();
-        entityManager.clear();  // Remove todos os objetos do cache
+        entityManager.clear();
 
-        // Agora busca do banco com os relacionamentos EAGER
         LivroEntity reloadedEntity = livroRepository.findById(updatedEntity.getId()).orElse(updatedEntity);
 
         return Optional.of(LivroEntityMapper.toDomain(reloadedEntity));
