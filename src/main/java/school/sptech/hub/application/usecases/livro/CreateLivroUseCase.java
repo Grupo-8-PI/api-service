@@ -68,7 +68,7 @@ public class CreateLivroUseCase {
         Livro createdLivro = livroGateway.createLivro(livroEntity)
                 .orElseThrow(() -> new LivroNaoEncontradoException("Erro ao criar livro"));
 
-        chatGptAdapter.gerarSinopse(createdLivro.getTitulo(), createdLivro.getAutor());
+        chatGptAdapter.gerarSinopse(createdLivro);
 
         return LivroMapper.toResponseDto(createdLivro);
     }
