@@ -190,21 +190,21 @@ public class VendaController {
         return ResponseEntity.ok(response);
     }
 
+//    @GetMapping()
+//    @SecurityRequirement(name = "bearer")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<List<Venda>> listAllReservas(){
+//        List<Venda> vendas = listAllVendasUseCase.execute();
+//
+//        return ResponseEntity.status(200).body(vendas);
+//    }
+
     @GetMapping()
-    @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Venda>> listAllReservas(){
-        List<Venda> vendas = listAllVendasUseCase.execute();
-
-        return ResponseEntity.status(200).body(vendas);
-    }
-
-    @GetMapping("/paginado")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ReservaPaginatedResponseDto> listarReservasPaginado(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "9") int size) {
         ReservaPaginatedResponseDto reservas = listReservasPaginatedUseCase.execute(page, size);
         return ResponseEntity.ok(reservas);
     }
