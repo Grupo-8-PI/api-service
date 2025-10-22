@@ -36,8 +36,6 @@ public class CategoriaController {
             )
     })
     @GetMapping
-    @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     public ResponseEntity<List<CategoriaResponseDto>> listarCategorias() {
         List<CategoriaResponseDto> categorias = categoriaService.listarCategorias();
         return ResponseEntity.ok(categorias);
@@ -59,8 +57,6 @@ public class CategoriaController {
             )
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
     public ResponseEntity<CategoriaResponseDto> buscarCategoriaPorId(@PathVariable Integer id) {
         CategoriaResponseDto categoria = categoriaService.buscarCategoriaPorId(id);
         return ResponseEntity.ok(categoria);
