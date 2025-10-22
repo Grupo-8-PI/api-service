@@ -190,15 +190,6 @@ public class VendaController {
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping()
-//    @SecurityRequirement(name = "bearer")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<List<Venda>> listAllReservas(){
-//        List<Venda> vendas = listAllVendasUseCase.execute();
-//
-//        return ResponseEntity.status(200).body(vendas);
-//    }
-
     @GetMapping()
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
