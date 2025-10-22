@@ -72,8 +72,6 @@ public class LivroController {
             )
     })
     @GetMapping
-    @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     public ResponseEntity<List<LivroResponseDto>> listarLivros() {
         List<LivroResponseDto> livros = livroService.listarLivros();
         return ResponseEntity.ok(livros);
