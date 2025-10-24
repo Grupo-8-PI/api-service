@@ -28,6 +28,7 @@ public class LivroMapper {
             livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
 
+        livro.setCapa(null);
         livro.setPreco(dto.getPreco());
 
         if (dto.getNomeCategoria() != null) {
@@ -36,7 +37,6 @@ public class LivroMapper {
             livro.setCategoria(categoria);
         }
 
-        // Definir dataAdicao: usar do DTO se fornecida, senão usar agora
         livro.setDataAdicao(dto.getDataAdicao() != null ? dto.getDataAdicao() : LocalDateTime.now());
 
         return livro;
@@ -78,6 +78,7 @@ public class LivroMapper {
         }
 
         dto.setDescricao(livro.getDescricao());
+        dto.setDataAdicao(livro.getDataAdicao());
 
         return dto;
     }
@@ -132,33 +133,50 @@ public class LivroMapper {
         return livro;
     }
 
-    public static Livro updateLivroFields(Livro existingLivro, Livro updatedLivro) {
-        if (existingLivro == null || updatedLivro == null) return existingLivro;
+    public static void updateEntityFromDto(Livro existingLivro, LivroUpdateDto dto) {
+        if (existingLivro == null || dto == null) return;
 
-        if (updatedLivro.getIsbn() != null) {
-            existingLivro.setIsbn(updatedLivro.getIsbn());
+        if (dto.getIsbn() != null) {
+            existingLivro.setIsbn(dto.getIsbn());
+        }
+        if (dto.getTitulo() != null) {
+            existingLivro.setTitulo(dto.getTitulo());
+        }
+        if (dto.getAutor() != null) {
+            existingLivro.setAutor(dto.getAutor());
+        }
+        if (dto.getEditora() != null) {
+            existingLivro.setEditora(dto.getEditora());
+        }
+        if (dto.getAnoPublicacao() != null) {
+            existingLivro.setAnoPublicacao(dto.getAnoPublicacao());
+        }
+        if (dto.getPaginas() != null) {
+            existingLivro.setPaginas(dto.getPaginas());
+        }
+        if (dto.getCapa() != null) {
+            existingLivro.setCapa(dto.getCapa());
+        }
+        if (dto.getPreco() != null) {
+            existingLivro.setPreco(dto.getPreco());
+        }
+        if (dto.getDescricao() != null) {
+            existingLivro.setDescricao(dto.getDescricao());
         }
 
-        // Atualizar conservação se fornecida
+        if (dto.getAcabamentoId() != null) {
+            existingLivro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
+        }
+
         if (dto.getConservacaoId() != null) {
-            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
+            existingLivro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
 
-        // Atualizar categoria se fornecida
         if (dto.getNomeCategoria() != null) {
             Categoria categoria = new Categoria();
             categoria.setNome(dto.getNomeCategoria());
-            livro.setCategoria(categoria);
+            existingLivro.setCategoria(categoria);
         }
-
-        // Atualizar dataAdicao se fornecida
-        if (dto.getDataAdicao() != null) {
-            livro.setDataAdicao(dto.getDataAdicao());
-        }
-        if (updatedLivro.getDescricao() != null) {
-            existingLivro.setDescricao(updatedLivro.getDescricao());
-        }
-        return existingLivro;
     }
 }
 

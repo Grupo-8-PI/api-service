@@ -27,7 +27,6 @@ public class LivroService {
     public LivroService(CreateLivroUseCase createLivroUseCase,
                         FindLivroByIdUseCase findLivroByIdUseCase,
                         ListAllLivrosUseCase listAllLivrosUseCase,
-                        FindLivroWithSinopseUseCase findLivroWithSinopseUseCase,
                         UpdateLivroUseCase updateLivroUseCase,
                         DeleteLivroUseCase deleteLivroUseCase,
                         UploadImageUseCase uploadImageUseCase,
