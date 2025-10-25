@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroErroResponseSwgDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
@@ -33,7 +32,7 @@ public class LivroController {
 
     @Operation(
             summary = "Cadastrar um novo livro",
-            description = "Cria um novo livro com os dados fornecidos no corpo da requisição"
+            description = "Cria um novo livro com os dados fornecidos no corpo da requisição. O campo 'dataAdicao' será preenchido automaticamente com a data/hora atual do sistema."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -72,8 +71,6 @@ public class LivroController {
             )
     })
     @GetMapping
-    @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     public ResponseEntity<List<LivroResponseDto>> listarLivros() {
         List<LivroResponseDto> livros = livroService.listarLivros();
         return ResponseEntity.ok(livros);
@@ -100,30 +97,6 @@ public class LivroController {
     @SecurityRequirement(name = "bearer")
     public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
-        return ResponseEntity.ok(livro);
-    }
-
-    @Operation(
-            summary = "Buscar livro por ID com sinopse",
-            description = "Retorna os dados de um livro com sinopse gerada por IA"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Livro encontrado com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroComSinopseResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Livro não encontrado",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
-            )
-    })
-    @GetMapping("/com-sinopse/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
-    public ResponseEntity<LivroComSinopseResponseDto> buscarLivroPorIdComSinopse(@PathVariable Integer id) {
-        LivroComSinopseResponseDto livro = livroService.buscarLivroPorIdComSinopse(id);
         return ResponseEntity.ok(livro);
     }
 
@@ -161,7 +134,6 @@ public class LivroController {
     public ResponseEntity<LivroResponseDto> atualizarImagemLivro(
             @RequestParam Integer id,
             @RequestParam("arquivo") MultipartFile arquivo) throws IOException {
-            // MultipartFile é uma interface do Spring para lidar com arquivos enviados em requisições HTTP
         LivroResponseDto livroUpdated = livroService.atualizarImagemLivro(
                 id,
                 arquivo.getBytes(),
@@ -194,4 +166,138 @@ public class LivroController {
         LivroResponseDto livroDeleted = livroService.deletarLivro(id);
         return ResponseEntity.ok(livroDeleted);
     }
+
+    @Operation(
+            summary = "Buscar livros por acabamento",
+            description = "Retorna uma lista de livros filtrados por tipo de acabamento. IDs válidos: 1 (CAPA_DURA), 2 (BROCHURA)"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de acabamento inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/acabamento/{acabamentoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorAcabamento(
+            @PathVariable @Schema(description = "ID do tipo de acabamento", example = "1", allowableValues = {"1", "2"}) Integer acabamentoId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorAcabamento(acabamentoId);
+        return ResponseEntity.ok(livros);
+    }
+
+    @Operation(
+            summary = "Buscar livros por conservação",
+            description = "Retorna uma lista de livros filtrados por estado de conservação. IDs válidos: 1 (EXCELENTE), 2 (BOM), 3 (RAZOÁVEL), 4 (DEGRADADO)"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de conservação inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/conservacao/{conservacaoId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorConservacao(
+            @PathVariable @Schema(description = "ID do estado de conservação", example = "1", allowableValues = {"1", "2", "3", "4"}) Integer conservacaoId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorConservacao(conservacaoId);
+        return ResponseEntity.ok(livros);
+    }
+
+    @Operation(
+            summary = "Buscar livros por categoria",
+            description = "Retorna uma lista de livros filtrados por categoria"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "ID de categoria inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Categoria não encontrada",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/categoria/{categoriaId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorCategoria(
+            @PathVariable @Schema(description = "ID da categoria", example = "1") Integer categoriaId) {
+        List<LivroResponseDto> livros = livroService.buscarLivrosPorCategoria(categoriaId);
+        return ResponseEntity.ok(livros);
+    }
+
+    @Operation(
+            summary = "Listar todas as categorias",
+            description = "Retorna uma lista com todas as categorias disponíveis no sistema"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de categorias retornada com sucesso",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    @GetMapping("/categorias")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<List<String>> listarCategorias() {
+        List<String> categorias = livroService.listarCategorias();
+        return ResponseEntity.ok(categorias);
+    }
+
+    @Operation(
+            summary = "Listar livros recomendados",
+            description = "Retorna uma lista com livros recomendados de forma aleatória (até 3 livros)"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros recomendados retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            )
+    })
+    @GetMapping("/recomendados")
+    public ResponseEntity<List<LivroResponseDto>> listarLivrosRecomendados() {
+        List<LivroResponseDto> livros = livroService.listarLivrosRecomendados();
+        return ResponseEntity.ok(livros);
+    }
+
+    @Operation(
+            summary = "Listar livros recentes",
+            description = "Retorna uma lista com os 3 livros mais recentes adicionados ao sebo, ordenados pela data de adição em ordem decrescente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de livros recentes retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            )
+    })
+    @GetMapping("/recentes")
+    public ResponseEntity<List<LivroResponseDto>> listarLivrosRecentes() {
+        List<LivroResponseDto> livros = livroService.listarLivrosRecentes();
+        return ResponseEntity.ok(livros);
+    }
 }
+

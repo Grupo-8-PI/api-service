@@ -32,44 +32,29 @@ public class UpdateLivroUseCase {
         Livro existingLivro = livroGateway.findById(id)
                 .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado com ID: " + id));
 
-        // Buscar entidades relacionadas pelos IDs apenas se fornecidos
-        Acabamento acabamento = null;
-        if (livroUpdateDto.getAcabamentoId() != null) {
-            // Para acabamento, criamos diretamente pois os IDs são fixos (1-CAPA DURA, 2-BROCHURA)
-            try {
-                acabamento = new Acabamento(livroUpdateDto.getAcabamentoId());
-            } catch (IllegalArgumentException e) {
-                throw new AcabamentoNaoEncontradoException("ID de acabamento inválido: " + livroUpdateDto.getAcabamentoId() + ". IDs válidos: 1-CAPA DURA, 2-BROCHURA");
-            }
-        }
-
-        Conservacao conservacao = null;
-        if (livroUpdateDto.getConservacaoId() != null) {
-            // Para conservação, criamos diretamente pois os IDs são fixos (1-4)
-            try {
-                conservacao = new Conservacao(livroUpdateDto.getConservacaoId());
-            } catch (IllegalArgumentException e) {
-                throw new ConservacaoNaoEncontradaException("ID de conservação inválido: " + livroUpdateDto.getConservacaoId() + ". IDs válidos: 1-EXCELENTE, 2-BOM, 3-RAZOÁVEL, 4-DEGRADADO");
-            }
-        }
-
         // Processar categoria da mesma forma que na criação (buscar existente ou criar nova)
-        Categoria categoria = null;
         if (livroUpdateDto.getNomeCategoria() != null) {
-            categoria = processarCategoria(livroUpdateDto.getNomeCategoria());
+            Categoria categoria = processarCategoria(livroUpdateDto.getNomeCategoria());
+            livroUpdateDto.setNomeCategoria(categoria.getNome());
         }
 
-        // Converter DTO para entidade usando o mapper atualizado
-        Livro livroToUpdate = LivroMapper.fromUpdateDto(livroUpdateDto, acabamento, conservacao, categoria);
+        // Usar o método updateEntityFromDto que implementamos no LivroMapper
+        LivroMapper.updateEntityFromDto(existingLivro, livroUpdateDto);
 
         // Validação usando regras de negócio da entidade de domínio
-        livroToUpdate.validateUpdateRules();
+        existingLivro.validateUpdateRules();
 
-        // Aplicar atualizações ao livro existente
-        Livro updatedLivro = LivroMapper.updateLivroFields(existingLivro, livroToUpdate);
+        // Verificar se há mudança de ISBN e se o novo ISBN já existe
+        if (livroUpdateDto.getIsbn() != null &&
+            !livroUpdateDto.getIsbn().equals(existingLivro.getIsbn())) {
+            livroGateway.findByIsbn(livroUpdateDto.getIsbn())
+                .ifPresent(livro -> {
+                    throw new LivroJaExisteException("Já existe um livro cadastrado com este ISBN.");
+                });
+        }
 
         // Salvar no repositório
-        Livro savedLivro = livroGateway.updateLivro(updatedLivro)
+        Livro savedLivro = livroGateway.updateLivro(existingLivro)
                 .orElseThrow(() -> new LivroNaoEncontradoException("Erro ao atualizar livro"));
 
         return LivroMapper.toResponseDto(savedLivro);

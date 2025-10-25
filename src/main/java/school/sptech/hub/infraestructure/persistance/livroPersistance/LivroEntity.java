@@ -6,6 +6,7 @@ import school.sptech.hub.infraestructure.persistance.acabamentoPersistance.Acaba
 import school.sptech.hub.infraestructure.persistance.categoriaPersistance.CategoriaEntity;
 import school.sptech.hub.infraestructure.persistance.conservacaoPersistance.ConservacaoEntity;
 
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.Objects;
 
@@ -53,8 +54,7 @@ public class LivroEntity {
     private ConservacaoEntity estadoConservacao;
 
     @Lob
-    @Column(nullable = false)
-    @NotBlank
+    @Column(nullable = true)
     private String capa;
 
     @Column(nullable = false)
@@ -67,11 +67,20 @@ public class LivroEntity {
     @NotNull
     private CategoriaEntity categoria;
 
+    @Lob
+    @Column(name = "descricao", columnDefinition = "TEXT")
+    private String descricao;
+
+    @Column(name = "data_adicao", nullable = false)
+    @NotNull
+    private LocalDateTime dataAdicao;
+
     public LivroEntity() {}
 
     public LivroEntity(Integer id, String titulo, String isbn, String autor, String editora,
                        Year anoPublicacao, Integer paginas, AcabamentoEntity acabamento,
-                       ConservacaoEntity estadoConservacao, String capa, Double preco, CategoriaEntity categoria) {
+                       ConservacaoEntity estadoConservacao, String capa, Double preco,
+                       CategoriaEntity categoria, LocalDateTime dataAdicao) {
         this.id = id;
         this.titulo = titulo;
         this.isbn = isbn;
@@ -84,9 +93,9 @@ public class LivroEntity {
         this.capa = capa;
         this.preco = preco;
         this.categoria = categoria;
+        this.dataAdicao = dataAdicao;
     }
 
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -123,6 +132,17 @@ public class LivroEntity {
     public CategoriaEntity getCategoria() { return categoria; }
     public void setCategoria(CategoriaEntity categoria) { this.categoria = categoria; }
 
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public LocalDateTime getDataAdicao() {
+        return dataAdicao;
+    }
+
+    public void setDataAdicao(LocalDateTime dataAdicao) {
+        this.dataAdicao = dataAdicao;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -139,13 +159,14 @@ public class LivroEntity {
                 Objects.equals(estadoConservacao, that.estadoConservacao) &&
                 Objects.equals(capa, that.capa) &&
                 Objects.equals(preco, that.preco) &&
-                Objects.equals(categoria, that.categoria);
+                Objects.equals(categoria, that.categoria) &&
+                Objects.equals(dataAdicao, that.dataAdicao);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, titulo, isbn, autor, editora, anoPublicacao, paginas,
-                           acabamento, estadoConservacao, capa, preco, categoria);
+                           acabamento, estadoConservacao, capa, preco, categoria, dataAdicao);
     }
 
     @Override
@@ -163,6 +184,8 @@ public class LivroEntity {
                 ", capa='" + capa + '\'' +
                 ", preco=" + preco +
                 ", categoria=" + categoria +
+                ", dataAdicao=" + dataAdicao +
                 '}';
     }
 }
+

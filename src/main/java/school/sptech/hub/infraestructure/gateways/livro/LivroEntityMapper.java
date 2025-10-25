@@ -24,19 +24,31 @@ public class LivroEntityMapper {
         entity.setPaginas(livro.getPaginas());
         entity.setCapa(livro.getCapa());
         entity.setPreco(livro.getPreco());
+        entity.setDataAdicao(livro.getDataAdicao());
 
-        // Inserir entidades completas (permitindo duplicação)
-        if (livro.getAcabamento() != null) {
-            entity.setAcabamento(AcabamentoEntityMapper.toEntity(livro.getAcabamento()));
+        if (livro.getAcabamento() != null && livro.getAcabamento().getId() != null) {
+            AcabamentoEntity acabamentoRef = new AcabamentoEntity();
+            acabamentoRef.setId(livro.getAcabamento().getId());
+            if (livro.getAcabamento().getTipoAcabamento() != null) {
+                acabamentoRef.setTipoAcabamento(livro.getAcabamento().getTipoAcabamento());
+            }
+            entity.setAcabamento(acabamentoRef);
         }
 
         if (livro.getCategoria() != null) {
             entity.setCategoria(CategoriaEntityMapper.toEntity(livro.getCategoria()));
         }
 
-        if (livro.getEstadoConservacao() != null) {
-            entity.setEstadoConservacao(ConservacaoEntityMapper.toEntity(livro.getEstadoConservacao()));
+        if (livro.getEstadoConservacao() != null && livro.getEstadoConservacao().getId() != null) {
+            ConservacaoEntity conservacaoRef = new ConservacaoEntity();
+            conservacaoRef.setId(livro.getEstadoConservacao().getId());
+            if (livro.getEstadoConservacao().getTipoConservacao() != null) {
+                conservacaoRef.setTipoConservacao(livro.getEstadoConservacao().getTipoConservacao());
+            }
+            entity.setEstadoConservacao(conservacaoRef);
         }
+
+        entity.setDescricao(livro.getDescricao());
 
         return entity;
     }
@@ -54,8 +66,8 @@ public class LivroEntityMapper {
         livro.setPaginas(entity.getPaginas());
         livro.setCapa(entity.getCapa());
         livro.setPreco(entity.getPreco());
+        livro.setDataAdicao(entity.getDataAdicao());
 
-        // Converter relacionamentos
         if (entity.getAcabamento() != null) {
             livro.setAcabamento(AcabamentoEntityMapper.toDomain(entity.getAcabamento()));
         }
@@ -67,6 +79,8 @@ public class LivroEntityMapper {
         if (entity.getEstadoConservacao() != null) {
             livro.setEstadoConservacao(ConservacaoEntityMapper.toDomain(entity.getEstadoConservacao()));
         }
+
+        livro.setDescricao(entity.getDescricao());
 
         return livro;
     }

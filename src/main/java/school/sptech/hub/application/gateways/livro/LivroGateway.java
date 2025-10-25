@@ -12,4 +12,11 @@ public interface LivroGateway {
     Optional<Livro> updateLivro(Livro livro);
     void deleteLivro(Integer id);
     Optional<Livro> findByIsbn(String isbn);
+    List<Livro> findByAcabamentoId(Integer acabamentoId);
+    List<Livro> findByConservacaoId(Integer conservacaoId);
+    List<Livro> findByCategoriaId(Integer categoriaId);
+    List<String> findAllDistinctCategorias();
+    List<Livro> findRecommendedRandomLivros();
+    Optional<Livro> findRandomLivro();
+    List<Livro> findTop3ByOrderByDataAdicaoDesc();
 }

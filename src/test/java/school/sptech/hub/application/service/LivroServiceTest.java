@@ -8,12 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import school.sptech.hub.application.usecases.livro.*;
-import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 
-import java.time.Year;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,13 +27,11 @@ class LivroServiceTest {
     private ListAllLivrosUseCase listAllLivrosUseCase;
 
     @Mock
-    private FindLivroWithSinopseUseCase findLivroWithSinopseUseCase;
-
-    @Mock
     private UpdateLivroUseCase updateLivroUseCase;
 
     @Mock
     private DeleteLivroUseCase deleteLivroUseCase;
+
     @Mock
     private UploadImageUseCase uploadImageUseCase;
 
@@ -51,13 +47,11 @@ class LivroServiceTest {
             createLivroUseCase,
             findLivroByIdUseCase,
             listAllLivrosUseCase,
-            findLivroWithSinopseUseCase,
             updateLivroUseCase,
             deleteLivroUseCase,
             uploadImageUseCase
         );
 
-        // Setup test data
         livroCreateDto = new LivroCreateDto();
         livroCreateDto.setTitulo("Dom Casmurro");
         livroCreateDto.setAutor("Machado de Assis");
@@ -77,13 +71,10 @@ class LivroServiceTest {
 
     @Test
     void testCreateNewLivro() {
-        // Given
         when(createLivroUseCase.execute(livroCreateDto)).thenReturn(livroResponseDto);
 
-        // When
         LivroResponseDto result = livroService.createNewLivro(livroCreateDto);
 
-        // Then
         assertNotNull(result);
         assertEquals(livroResponseDto.getId(), result.getId());
         assertEquals(livroResponseDto.getTitulo(), result.getTitulo());
@@ -92,14 +83,11 @@ class LivroServiceTest {
 
     @Test
     void testBuscarLivroPorId() {
-        // Given
         Integer id = 1;
         when(findLivroByIdUseCase.execute(id)).thenReturn(livroResponseDto);
 
-        // When
         LivroResponseDto result = livroService.buscarLivroPorId(id);
 
-        // Then
         assertNotNull(result);
         assertEquals(livroResponseDto.getId(), result.getId());
         verify(findLivroByIdUseCase).execute(id);
@@ -107,7 +95,6 @@ class LivroServiceTest {
 
     @Test
     void testListarLivros() {
-        // Given
         LivroResponseDto livro2 = new LivroResponseDto();
         livro2.setId(2);
         livro2.setTitulo("O Cortiço");
@@ -115,10 +102,8 @@ class LivroServiceTest {
         List<LivroResponseDto> livros = Arrays.asList(livroResponseDto, livro2);
         when(listAllLivrosUseCase.execute()).thenReturn(livros);
 
-        // When
         List<LivroResponseDto> result = livroService.listarLivros();
 
-        // Then
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("Dom Casmurro", result.get(0).getTitulo());
@@ -127,30 +112,7 @@ class LivroServiceTest {
     }
 
     @Test
-    void testBuscarLivroPorIdComSinopse() {
-        // Given
-        Integer id = 1;
-        LivroComSinopseResponseDto livroComSinopse = new LivroComSinopseResponseDto();
-        livroComSinopse.setId(1);
-        livroComSinopse.setTitulo("Dom Casmurro");
-        livroComSinopse.setSinopse("Uma obra-prima da literatura brasileira");
-
-        when(findLivroWithSinopseUseCase.execute(id)).thenReturn(livroComSinopse);
-
-        // When
-        LivroComSinopseResponseDto result = livroService.buscarLivroPorIdComSinopse(id);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(livroComSinopse.getId(), result.getId());
-        assertEquals(livroComSinopse.getTitulo(), result.getTitulo());
-        assertEquals(livroComSinopse.getSinopse(), result.getSinopse());
-        verify(findLivroWithSinopseUseCase).execute(id);
-    }
-
-    @Test
     void testAtualizarLivro() {
-        // Given
         Integer id = 1;
         LivroResponseDto livroAtualizado = new LivroResponseDto();
         livroAtualizado.setId(1);
@@ -159,10 +121,8 @@ class LivroServiceTest {
 
         when(updateLivroUseCase.execute(id, livroUpdateDto)).thenReturn(livroAtualizado);
 
-        // When
         LivroResponseDto result = livroService.atualizarLivro(id, livroUpdateDto);
 
-        // Then
         assertNotNull(result);
         assertEquals(livroAtualizado.getId(), result.getId());
         assertEquals(livroAtualizado.getTitulo(), result.getTitulo());
@@ -172,16 +132,14 @@ class LivroServiceTest {
 
     @Test
     void testDeletarLivro() {
-        // Given
         Integer id = 1;
         when(deleteLivroUseCase.execute(id)).thenReturn(livroResponseDto);
 
-        // When
         LivroResponseDto result = livroService.deletarLivro(id);
 
-        // Then
         assertNotNull(result);
         assertEquals(livroResponseDto.getId(), result.getId());
         verify(deleteLivroUseCase).execute(id);
     }
 }
+
