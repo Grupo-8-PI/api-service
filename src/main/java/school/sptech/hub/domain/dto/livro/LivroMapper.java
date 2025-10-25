@@ -37,7 +37,7 @@ public class LivroMapper {
             livro.setCategoria(categoria);
         }
 
-        livro.setDataAdicao(dto.getDataAdicao() != null ? dto.getDataAdicao() : LocalDateTime.now());
+        livro.setDataAdicao(LocalDateTime.now());
 
         return livro;
     }

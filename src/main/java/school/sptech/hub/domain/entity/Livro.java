@@ -149,9 +149,9 @@ public class Livro {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime minDate = LocalDateTime.of(2020, 1, 1, 0, 0); // Data mínima razoável para o sebo
-
-        return !dataAdicao.isBefore(minDate) && !dataAdicao.isAfter(now);
+        
+        // Apenas valida que a data não é futura
+        return !dataAdicao.isAfter(now);
     }
 
     public void validateBusinessRules() {
