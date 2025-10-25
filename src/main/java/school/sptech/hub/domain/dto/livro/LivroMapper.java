@@ -130,8 +130,10 @@ public class LivroMapper {
         if (conservacao != null) livro.setEstadoConservacao(conservacao);
         if (categoria != null) livro.setCategoria(categoria);
 
-        return livro;
-    }
+        // Atualizar conservação se fornecida
+        if (dto.getConservacaoId() != null) {
+            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
+        }
 
     public static void updateEntityFromDto(Livro existingLivro, LivroUpdateDto dto) {
         if (existingLivro == null || dto == null) return;
