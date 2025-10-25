@@ -58,7 +58,10 @@ public class LivroUpdateDto {
             example = "2024-12-05T14:30:00")
     private LocalDateTime dataAdicao;
 
-    // Getters and Setters
+    @Schema(description = "Descrição/sinopse do livro", example = "Uma história envolvente sobre...")
+    @Size(max = 1000, message = "A descrição deve ter no máximo 1000 caracteres")
+    private String descricao;
+
     public String getIsbn() {
         return isbn;
     }
@@ -154,4 +157,13 @@ public class LivroUpdateDto {
     public void setDataAdicao(LocalDateTime dataAdicao) {
         this.dataAdicao = dataAdicao;
     }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 }
+

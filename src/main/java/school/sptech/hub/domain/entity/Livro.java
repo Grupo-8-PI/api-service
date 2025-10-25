@@ -12,6 +12,7 @@ public class Livro {
     private String isbn;
     private String autor;
     private String editora;
+    private String descricao;
     private Year anoPublicacao;
     private Integer paginas;
     private Acabamento acabamento;
@@ -42,7 +43,6 @@ public class Livro {
         this.dataAdicao = dataAdicao;
     }
 
-    // Business Rules - Métodos de validação da entidade de domínio
     public boolean isValidForCreation() {
         return isValidIsbn(this.isbn) &&
                isValidTitulo(this.titulo) &&
@@ -59,8 +59,6 @@ public class Livro {
     }
 
     public boolean isValidForUpdate() {
-        // Para update, os campos podem ser nulos (update parcial)
-        // Mas se fornecidos, devem ser válidos
         if (this.isbn != null && !isValidIsbn(this.isbn)) return false;
         if (this.titulo != null && !isValidTitulo(this.titulo)) return false;
         if (this.autor != null && !isValidAutor(this.autor)) return false;
@@ -73,6 +71,7 @@ public class Livro {
         if (this.estadoConservacao != null && !isValidEstadoConservacao(this.estadoConservacao)) return false;
         if (this.categoria != null && !isValidCategoria(this.categoria)) return false;
         if (this.dataAdicao != null && !isValidDataAdicao(this.dataAdicao)) return false;
+        if (this.descricao != null && !isValidDescricao(this.descricao)) return false;
 
         return true;
     }
@@ -82,10 +81,8 @@ public class Livro {
             return false;
         }
 
-        // Remove hífens e espaços para validação
         String cleanIsbn = isbn.replaceAll("[\\s-]", "");
 
-        // Verifica se é ISBN-10 (10 caracteres, sendo o último podendo ser X) ou ISBN-13 (13 dígitos)
         return cleanIsbn.matches("\\d{9}[\\dX]") || cleanIsbn.matches("\\d{13}");
     }
 
@@ -95,7 +92,7 @@ public class Livro {
         }
 
         Year currentYear = Year.now();
-        Year oldestYear = Year.of(1450); // Prensa de Gutenberg
+        Year oldestYear = Year.of(1450);
 
         return !year.isBefore(oldestYear) && !year.isAfter(currentYear);
     }
@@ -152,26 +149,27 @@ public class Livro {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime minDate = LocalDateTime.of(2020, 1, 1, 0, 0); // Data mínima razoável para o sebo
-
-        return !dataAdicao.isBefore(minDate) && !dataAdicao.isAfter(now);
+        
+        // Apenas valida que a data não é futura
+        return !dataAdicao.isAfter(now);
     }
 
-    // Método para validar regra de negócio específica
     public void validateBusinessRules() {
         if (!isValidForCreation()) {
             throw new IllegalArgumentException("Dados do livro não atendem às regras de negócio");
         }
     }
 
-    // Método para aplicar regras de negócio durante atualização
     public void validateUpdateRules() {
         if (!isValidForUpdate()) {
             throw new IllegalArgumentException("Dados de atualização do livro não atendem às regras de negócio");
         }
     }
 
-    // Getters and Setters
+    private boolean isValidDescricao(String descricao) {
+        return descricao instanceof String;
+    }
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -215,6 +213,9 @@ public class Livro {
     public void setDataAdicao(LocalDateTime dataAdicao) {
         this.dataAdicao = dataAdicao;
     }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
     @Override
     public boolean equals(Object o) {
@@ -261,3 +262,4 @@ public class Livro {
                 '}';
     }
 }
+

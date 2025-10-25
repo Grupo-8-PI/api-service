@@ -53,12 +53,13 @@ public class LivroResponseDto {
     @Schema(description = "Nome da categoria do livro", example = "Romance")
     private String nomeCategoria;
 
+    @Schema(description = "Descrição/sinopse do livro", example = "Uma história envolvente sobre...")
+    private String descricao;
+
     @Schema(description = "Data e hora em que o livro foi adicionado ao sebo",
             example = "2024-12-05T14:30:00")
     private LocalDateTime dataAdicao;
 
-
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -104,11 +105,10 @@ public class LivroResponseDto {
     public String getNomeCategoria() { return nomeCategoria; }
     public void setNomeCategoria(String nomeCategoria) { this.nomeCategoria = nomeCategoria; }
 
-    public LocalDateTime getDataAdicao() {
-        return dataAdicao;
-    }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public void setDataAdicao(LocalDateTime dataAdicao) {
-        this.dataAdicao = dataAdicao;
-    }
+    public LocalDateTime getDataAdicao() { return dataAdicao; }
+    public void setDataAdicao(LocalDateTime dataAdicao) { this.dataAdicao = dataAdicao; }
 }
+

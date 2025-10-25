@@ -1,5 +1,7 @@
 package school.sptech.hub.infraestructure.gateways.livro;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
 import school.sptech.hub.domain.entity.Livro;
@@ -15,6 +17,9 @@ public class LivroRepositoryGateway implements LivroGateway {
 
     private final LivroRepository livroRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public LivroRepositoryGateway(LivroRepository livroRepository) {
         this.livroRepository = livroRepository;
     }
@@ -23,7 +28,11 @@ public class LivroRepositoryGateway implements LivroGateway {
     public Optional<Livro> createLivro(Livro livro) {
         LivroEntity livroEntity = LivroEntityMapper.toEntity(livro);
         LivroEntity savedEntity = livroRepository.save(livroEntity);
-        return Optional.of(LivroEntityMapper.toDomain(savedEntity));
+        livroRepository.flush();
+        entityManager.clear();
+        LivroEntity reloadedEntity = livroRepository.findById(savedEntity.getId()).orElse(savedEntity);
+
+        return Optional.of(LivroEntityMapper.toDomain(reloadedEntity));
     }
 
     @Override
@@ -44,7 +53,13 @@ public class LivroRepositoryGateway implements LivroGateway {
     public Optional<Livro> updateLivro(Livro livro) {
         LivroEntity livroEntity = LivroEntityMapper.toEntity(livro);
         LivroEntity updatedEntity = livroRepository.save(livroEntity);
-        return Optional.of(LivroEntityMapper.toDomain(updatedEntity));
+
+        livroRepository.flush();
+        entityManager.clear();
+
+        LivroEntity reloadedEntity = livroRepository.findById(updatedEntity.getId()).orElse(updatedEntity);
+
+        return Optional.of(LivroEntityMapper.toDomain(reloadedEntity));
     }
 
     @Override

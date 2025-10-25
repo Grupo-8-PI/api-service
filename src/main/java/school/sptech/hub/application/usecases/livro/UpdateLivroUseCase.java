@@ -35,9 +35,6 @@ public class UpdateLivroUseCase {
         // Processar categoria da mesma forma que na criação (buscar existente ou criar nova)
         if (livroUpdateDto.getNomeCategoria() != null) {
             Categoria categoria = processarCategoria(livroUpdateDto.getNomeCategoria());
-            // Criar categoria temporária apenas com o nome para processamento posterior
-            Categoria categoriaTemp = new Categoria();
-            categoriaTemp.setNome(livroUpdateDto.getNomeCategoria());
             livroUpdateDto.setNomeCategoria(categoria.getNome());
         }
 

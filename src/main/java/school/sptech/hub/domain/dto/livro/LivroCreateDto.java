@@ -63,11 +63,6 @@ public class LivroCreateDto {
     @Size(max = 100, message = "O nome da categoria deve ter no máximo 100 caracteres")
     private String nomeCategoria;
 
-    @Schema(description = "Data e hora em que o livro foi adicionado ao sebo (Preenchido automaticamente pelo sistema)",
-            example = "2024-12-05T14:30:00",
-            accessMode = Schema.AccessMode.READ_ONLY)
-    private LocalDateTime dataAdicao;
-
     // Getters and Setters
     public String getIsbn() {
         return isbn;
@@ -147,13 +142,5 @@ public class LivroCreateDto {
 
     public void setNomeCategoria(String nomeCategoria) {
         this.nomeCategoria = nomeCategoria;
-    }
-
-    public LocalDateTime getDataAdicao() {
-        return dataAdicao;
-    }
-
-    public void setDataAdicao(LocalDateTime dataAdicao) {
-        this.dataAdicao = dataAdicao;
     }
 }
