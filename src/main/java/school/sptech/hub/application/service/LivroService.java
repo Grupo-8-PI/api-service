@@ -45,6 +45,7 @@ public class LivroService {
         this.findLivrosByAcabamentoUseCase = findLivrosByAcabamentoUseCase;
         this.findLivrosByConservacaoUseCase = findLivrosByConservacaoUseCase;
         this.findLivrosByCategoriaUseCase = findLivrosByCategoriaUseCase;
+        this.listAllCategoriesUseCase = listAllCategoriesUseCase;
         this.listRecommendedLivrosUseCase = listRecommendedLivrosUseCase;
         this.listRecentLivrosUseCase = listRecentLivrosUseCase;
     }

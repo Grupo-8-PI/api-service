@@ -108,14 +108,6 @@ public class LivroResponseDto {
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public LocalDateTime getDataAdicao() {
-        return dataAdicao;
-    }
-
-    public void setDataAdicao(LocalDateTime dataAdicao) {
-        this.dataAdicao = dataAdicao;
-    }
-
     public LocalDateTime getDataAdicao() { return dataAdicao; }
     public void setDataAdicao(LocalDateTime dataAdicao) { this.dataAdicao = dataAdicao; }
 }
