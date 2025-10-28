@@ -19,6 +19,7 @@ import school.sptech.hub.domain.dto.venda.VendaErroResponseSwgDto;
 import school.sptech.hub.domain.dto.venda.VendaResponseDto;
 import school.sptech.hub.domain.dto.venda.VendaMapper;
 import school.sptech.hub.domain.entity.Venda;
+import school.sptech.hub.domain.dto.venda.ReservaPaginatedResponseDto;
 
 import java.util.List;
 
@@ -47,6 +48,9 @@ public class VendaController {
 
     @Autowired
     private ListAllVendasUseCase listAllVendasUseCase;
+
+    @Autowired
+    private ListReservasPaginatedUseCase listReservasPaginatedUseCase;
 
 
     @Operation(
@@ -189,10 +193,11 @@ public class VendaController {
     @GetMapping()
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Venda>> listAllReservas(){
-        List<Venda> vendas = listAllVendasUseCase.execute();
-
-        return ResponseEntity.status(200).body(vendas);
+    public ResponseEntity<ReservaPaginatedResponseDto> listarReservasPaginado(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        ReservaPaginatedResponseDto reservas = listReservasPaginatedUseCase.execute(page, size);
+        return ResponseEntity.ok(reservas);
     }
 
 }
