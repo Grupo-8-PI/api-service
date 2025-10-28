@@ -42,6 +42,27 @@ class LivroServiceTest {
     @Mock private ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
     @Mock private ListRecentLivrosUseCase listRecentLivrosUseCase;
 
+    @Mock
+    private FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase;
+
+    @Mock
+    private FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase;
+
+    @Mock
+    private FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase;
+
+    @Mock
+    private ListAllCategoriesUseCase listAllCategoriesUseCase;
+
+    @Mock
+    private ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
+
+    @Mock
+    private ListRecentLivrosUseCase listRecentLivrosUseCase;
+
+    @Mock
+    private UpdateLivroSinopseUseCase updateLivroSinopseUseCase;
+
     private LivroService livroService;
     private LivroCreateDto livroCreateDto;
     private LivroUpdateDto livroUpdateDto;
@@ -62,7 +83,8 @@ class LivroServiceTest {
             findLivrosByCategoriaUseCase,
             listAllCategoriesUseCase,
             listRecommendedLivrosUseCase,
-            listRecentLivrosUseCase
+            listRecentLivrosUseCase,
+            updateLivroSinopseUseCase
         );
 
         livroCreateDto = new LivroCreateDto();

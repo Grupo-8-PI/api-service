@@ -24,6 +24,7 @@ public class LivroService {
     private final ListAllCategoriesUseCase listAllCategoriesUseCase;
     private final ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
     private final ListRecentLivrosUseCase listRecentLivrosUseCase;
+    private final UpdateLivroSinopseUseCase updateLivroSinopseUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                         FindLivroByIdUseCase findLivroByIdUseCase,
@@ -36,7 +37,8 @@ public class LivroService {
                         FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase,
                         ListAllCategoriesUseCase listAllCategoriesUseCase,
                         ListRecommendedLivrosUseCase listRecommendedLivrosUseCase,
-                        ListRecentLivrosUseCase listRecentLivrosUseCase) {
+                        ListRecentLivrosUseCase listRecentLivrosUseCase,
+                        UpdateLivroSinopseUseCase updateLivroSinopseUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listLivrosPaginatedUseCase = listLivrosPaginatedUseCase;
@@ -49,6 +51,7 @@ public class LivroService {
         this.listAllCategoriesUseCase = listAllCategoriesUseCase;
         this.listRecommendedLivrosUseCase = listRecommendedLivrosUseCase;
         this.listRecentLivrosUseCase = listRecentLivrosUseCase;
+        this.updateLivroSinopseUseCase = updateLivroSinopseUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -95,7 +98,7 @@ public class LivroService {
         return listRecentLivrosUseCase.execute();
     }
 
-    public LivroPaginatedResponseDto listarLivrosPaginado(int page, int size) {
-        return listLivrosPaginatedUseCase.execute(page, size);
+    public LivroResponseDto atualizarSinopseLivro(Integer id, String sinopse) {
+        return updateLivroSinopseUseCase.execute(id, sinopse);
     }
 }
