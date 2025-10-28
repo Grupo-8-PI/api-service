@@ -27,18 +27,21 @@ public class CreateLivroUseCase {
     private final AcabamentoGateway acabamentoGateway;
     private final ConservacaoGateway conservacaoGateway;
     private final ChatGptAdapter chatGptAdapter;
+    private final LivroMapper livroMapper;
 
     public CreateLivroUseCase(
             LivroGateway livroGateway,
             CategoriaGateway categoriaGateway,
             AcabamentoGateway acabamentoGateway,
             ConservacaoGateway conservacaoGateway,
-            ChatGptAdapter chatGptAdapter) {
+            ChatGptAdapter chatGptAdapter,
+            LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
         this.categoriaGateway = categoriaGateway;
         this.acabamentoGateway = acabamentoGateway;
         this.conservacaoGateway = conservacaoGateway;
         this.chatGptAdapter = chatGptAdapter;
+        this.livroMapper = livroMapper;
     }
 
     @Transactional
@@ -70,7 +73,7 @@ public class CreateLivroUseCase {
 
         chatGptAdapter.gerarSinopse(createdLivro);
 
-        return LivroMapper.toResponseDto(createdLivro);
+        return livroMapper.toResponseDto(createdLivro);
     }
 
     private Categoria processarCategoria(String nomeCategoria) {

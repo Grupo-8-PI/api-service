@@ -13,16 +13,18 @@ import java.util.stream.Collectors;
 public class ListAllLivrosUseCase {
 
     private final LivroGateway livroGateway;
+    private final LivroMapper livroMapper;
 
-    public ListAllLivrosUseCase(LivroGateway livroGateway) {
+    public ListAllLivrosUseCase(LivroGateway livroGateway, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
+        this.livroMapper = livroMapper;
     }
 
     public List<LivroResponseDto> execute() {
         List<Livro> livros = livroGateway.findAll();
 
         return livros.stream()
-                .map(LivroMapper::toResponseDto)
+                .map(livroMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 }

@@ -2,16 +2,12 @@ package school.sptech.hub.application.usecases.livro;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import school.sptech.hub.application.exceptions.AcabamentoExceptions.AcabamentoNaoEncontradoException;
-import school.sptech.hub.application.exceptions.ConservacaoExceptions.ConservacaoNaoEncontradaException;
 import school.sptech.hub.application.exceptions.LivroExceptions.LivroJaExisteException;
 import school.sptech.hub.application.exceptions.LivroExceptions.LivroNaoEncontradoException;
 import school.sptech.hub.application.gateways.categoria.CategoriaGateway;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
 import school.sptech.hub.domain.entity.Livro;
-import school.sptech.hub.domain.entity.Acabamento;
 import school.sptech.hub.domain.entity.Categoria;
-import school.sptech.hub.domain.entity.Conservacao;
 import school.sptech.hub.domain.dto.livro.LivroMapper;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
@@ -22,10 +18,12 @@ public class UpdateLivroUseCase {
 
     private final LivroGateway livroGateway;
     private final CategoriaGateway categoriaGateway;
+    private final LivroMapper livroMapper;
 
-    public UpdateLivroUseCase(LivroGateway livroGateway, CategoriaGateway categoriaGateway) {
+    public UpdateLivroUseCase(LivroGateway livroGateway, CategoriaGateway categoriaGateway, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
         this.categoriaGateway = categoriaGateway;
+        this.livroMapper = livroMapper;
     }
 
     public LivroResponseDto execute(Integer id, LivroUpdateDto livroUpdateDto) {
@@ -57,7 +55,7 @@ public class UpdateLivroUseCase {
         Livro savedLivro = livroGateway.updateLivro(existingLivro)
                 .orElseThrow(() -> new LivroNaoEncontradoException("Erro ao atualizar livro"));
 
-        return LivroMapper.toResponseDto(savedLivro);
+        return livroMapper.toResponseDto(savedLivro);
     }
 
     /**

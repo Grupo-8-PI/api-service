@@ -11,9 +11,11 @@ import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 public class DeleteLivroUseCase {
 
     private final LivroGateway livroGateway;
+    private final LivroMapper livroMapper;
 
-    public DeleteLivroUseCase(LivroGateway livroGateway) {
+    public DeleteLivroUseCase(LivroGateway livroGateway, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
+        this.livroMapper = livroMapper;
     }
 
     public LivroResponseDto execute(Integer id) {
@@ -22,6 +24,6 @@ public class DeleteLivroUseCase {
 
         livroGateway.deleteLivro(id);
 
-        return LivroMapper.toResponseDto(livro);
+        return livroMapper.toResponseDto(livro);
     }
 }

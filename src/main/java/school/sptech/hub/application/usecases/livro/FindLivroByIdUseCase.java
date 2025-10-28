@@ -11,15 +11,17 @@ import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 public class FindLivroByIdUseCase {
 
     private final LivroGateway livroGateway;
+    private final LivroMapper livroMapper;
 
-    public FindLivroByIdUseCase(LivroGateway livroGateway) {
+    public FindLivroByIdUseCase(LivroGateway livroGateway, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
+        this.livroMapper = livroMapper;
     }
 
     public LivroResponseDto execute(Integer id) {
         Livro livro = livroGateway.findById(id)
                 .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado com ID: " + id));
 
-        return LivroMapper.toResponseDto(livro);
+        return livroMapper.toResponseDto(livro);
     }
 }

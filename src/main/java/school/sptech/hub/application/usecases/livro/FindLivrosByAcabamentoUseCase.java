@@ -14,9 +14,11 @@ import java.util.stream.Collectors;
 public class FindLivrosByAcabamentoUseCase {
 
     private final LivroGateway livroGateway;
+    private final LivroMapper livroMapper;
 
-    public FindLivrosByAcabamentoUseCase(LivroGateway livroGateway) {
+    public FindLivrosByAcabamentoUseCase(LivroGateway livroGateway, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
+        this.livroMapper = livroMapper;
     }
 
     public List<LivroResponseDto> execute(Integer acabamentoId) {
@@ -36,7 +38,7 @@ public class FindLivrosByAcabamentoUseCase {
 
         // Converter para DTOs de resposta
         return livros.stream()
-                .map(LivroMapper::toResponseDto)
+                .map(livroMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 }

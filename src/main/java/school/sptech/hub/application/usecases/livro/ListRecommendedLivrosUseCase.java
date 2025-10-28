@@ -14,9 +14,11 @@ import java.util.stream.Collectors;
 public class ListRecommendedLivrosUseCase {
 
     private final LivroGateway livroGateway;
+    private final LivroMapper livroMapper;
 
-    public ListRecommendedLivrosUseCase(LivroGateway livroGateway) {
+    public ListRecommendedLivrosUseCase(LivroGateway livroGateway, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
+        this.livroMapper = livroMapper;
     }
 
     public List<LivroResponseDto> execute() {
@@ -27,7 +29,7 @@ public class ListRecommendedLivrosUseCase {
         }
 
         return livros.stream()
-                .map(LivroMapper::toResponseDto)
+                .map(livroMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 }

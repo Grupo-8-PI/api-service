@@ -1,13 +1,22 @@
 package school.sptech.hub.domain.dto.livro;
 
+import org.springframework.stereotype.Component;
 import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.domain.entity.Acabamento;
 import school.sptech.hub.domain.entity.Categoria;
 import school.sptech.hub.domain.entity.Conservacao;
+import school.sptech.hub.utils.UrlGenerator;
 
 import java.time.LocalDateTime;
 
+@Component
 public class LivroMapper {
+
+    private final UrlGenerator urlGenerator;
+
+    public LivroMapper(UrlGenerator urlGenerator) {
+        this.urlGenerator = urlGenerator;
+    }
 
     public static Livro toEntity(LivroCreateDto dto) {
         if (dto == null) return null;
@@ -46,7 +55,7 @@ public class LivroMapper {
         return toEntity(dto);
     }
 
-    public static LivroResponseDto toResponseDto(Livro livro) {
+    public LivroResponseDto toResponseDto(Livro livro) {
         if (livro == null) return null;
 
         LivroResponseDto dto = new LivroResponseDto();
@@ -57,7 +66,14 @@ public class LivroMapper {
         dto.setEditora(livro.getEditora());
         dto.setAnoPublicacao(livro.getAnoPublicacao() != null ? livro.getAnoPublicacao().getValue() : null);
         dto.setPaginas(livro.getPaginas());
-        dto.setCapa(livro.getCapa());
+
+        // Gerar URL predefinida da capa usando UrlGenerator
+        if (livro.getId() != null) {
+            dto.setCapa(urlGenerator.gerarUrlCapa(livro.getId()));
+        } else {
+            dto.setCapa(null);
+        }
+
         dto.setPreco(livro.getPreco());
 
         if (livro.getAcabamento() != null) {
@@ -83,7 +99,7 @@ public class LivroMapper {
         return dto;
     }
 
-    public static LivroComSinopseResponseDto toResponseDtoWithSinopse(Livro livro, String sinopse) {
+    public LivroComSinopseResponseDto toResponseDtoWithSinopse(Livro livro, String sinopse) {
         if (livro == null) return null;
 
         LivroComSinopseResponseDto dto = new LivroComSinopseResponseDto();
@@ -179,4 +195,3 @@ public class LivroMapper {
         }
     }
 }
-

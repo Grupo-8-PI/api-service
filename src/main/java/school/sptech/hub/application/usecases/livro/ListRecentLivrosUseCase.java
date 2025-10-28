@@ -13,16 +13,18 @@ import java.util.stream.Collectors;
 public class ListRecentLivrosUseCase {
 
     private final LivroGateway livroGateway;
+    private final LivroMapper livroMapper;
 
-    public ListRecentLivrosUseCase(LivroGateway livroGateway) {
+    public ListRecentLivrosUseCase(LivroGateway livroGateway, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
+        this.livroMapper = livroMapper;
     }
 
     public List<LivroResponseDto> execute() {
         List<Livro> recentLivros = livroGateway.findTop3ByOrderByDataAdicaoDesc();
 
         return recentLivros.stream()
-                .map(LivroMapper::toResponseDto)
+                .map(livroMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 }

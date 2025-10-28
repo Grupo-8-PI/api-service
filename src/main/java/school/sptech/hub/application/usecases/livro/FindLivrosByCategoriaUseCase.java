@@ -17,10 +17,12 @@ public class FindLivrosByCategoriaUseCase {
 
     private final LivroGateway livroGateway;
     private final CategoriaGateway categoriaGateway;
+    private final LivroMapper livroMapper;
 
-    public FindLivrosByCategoriaUseCase(LivroGateway livroGateway, CategoriaGateway categoriaGateway) {
+    public FindLivrosByCategoriaUseCase(LivroGateway livroGateway, CategoriaGateway categoriaGateway, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
         this.categoriaGateway = categoriaGateway;
+        this.livroMapper = livroMapper;
     }
 
     public List<LivroResponseDto> execute(Integer categoriaId) {
@@ -37,7 +39,7 @@ public class FindLivrosByCategoriaUseCase {
 
         // Converter para DTOs de resposta
         return livros.stream()
-                .map(LivroMapper::toResponseDto)
+                .map(livroMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 }

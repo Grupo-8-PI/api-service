@@ -8,18 +8,21 @@ import school.sptech.hub.application.gateways.livro.LivroImagemStorageGateway;
 import school.sptech.hub.domain.dto.livro.LivroMapper;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.entity.Livro;
-
-import java.util.UUID;
+import school.sptech.hub.utils.UrlGenerator;
 
 @Component
 public class UploadImageUseCase {
 
     private final LivroGateway livroGateway;
     private final LivroImagemStorageGateway imagemStorageGateway;
+    private final UrlGenerator urlGenerator;
+    private final LivroMapper livroMapper;
 
-    public UploadImageUseCase(LivroGateway livroGateway, LivroImagemStorageGateway imagemStorageGateway) {
+    public UploadImageUseCase(LivroGateway livroGateway, LivroImagemStorageGateway imagemStorageGateway, UrlGenerator urlGenerator, LivroMapper livroMapper) {
         this.livroGateway = livroGateway;
         this.imagemStorageGateway = imagemStorageGateway;
+        this.urlGenerator = urlGenerator;
+        this.livroMapper = livroMapper;
     }
 
     public LivroResponseDto execute(Integer id, byte[] conteudoArquivo, String nomeArquivo, String contentType) {
@@ -51,7 +54,10 @@ public class UploadImageUseCase {
 
         try {
             // Upload para S3 via gateway
-            String urlCapa = imagemStorageGateway.upload(conteudoArquivo, s3Key);
+            imagemStorageGateway.upload(conteudoArquivo, s3Key);
+
+            // Gerar URL predefinida da capa usando o UrlGenerator
+            String urlCapa = urlGenerator.gerarUrlCapa(id, extensao);
 
             // Atualizar URL da capa no livro
             livro.setCapa(urlCapa);
@@ -60,7 +66,7 @@ public class UploadImageUseCase {
             Livro livroAtualizado = livroGateway.updateLivro(livro)
                     .orElseThrow(() -> new CapaUploadException("Erro ao salvar URL da capa"));
 
-            return LivroMapper.toResponseDto(livroAtualizado);
+            return livroMapper.toResponseDto(livroAtualizado);
 
         } catch (Exception e) {
             throw new CapaUploadException("Erro ao fazer upload da capa: " + e.getMessage());
@@ -102,6 +108,6 @@ public class UploadImageUseCase {
     }
 
     private String gerarChaveS3(Integer livroId, String extensao) {
-        return String.format("livros/%d/capa-%s.%s", livroId, UUID.randomUUID(), extensao);
+        return String.format("livros/%d/capa-%d.%s", livroId, livroId, extensao);
     }
 }
