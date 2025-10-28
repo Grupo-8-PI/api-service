@@ -54,7 +54,6 @@ class LivroServiceTest {
             createLivroUseCase,
             findLivroByIdUseCase,
             listLivrosPaginatedUseCase,
-            findLivroWithSinopseUseCase,
             updateLivroUseCase,
             deleteLivroUseCase,
             uploadImageUseCase,

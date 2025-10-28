@@ -15,7 +15,6 @@ public class LivroService {
     private final CreateLivroUseCase createLivroUseCase;
     private final FindLivroByIdUseCase findLivroByIdUseCase;
     private final ListLivrosPaginatedUseCase listLivrosPaginatedUseCase;
-    private final FindLivroWithSinopseUseCase findLivroWithSinopseUseCase;
     private final UpdateLivroUseCase updateLivroUseCase;
     private final DeleteLivroUseCase deleteLivroUseCase;
     private final UploadImageUseCase uploadImageUseCase;
@@ -29,7 +28,6 @@ public class LivroService {
     public LivroService(CreateLivroUseCase createLivroUseCase,
                         FindLivroByIdUseCase findLivroByIdUseCase,
                         ListLivrosPaginatedUseCase listLivrosPaginatedUseCase,
-                        FindLivroWithSinopseUseCase findLivroWithSinopseUseCase,
                         UpdateLivroUseCase updateLivroUseCase,
                         DeleteLivroUseCase deleteLivroUseCase,
                         UploadImageUseCase uploadImageUseCase,
@@ -42,7 +40,6 @@ public class LivroService {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listLivrosPaginatedUseCase = listLivrosPaginatedUseCase;
-        this.findLivroWithSinopseUseCase = findLivroWithSinopseUseCase;
         this.updateLivroUseCase = updateLivroUseCase;
         this.deleteLivroUseCase = deleteLivroUseCase;
         this.uploadImageUseCase = uploadImageUseCase;
@@ -56,10 +53,6 @@ public class LivroService {
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
         return createLivroUseCase.execute(livro);
-    }
-
-    public LivroComSinopseResponseDto buscarLivroPorIdComSinopse(Integer id) {
-        return findLivroWithSinopseUseCase.execute(id);
     }
 
     public LivroResponseDto buscarLivroPorId(Integer id) {
