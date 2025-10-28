@@ -9,6 +9,8 @@ import school.sptech.hub.application.adapter.ChatGptAdapter;
 import school.sptech.hub.domain.dto.livro.LivroCriadoEventDto;
 import school.sptech.hub.domain.entity.Livro;
 
+import java.util.Arrays;
+
 @Component
 public class LivroProducerAdapter implements ChatGptAdapter {
 
@@ -25,19 +27,7 @@ public class LivroProducerAdapter implements ChatGptAdapter {
     }
 
     @Override
-    public String gerarSinopse(String titulo, String autor) {
-        // Método antigo mantido para compatibilidade
-        LivroCriadoEventDto evento = new LivroCriadoEventDto();
-        evento.setTitulo(titulo);
-        evento.setAutor(autor);
-
-        enviarEvento(evento);
-        return titulo;
-    }
-
-    @Override
     public String gerarSinopse(Livro livro) {
-        // Novo método: cria o DTO com TODOS os dados do livro
         LivroCriadoEventDto evento = new LivroCriadoEventDto();
         evento.setLivroId(livro.getId());
         evento.setTitulo(livro.getTitulo());
@@ -48,7 +38,6 @@ public class LivroProducerAdapter implements ChatGptAdapter {
         return livro.getTitulo();
     }
 
-    // Método privado para evitar duplicação
     private void enviarEvento(LivroCriadoEventDto evento) {
         ObjectMapper objectConverter = new ObjectMapper();
         String json = "";
