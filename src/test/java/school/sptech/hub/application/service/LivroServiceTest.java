@@ -35,6 +35,27 @@ class LivroServiceTest {
     @Mock
     private UploadImageUseCase uploadImageUseCase;
 
+    @Mock
+    private FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase;
+
+    @Mock
+    private FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase;
+
+    @Mock
+    private FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase;
+
+    @Mock
+    private ListAllCategoriesUseCase listAllCategoriesUseCase;
+
+    @Mock
+    private ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
+
+    @Mock
+    private ListRecentLivrosUseCase listRecentLivrosUseCase;
+
+    @Mock
+    private UpdateLivroSinopseUseCase updateLivroSinopseUseCase;
+
     private LivroService livroService;
     private LivroCreateDto livroCreateDto;
     private LivroUpdateDto livroUpdateDto;
@@ -49,7 +70,14 @@ class LivroServiceTest {
             listAllLivrosUseCase,
             updateLivroUseCase,
             deleteLivroUseCase,
-            uploadImageUseCase
+            uploadImageUseCase,
+            findLivrosByAcabamentoUseCase,
+            findLivrosByConservacaoUseCase,
+            findLivrosByCategoriaUseCase,
+            listAllCategoriesUseCase,
+            listRecommendedLivrosUseCase,
+            listRecentLivrosUseCase,
+            updateLivroSinopseUseCase
         );
 
         livroCreateDto = new LivroCreateDto();

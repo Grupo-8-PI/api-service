@@ -299,5 +299,34 @@ public class LivroController {
         List<LivroResponseDto> livros = livroService.listarLivrosRecentes();
         return ResponseEntity.ok(livros);
     }
+
+    @Operation(
+            summary = "Atualizar sinopse do livro",
+            description = "Atualiza a sinopse/descrição de um livro específico"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Sinopse atualizada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos fornecidos",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Livro não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @PutMapping("/atualizar/sinopse")
+    public ResponseEntity<LivroResponseDto> atualizarSinopseLivro(
+            @RequestParam Integer id,
+            @RequestParam String sinopse) {
+        LivroResponseDto livroUpdated = livroService.atualizarSinopseLivro(id, sinopse);
+        return ResponseEntity.status(200).body(livroUpdated);
+    }
 }
 

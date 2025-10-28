@@ -1,5 +1,7 @@
 package school.sptech.hub.application.adapter.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -48,12 +50,18 @@ public class LivroProducerAdapter implements ChatGptAdapter {
 
     // Método privado para evitar duplicação
     private void enviarEvento(LivroCriadoEventDto evento) {
+        ObjectMapper objectConverter = new ObjectMapper();
+        String json = "";
+        try {
+            json = objectConverter.writeValueAsString(evento);
+        } catch (JsonProcessingException e) {
+            System.out.println("Houve um erro ao converter o evento para JSON: " + e.getMessage());
+        }
         rabbitTemplate.convertAndSend(
                 exchangeName,
                 routingKey,
-                evento
+                json
         );
-
         System.out.println("[Adapter] Evento de livro criado enviado -> " + evento);
     }
 }
