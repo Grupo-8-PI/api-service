@@ -115,8 +115,14 @@
             <version>2.32.21</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
 
-	</dependencies>
+
+
+    </dependencies>
 
 	<build>
 		<plugins>

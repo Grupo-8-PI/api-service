@@ -20,34 +20,28 @@ public class LivroMapper {
         livro.setAnoPublicacao(dto.getAnoPublicacao());
         livro.setPaginas(dto.getPaginas());
 
-        // Criar acabamento a partir do ID
         if (dto.getAcabamentoId() != null) {
             livro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
         }
 
-        // Criar conservação a partir do ID
         if (dto.getConservacaoId() != null) {
             livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
 
-        // Capa será definida apenas via PATCH - não definir durante criação
         livro.setCapa(null);
         livro.setPreco(dto.getPreco());
 
-        // Criar categoria temporária apenas com o nome para processamento posterior
         if (dto.getNomeCategoria() != null) {
             Categoria categoria = new Categoria();
             categoria.setNome(dto.getNomeCategoria());
             livro.setCategoria(categoria);
         }
 
-        // Definir dataAdicao: usar do DTO se fornecida, senão usar agora
-        livro.setDataAdicao(dto.getDataAdicao() != null ? dto.getDataAdicao() : LocalDateTime.now());
+        livro.setDataAdicao(LocalDateTime.now());
 
         return livro;
     }
 
-    // Método compatível com a assinatura anterior (para não quebrar outros códigos)
     public static Livro toEntity(LivroCreateDto dto, Acabamento acabamento, Conservacao conservacao, Categoria categoria) {
         return toEntity(dto);
     }
@@ -66,27 +60,24 @@ public class LivroMapper {
         dto.setCapa(livro.getCapa());
         dto.setPreco(livro.getPreco());
 
-        // Mapear acabamento
         if (livro.getAcabamento() != null) {
             dto.setAcabamentoId(livro.getAcabamento().getId());
             dto.setTipoAcabamento(livro.getAcabamento().getTipoAcabamento() != null
                 ? livro.getAcabamento().getTipoAcabamento().name() : null);
         }
 
-        // Mapear conservação
         if (livro.getEstadoConservacao() != null) {
             dto.setConservacaoId(livro.getEstadoConservacao().getId());
             dto.setEstadoConservacao(livro.getEstadoConservacao().getTipoConservacao() != null
                 ? livro.getEstadoConservacao().getTipoConservacao().name() : null);
         }
 
-        // Mapear categoria
         if (livro.getCategoria() != null) {
             dto.setCategoriaId(livro.getCategoria().getId());
             dto.setNomeCategoria(livro.getCategoria().getNome());
         }
 
-        // Mapear dataAdicao
+        dto.setDescricao(livro.getDescricao());
         dto.setDataAdicao(livro.getDataAdicao());
 
         return dto;
@@ -97,8 +88,8 @@ public class LivroMapper {
 
         LivroComSinopseResponseDto dto = new LivroComSinopseResponseDto();
 
-        // Copiar todos os campos do LivroResponseDto
         LivroResponseDto baseDto = toResponseDto(livro);
+
         dto.setId(baseDto.getId());
         dto.setIsbn(baseDto.getIsbn());
         dto.setTitulo(baseDto.getTitulo());
@@ -116,15 +107,15 @@ public class LivroMapper {
         dto.setNomeCategoria(baseDto.getNomeCategoria());
         dto.setDataAdicao(baseDto.getDataAdicao());
 
-        // Adicionar sinopse
         dto.setSinopse(sinopse);
 
         return dto;
     }
 
-    public static void updateEntityFromDto(Livro livro, LivroUpdateDto dto) {
-        if (livro == null || dto == null) return;
+    public static Livro fromUpdateDto(LivroUpdateDto dto, Acabamento acabamento, Conservacao conservacao, Categoria categoria) {
+        if (dto == null) return null;
 
+        Livro livro = new Livro();
         if (dto.getIsbn() != null) livro.setIsbn(dto.getIsbn());
         if (dto.getTitulo() != null) livro.setTitulo(dto.getTitulo());
         if (dto.getAutor() != null) livro.setAutor(dto.getAutor());
@@ -133,27 +124,59 @@ public class LivroMapper {
         if (dto.getPaginas() != null) livro.setPaginas(dto.getPaginas());
         if (dto.getCapa() != null) livro.setCapa(dto.getCapa());
         if (dto.getPreco() != null) livro.setPreco(dto.getPreco());
+        if (dto.getDescricao() != null) livro.setDescricao(dto.getDescricao());
 
-        // Atualizar acabamento se fornecido
+        if (acabamento != null) livro.setAcabamento(acabamento);
+        if (conservacao != null) livro.setEstadoConservacao(conservacao);
+        if (categoria != null) livro.setCategoria(categoria);
+
+        return livro;
+    }
+
+    public static void updateEntityFromDto(Livro existingLivro, LivroUpdateDto dto) {
+        if (existingLivro == null || dto == null) return;
+
+        if (dto.getIsbn() != null) {
+            existingLivro.setIsbn(dto.getIsbn());
+        }
+        if (dto.getTitulo() != null) {
+            existingLivro.setTitulo(dto.getTitulo());
+        }
+        if (dto.getAutor() != null) {
+            existingLivro.setAutor(dto.getAutor());
+        }
+        if (dto.getEditora() != null) {
+            existingLivro.setEditora(dto.getEditora());
+        }
+        if (dto.getAnoPublicacao() != null) {
+            existingLivro.setAnoPublicacao(dto.getAnoPublicacao());
+        }
+        if (dto.getPaginas() != null) {
+            existingLivro.setPaginas(dto.getPaginas());
+        }
+        if (dto.getCapa() != null) {
+            existingLivro.setCapa(dto.getCapa());
+        }
+        if (dto.getPreco() != null) {
+            existingLivro.setPreco(dto.getPreco());
+        }
+        if (dto.getDescricao() != null) {
+            existingLivro.setDescricao(dto.getDescricao());
+        }
+
         if (dto.getAcabamentoId() != null) {
-            livro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
+            existingLivro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
         }
 
-        // Atualizar conservação se fornecida
         if (dto.getConservacaoId() != null) {
-            livro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
+            existingLivro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
         }
 
-        // Atualizar categoria se fornecida
         if (dto.getNomeCategoria() != null) {
             Categoria categoria = new Categoria();
             categoria.setNome(dto.getNomeCategoria());
-            livro.setCategoria(categoria);
-        }
-
-        // Atualizar dataAdicao se fornecida
-        if (dto.getDataAdicao() != null) {
-            livro.setDataAdicao(dto.getDataAdicao());
+            existingLivro.setCategoria(categoria);
         }
     }
 }
+

@@ -17,7 +17,7 @@ public class LivroCapaS3Persistence implements LivroImagemStorageGateway {
 
     private final S3Client s3Client;
 
-    @Value("${aws.s3.livros-bucket}")
+    @Value("${aws.bucket}")
     private String bucket;
 
     @Value("${aws.regiao}")

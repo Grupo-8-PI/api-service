@@ -2,7 +2,6 @@ package school.sptech.hub.application.service;
 
 import org.springframework.stereotype.Service;
 import school.sptech.hub.application.usecases.livro.*;
-import school.sptech.hub.domain.dto.livro.LivroComSinopseResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;

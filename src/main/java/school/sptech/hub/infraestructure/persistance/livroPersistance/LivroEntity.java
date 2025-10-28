@@ -54,7 +54,7 @@ public class LivroEntity {
     private ConservacaoEntity estadoConservacao;
 
     @Lob
-    @Column(nullable = true)  // Permitir nulo durante criação
+    @Column(nullable = true)
     private String capa;
 
     @Column(nullable = false)
@@ -66,6 +66,10 @@ public class LivroEntity {
     @JoinColumn(name = "categoria_id", nullable = false)
     @NotNull
     private CategoriaEntity categoria;
+
+    @Lob
+    @Column(name = "descricao", columnDefinition = "TEXT")
+    private String descricao;
 
     @Column(name = "data_adicao", nullable = false)
     @NotNull
@@ -92,7 +96,6 @@ public class LivroEntity {
         this.dataAdicao = dataAdicao;
     }
 
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -128,6 +131,9 @@ public class LivroEntity {
 
     public CategoriaEntity getCategoria() { return categoria; }
     public void setCategoria(CategoriaEntity categoria) { this.categoria = categoria; }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
     public LocalDateTime getDataAdicao() {
         return dataAdicao;
@@ -182,3 +188,4 @@ public class LivroEntity {
                 '}';
     }
 }
+
