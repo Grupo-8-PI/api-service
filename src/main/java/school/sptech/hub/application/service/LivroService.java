@@ -98,6 +98,10 @@ public class LivroService {
         return listRecentLivrosUseCase.execute();
     }
 
+    public LivroPaginatedResponseDto listarLivrosPaginado(int page, int size) {
+        return listLivrosPaginatedUseCase.execute(page, size);
+    }
+
     public LivroResponseDto atualizarSinopseLivro(Integer id, String sinopse) {
         return updateLivroSinopseUseCase.execute(id, sinopse);
     }
