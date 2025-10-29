@@ -134,17 +134,45 @@ public class LivroController {
         return ResponseEntity.ok(livroUpdated);
     }
 
-    @PatchMapping("/imagem")
+    @Operation(
+            summary = "Atualizar imagem do livro",
+            description = "Atualiza a imagem/capa de um livro. Envie o arquivo como multipart/form-data"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Imagem atualizada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Arquivo inválido ou ID inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Livro não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @PatchMapping("/{id}/imagem")
     @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LivroResponseDto> atualizarImagemLivro(
-            @RequestParam Integer id,
+            @PathVariable("id") Integer id,
             @RequestParam("arquivo") MultipartFile arquivo) throws IOException {
+
+        if (arquivo.isEmpty()) {
+            throw new IllegalArgumentException("Arquivo não pode ser vazio");
+        }
+
         LivroResponseDto livroUpdated = livroService.atualizarImagemLivro(
                 id,
                 arquivo.getBytes(),
                 arquivo.getOriginalFilename(),
                 arquivo.getContentType()
         );
+
         return ResponseEntity.status(200).body(livroUpdated);
     }
 
@@ -327,9 +355,11 @@ public class LivroController {
             )
     })
     @PutMapping("/atualizar/sinopse")
+    @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LivroResponseDto> atualizarSinopseLivro(
-            @RequestParam Integer id,
-            @RequestParam String sinopse) {
+            @RequestParam("id") Integer id,
+            @RequestParam("sinopse") String sinopse) {
         LivroResponseDto livroUpdated = livroService.atualizarSinopseLivro(id, sinopse);
         return ResponseEntity.status(200).body(livroUpdated);
     }

@@ -40,7 +40,17 @@ public class LivroRepositoryGateway implements LivroGateway {
     @Override
     public Optional<Livro> findById(Integer id) {
         Optional<LivroEntity> entity = livroRepository.findById(id);
-        return entity.map(LivroEntityMapper::toDomain);
+
+        if (entity.isEmpty()) {
+            return Optional.empty();
+        }
+
+        try {
+            Livro livro = LivroEntityMapper.toDomain(entity.get());
+            return Optional.of(livro);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao mapear LivroEntity para Livro (ID: " + id + "): " + e.getMessage(), e);
+        }
     }
 
     @Override
