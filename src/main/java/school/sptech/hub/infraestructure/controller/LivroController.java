@@ -72,11 +72,9 @@ public class LivroController {
             )
     })
     @GetMapping
-    @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     public ResponseEntity<LivroPaginatedResponseDto> listarLivros(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "9") int size) {
+            @RequestParam(defaultValue = "0", name = "page") int page,
+            @RequestParam(defaultValue = "9", name = "size") int size) {
         LivroPaginatedResponseDto livros = livroService.listarLivrosPaginado(page, size);
         return ResponseEntity.ok(livros);
     }
@@ -100,7 +98,7 @@ public class LivroController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     @SecurityRequirement(name = "bearer")
-    public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
+    public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable("id") Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
         return ResponseEntity.ok(livro);
     }
@@ -355,8 +353,6 @@ public class LivroController {
             )
     })
     @PutMapping("/atualizar/sinopse")
-    @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LivroResponseDto> atualizarSinopseLivro(
             @RequestParam("id") Integer id,
             @RequestParam("sinopse") String sinopse) {
