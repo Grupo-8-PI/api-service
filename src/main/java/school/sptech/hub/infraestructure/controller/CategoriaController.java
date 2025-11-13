@@ -5,14 +5,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.hub.domain.dto.categoria.CategoriaResponseDto;
 import school.sptech.hub.application.service.CategoriaService;
+import school.sptech.hub.domain.dto.categoria.CategoriaCreateDto;
+import school.sptech.hub.domain.dto.categoria.CategoriaResponseDto;
 
 import java.util.List;
 
@@ -60,5 +61,32 @@ public class CategoriaController {
     public ResponseEntity<CategoriaResponseDto> buscarCategoriaPorId(@PathVariable Integer id) {
         CategoriaResponseDto categoria = categoriaService.buscarCategoriaPorId(id);
         return ResponseEntity.ok(categoria);
+    }
+
+    @Operation(
+            summary = "Criar nova categoria",
+            description = "Cria uma nova categoria com os dados enviados no corpo da requisição. Os dados são validados automaticamente."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Categoria criada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategoriaResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos - erro de validação"
+            )
+    })
+    @PostMapping
+    public ResponseEntity<CategoriaResponseDto> createCategoria(@Valid @RequestBody CategoriaCreateDto categoria) {
+
+        try {
+            CategoriaResponseDto createdCategoria = categoriaService.criarCategoria(categoria);
+            return ResponseEntity.status(201).body(createdCategoria);
+
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).build();
+        }
     }
 }
