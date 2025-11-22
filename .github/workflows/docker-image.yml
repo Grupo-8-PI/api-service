@@ -1,5 +1,4 @@
 name: build
-
 on:
   push:
     branches: [ "main" ]
@@ -27,4 +26,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: felipegasp/aej-livros-api-service:latest
+          tags: |
+            felipegasp/aej-livros-api-service:latest
+            felipegasp/aej-livros-api-service:${{ github.sha }}
+
