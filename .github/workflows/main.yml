@@ -6,16 +6,23 @@ on:
     types:
       - completed
 
-
 jobs:
-  compose-test:
+  deploy-to-ec2:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create .env from secrets
+      # === 1. Construir a chave .pem ===
+      - name: Create SSH key
+        run: |
+          echo "${{ secrets.AWS_SSH_EC2 }}" > key.pem
+          chmod 600 key.pem
+
+      # === 2. Criar arquivo .env com os secrets ===
+      - name: Create .env file
         run: |
           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
@@ -29,8 +36,26 @@ jobs:
           echo "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}" >> .env
           echo "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}" >> .env
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # === 3. Copiar docker-compose.yml para EC2 ===
+      - name: Copy docker-compose to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no \
+            -i key.pem \
+            docker-compose.yml \
+            ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_IP }}:/home/${{ secrets.AWS_EC2_USER }}/docker-compose.yml
 
-      - name: Build services via docker-compose
-        run: docker compose build
+      # === 4. Copiar .env para EC2 ===
+      - name: Copy .env to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no \
+            -i key.pem \
+            .env \
+            ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_IP }}:/home/${{ secrets.AWS_EC2_USER }}/.env
+
+      # === 5. Rodar docker compose pull + up -d na EC2 ===
+      - name: Deploy on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+            -i key.pem \
+            ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_IP }} \
+            "docker compose pull && docker compose up -d"
