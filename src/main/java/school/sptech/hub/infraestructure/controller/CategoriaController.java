@@ -59,8 +59,12 @@ public class CategoriaController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<CategoriaResponseDto> buscarCategoriaPorId(@PathVariable Integer id) {
-        CategoriaResponseDto categoria = categoriaService.buscarCategoriaPorId(id);
-        return ResponseEntity.ok(categoria);
+        try {
+            CategoriaResponseDto categoria = categoriaService.buscarCategoriaPorId(id);
+            return ResponseEntity.ok(categoria);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Operation(
