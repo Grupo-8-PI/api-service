@@ -91,12 +91,13 @@ public class Acabamento {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Acabamento that = (Acabamento) o;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Acabamento that = (Acabamento) obj;
         return Objects.equals(id, that.id) &&
-                Objects.equals(tipoAcabamento, that.tipoAcabamento);
+               Objects.equals(tipoAcabamento, that.tipoAcabamento);
     }
 
     @Override

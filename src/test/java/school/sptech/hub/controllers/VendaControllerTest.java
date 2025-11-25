@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,6 @@ import school.sptech.hub.application.exceptions.VendaExceptions.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,7 +54,6 @@ class VendaControllerTest {
     private VendaController vendaController;
 
     private Venda vendaMock;
-    private VendaCreateDto vendaCreateDto;
     private VendaResponseDto vendaResponseDto;
 
     @BeforeEach
@@ -67,16 +66,11 @@ class VendaControllerTest {
         vendaMock.setTotalReserva(3);
         vendaMock.setStatusReserva("CONFIRMADA");
 
-        // Setup do DTO de criação
-        vendaCreateDto = new VendaCreateDto();
-        vendaCreateDto.setDtReserva(LocalDateTime.of(2023, 12, 15, 10, 30));
-        vendaCreateDto.setTotalReserva(2);
-        vendaCreateDto.setStatusReserva("PENDENTE");
-
         // Setup do DTO de resposta
         vendaResponseDto = new VendaResponseDto();
         vendaResponseDto.setId(1);
-        vendaResponseDto.setDtReserva("2023-12-15T10:30:00");
+        vendaResponseDto.setDtReserva("2023-12-15");
+        vendaResponseDto.setDtLimite("2023-12-22");
         vendaResponseDto.setTotalReserva(3);
         vendaResponseDto.setStatusReserva("CONFIRMADA");
     }
@@ -87,52 +81,72 @@ class VendaControllerTest {
     @DisplayName("Quando criar reserva com dados válidos deve retornar status 201 e VendaResponseDto")
     void when_createReserva_withValidData_should_return201AndVendaResponseDto() {
         // Arrange
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
+        vendaCreateDto.setDtReserva(LocalDateTime.of(2023, 12, 15, 10, 30));
+        vendaCreateDto.setTotalReserva(2);
+        vendaCreateDto.setStatusReserva("PENDENTE");
+
         when(createVendaUseCase.execute(any(Venda.class))).thenReturn(vendaMock);
 
-        // Act
-        ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaCreateDto);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(3, response.getBody().getTotalReserva());
-        assertEquals("CONFIRMADA", response.getBody().getStatusReserva());
-        verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaCreateDto);
+
+            // Assert
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(3, response.getBody().getTotalReserva());
+            assertEquals("CONFIRMADA", response.getBody().getStatusReserva());
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        }
     }
 
     @Test
     @DisplayName("Quando criar reserva com dados inválidos deve lançar exceção")
     void when_createReserva_withInvalidData_should_throwException() {
         // Arrange
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
         when(createVendaUseCase.execute(any(Venda.class)))
                 .thenThrow(new VendaInvalidaException("Total da reserva não pode ser negativo"));
 
-        // Act & Assert
-        assertThrows(VendaInvalidaException.class, () ->
-            vendaController.createReserva(vendaCreateDto)
-        );
-        verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
+
+            // Act & Assert
+            assertThrows(VendaInvalidaException.class, () ->
+                vendaController.createReserva(vendaCreateDto)
+            );
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        }
     }
 
     @Test
     @DisplayName("Quando criar reserva e ocorrer violação de integridade deve lançar exceção")
     void when_createReserva_withDataIntegrityViolation_should_throwException() {
         // Arrange
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
         when(createVendaUseCase.execute(any(Venda.class)))
                 .thenThrow(new DataIntegrityViolationException("Violação de integridade"));
 
-        // Act & Assert
-        assertThrows(DataIntegrityViolationException.class, () ->
-            vendaController.createReserva(vendaCreateDto)
-        );
-        verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
+
+            // Act & Assert
+            assertThrows(DataIntegrityViolationException.class, () ->
+                vendaController.createReserva(vendaCreateDto)
+            );
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        }
     }
 
     // ===== TESTES PARA UPDATE RESERVA =====
 
     @Test
-    @DisplayName("Quando atualizar reserva com dados válidos deve retornar status 200 e Venda")
-    void when_updateReservaById_withValidData_should_return200AndVenda() {
+    @DisplayName("Quando atualizar reserva com dados válidos deve retornar status 200 e VendaResponseDto")
+    void when_updateReservaById_withValidData_should_return200AndVendaResponseDto() {
         // Arrange
         Integer id = 1;
         Venda vendaUpdate = new Venda();
@@ -141,14 +155,18 @@ class VendaControllerTest {
 
         when(updateVendaReservaUseCase.execute(eq(id), any(Venda.class))).thenReturn(vendaMock);
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.updateReservaById(id, vendaUpdate);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(vendaMock, response.getBody());
-        verify(updateVendaReservaUseCase, times(1)).execute(eq(id), any(Venda.class));
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.updateReservaById(id, vendaUpdate);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(vendaResponseDto, response.getBody());
+            verify(updateVendaReservaUseCase, times(1)).execute(eq(id), any(Venda.class));
+        }
     }
 
     @Test
@@ -171,20 +189,24 @@ class VendaControllerTest {
     // ===== TESTES PARA GET RESERVA BY ID =====
 
     @Test
-    @DisplayName("Quando buscar reserva por ID válido deve retornar status 200 e Venda")
-    void when_getReservaById_withValidId_should_return200AndVenda() {
+    @DisplayName("Quando buscar reserva por ID válido deve retornar status 200 e VendaResponseDto")
+    void when_getReservaById_withValidId_should_return200AndVendaResponseDto() {
         // Arrange
         Integer id = 1;
         when(getVendaByIdUseCase.execute(id)).thenReturn(vendaMock);
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.getReservaById(id);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(vendaMock, response.getBody());
-        verify(getVendaByIdUseCase, times(1)).execute(id);
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.getReservaById(id);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(vendaResponseDto, response.getBody());
+            verify(getVendaByIdUseCase, times(1)).execute(id);
+        }
     }
 
     @Test
@@ -220,20 +242,24 @@ class VendaControllerTest {
     // ===== TESTES PARA DELETE RESERVA =====
 
     @Test
-    @DisplayName("Quando deletar reserva com ID válido deve retornar status 200 e Venda")
-    void when_deleteReservaById_withValidId_should_return200AndVenda() {
+    @DisplayName("Quando deletar reserva com ID válido deve retornar status 200 e VendaResponseDto")
+    void when_deleteReservaById_withValidId_should_return200AndVendaResponseDto() {
         // Arrange
         Integer id = 1;
         when(deleteVendaUseCase.execute(id)).thenReturn(vendaMock);
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.deleteReservaById(id);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(vendaMock, response.getBody());
-        verify(deleteVendaUseCase, times(1)).execute(id);
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.deleteReservaById(id);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(vendaResponseDto, response.getBody());
+            verify(deleteVendaUseCase, times(1)).execute(id);
+        }
     }
 
     @Test
@@ -258,17 +284,21 @@ class VendaControllerTest {
     void when_getVendaPorIdCliente_withValidId_should_return200AndVendaResponseDtoList() {
         // Arrange
         Integer idCliente = 1;
-        List<Venda> vendas = Arrays.asList(vendaMock);
+        List<Venda> vendas = List.of(vendaMock);
         when(listAllVendasByClienteUseCase.execute(idCliente)).thenReturn(vendas);
 
-        // Act
-        ResponseEntity<List<VendaResponseDto>> response = vendaController.getVendaPorIdCliente(idCliente);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        verify(listAllVendasByClienteUseCase, times(1)).execute(idCliente);
+            // Act
+            ResponseEntity<List<VendaResponseDto>> response = vendaController.getVendaPorIdCliente(idCliente);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(1, response.getBody().size());
+            verify(listAllVendasByClienteUseCase, times(1)).execute(idCliente);
+        }
     }
 
     @Test
@@ -292,21 +322,25 @@ class VendaControllerTest {
     // ===== TESTES PARA LIST ALL RESERVAS =====
 
     @Test
-    @DisplayName("Quando listar todas as reservas deve retornar status 200 e lista de Venda")
-    void when_listAllReservas_should_return200AndVendaList() {
+    @DisplayName("Quando listar todas as reservas deve retornar status 200 e lista de VendaResponseDto")
+    void when_listAllReservas_should_return200AndVendaResponseDtoList() {
         // Arrange
-        List<Venda> vendas = Arrays.asList(vendaMock);
+        List<Venda> vendas = List.of(vendaMock);
         when(listAllVendasUseCase.execute()).thenReturn(vendas);
 
-        // Act
-        ResponseEntity<List<Venda>> response = vendaController.listAllReservas();
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertEquals(vendaMock, response.getBody().get(0));
-        verify(listAllVendasUseCase, times(1)).execute();
+            // Act
+            ResponseEntity<List<VendaResponseDto>> response = vendaController.listAllReservas();
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(1, response.getBody().size());
+            assertEquals(vendaResponseDto, response.getBody().get(0));
+            verify(listAllVendasUseCase, times(1)).execute();
+        }
     }
 
     @Test
@@ -317,7 +351,7 @@ class VendaControllerTest {
         when(listAllVendasUseCase.execute()).thenReturn(vendasVazias);
 
         // Act
-        ResponseEntity<List<Venda>> response = vendaController.listAllReservas();
+        ResponseEntity<List<VendaResponseDto>> response = vendaController.listAllReservas();
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -332,15 +366,21 @@ class VendaControllerTest {
     @DisplayName("Deve verificar que os use cases corretos estão sendo chamados")
     void should_verifyCorrectUseCasesAreCalled() {
         // Arrange
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
         when(createVendaUseCase.execute(any(Venda.class))).thenReturn(vendaMock);
 
-        // Act
-        vendaController.createReserva(vendaCreateDto);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        verify(createVendaUseCase, times(1)).execute(any(Venda.class));
-        verifyNoInteractions(updateVendaReservaUseCase, getVendaByIdUseCase, deleteVendaUseCase,
-                           checkVendaOwnershipUseCase, listAllVendasByClienteUseCase, listAllVendasUseCase);
+            // Act
+            vendaController.createReserva(vendaCreateDto);
+
+            // Assert
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+            verifyNoInteractions(updateVendaReservaUseCase, getVendaByIdUseCase, deleteVendaUseCase,
+                               checkVendaOwnershipUseCase, listAllVendasByClienteUseCase, listAllVendasUseCase);
+        }
     }
 
     @Test
@@ -351,12 +391,16 @@ class VendaControllerTest {
         Venda vendaUpdate = new Venda();
         when(updateVendaReservaUseCase.execute(id, vendaUpdate)).thenReturn(vendaMock);
 
-        // Act
-        vendaController.updateReservaById(id, vendaUpdate);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        verify(updateVendaReservaUseCase, times(1)).execute(id, vendaUpdate);
-        verifyNoInteractions(createVendaUseCase, getVendaByIdUseCase, deleteVendaUseCase);
+            // Act
+            vendaController.updateReservaById(id, vendaUpdate);
+
+            // Assert
+            verify(updateVendaReservaUseCase, times(1)).execute(id, vendaUpdate);
+            verifyNoInteractions(createVendaUseCase, getVendaByIdUseCase, deleteVendaUseCase);
+        }
     }
 
     @Test
@@ -366,38 +410,40 @@ class VendaControllerTest {
         VendaCreateDto vendaComTotalGrande = new VendaCreateDto();
         vendaComTotalGrande.setTotalReserva(Integer.MAX_VALUE);
 
-        when(createVendaUseCase.execute(any(Venda.class)))
-                .thenReturn(vendaMock);
+        when(createVendaUseCase.execute(any(Venda.class))).thenReturn(vendaMock);
 
-        // Act
-        ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaComTotalGrande);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaComTotalGrande);
+
+            // Assert
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        }
     }
 
     @Test
     @DisplayName("Deve verificar se todas as propriedades do response são retornadas corretamente")
     void should_verifyAllResponsePropertiesAreReturnedCorrectly() {
         // Arrange
-        VendaResponseDto responseCompleto = new VendaResponseDto();
-        responseCompleto.setId(1);
-        responseCompleto.setTotalReserva(3);
-        responseCompleto.setStatusReserva("CONFIRMADA");
-        responseCompleto.setDtReserva(String.valueOf(LocalDateTime.of(2023, 12, 15, 10, 30)));
-
         when(getVendaByIdUseCase.execute(1)).thenReturn(vendaMock);
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.getReservaById(1);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertNotNull(response.getBody());
-        Venda body = response.getBody();
-        assertEquals(3, body.getTotalReserva());
-        assertEquals("CONFIRMADA", body.getStatusReserva());
-        assertNotNull(body.getDtReserva());
-        verify(getVendaByIdUseCase, times(1)).execute(1);
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.getReservaById(1);
+
+            // Assert
+            assertNotNull(response.getBody());
+            VendaResponseDto body = response.getBody();
+            assertEquals(3, body.getTotalReserva());
+            assertEquals("CONFIRMADA", body.getStatusReserva());
+            assertNotNull(body.getDtReserva());
+            verify(getVendaByIdUseCase, times(1)).execute(1);
+        }
     }
 }
