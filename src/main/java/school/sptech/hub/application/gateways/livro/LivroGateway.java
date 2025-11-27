@@ -1,6 +1,5 @@
 package school.sptech.hub.application.gateways.livro;
 
-import org.springframework.data.domain.Page;
 import school.sptech.hub.domain.entity.Livro;
 
 import java.util.List;
@@ -20,5 +19,4 @@ public interface LivroGateway {
     List<Livro> findRecommendedRandomLivros();
     Optional<Livro> findRandomLivro();
     List<Livro> findTop3ByOrderByDataAdicaoDesc();
-    Page<Livro> findAllPaginated(int page, int size);
 }

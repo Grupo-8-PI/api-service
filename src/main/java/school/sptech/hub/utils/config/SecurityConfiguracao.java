@@ -39,9 +39,6 @@ public class SecurityConfiguracao {
     @Autowired
     private AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
 
-    @Autowired
-    private GerenciadorTokenJwt gerenciadorTokenJwt;
-
     private static final AntPathRequestMatcher[] URLS_PERMITIDAS = {
             new AntPathRequestMatcher("/swagger-ui/**"),
             new AntPathRequestMatcher("/swagger-ui.html"),
@@ -63,8 +60,7 @@ public class SecurityConfiguracao {
             new AntPathRequestMatcher("/livros/recomendados"),
             new AntPathRequestMatcher("/livros"),
             new AntPathRequestMatcher("/categorias"),
-            new AntPathRequestMatcher("/categorias/*", "GET" ),
-            new AntPathRequestMatcher("/livros/atualizar/sinopse/**")
+            new AntPathRequestMatcher("/categorias/*", "GET" )
 
     };
 
@@ -107,7 +103,12 @@ public class SecurityConfiguracao {
 
     @Bean
     public AutenticacaoFilter jwtAuthenticationFilterBean() {
-        return new AutenticacaoFilter(autenticacaoService, gerenciadorTokenJwt);
+        return new AutenticacaoFilter(autenticacaoService, jwtAuthenticationUtilBean());
+    }
+
+    @Bean
+    public GerenciadorTokenJwt jwtAuthenticationUtilBean() {
+        return new GerenciadorTokenJwt();
     }
 
     @Bean

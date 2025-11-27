@@ -3,7 +3,6 @@ package school.sptech.hub.application.service;
 import org.springframework.stereotype.Service;
 import school.sptech.hub.application.usecases.livro.*;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
-import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 
@@ -14,7 +13,7 @@ public class LivroService {
 
     private final CreateLivroUseCase createLivroUseCase;
     private final FindLivroByIdUseCase findLivroByIdUseCase;
-    private final ListLivrosPaginatedUseCase listLivrosPaginatedUseCase;
+    private final ListAllLivrosUseCase listAllLivrosUseCase;
     private final UpdateLivroUseCase updateLivroUseCase;
     private final DeleteLivroUseCase deleteLivroUseCase;
     private final UploadImageUseCase uploadImageUseCase;
@@ -24,11 +23,10 @@ public class LivroService {
     private final ListAllCategoriesUseCase listAllCategoriesUseCase;
     private final ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
     private final ListRecentLivrosUseCase listRecentLivrosUseCase;
-    private final UpdateLivroSinopseUseCase updateLivroSinopseUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                         FindLivroByIdUseCase findLivroByIdUseCase,
-                        ListLivrosPaginatedUseCase listLivrosPaginatedUseCase,
+                        ListAllLivrosUseCase listAllLivrosUseCase,
                         UpdateLivroUseCase updateLivroUseCase,
                         DeleteLivroUseCase deleteLivroUseCase,
                         UploadImageUseCase uploadImageUseCase,
@@ -37,11 +35,10 @@ public class LivroService {
                         FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase,
                         ListAllCategoriesUseCase listAllCategoriesUseCase,
                         ListRecommendedLivrosUseCase listRecommendedLivrosUseCase,
-                        ListRecentLivrosUseCase listRecentLivrosUseCase,
-                        UpdateLivroSinopseUseCase updateLivroSinopseUseCase) {
+                        ListRecentLivrosUseCase listRecentLivrosUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
-        this.listLivrosPaginatedUseCase = listLivrosPaginatedUseCase;
+        this.listAllLivrosUseCase = listAllLivrosUseCase;
         this.updateLivroUseCase = updateLivroUseCase;
         this.deleteLivroUseCase = deleteLivroUseCase;
         this.uploadImageUseCase = uploadImageUseCase;
@@ -51,11 +48,14 @@ public class LivroService {
         this.listAllCategoriesUseCase = listAllCategoriesUseCase;
         this.listRecommendedLivrosUseCase = listRecommendedLivrosUseCase;
         this.listRecentLivrosUseCase = listRecentLivrosUseCase;
-        this.updateLivroSinopseUseCase = updateLivroSinopseUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
         return createLivroUseCase.execute(livro);
+    }
+
+    public List<LivroResponseDto> listarLivros() {
+        return listAllLivrosUseCase.execute();
     }
 
     public LivroResponseDto buscarLivroPorId(Integer id) {
@@ -96,13 +96,5 @@ public class LivroService {
 
     public List<LivroResponseDto> listarLivrosRecentes() {
         return listRecentLivrosUseCase.execute();
-    }
-
-    public LivroPaginatedResponseDto listarLivrosPaginado(int page, int size) {
-        return listLivrosPaginatedUseCase.execute(page, size);
-    }
-
-    public LivroResponseDto atualizarSinopseLivro(Integer id, String sinopse) {
-        return updateLivroSinopseUseCase.execute(id, sinopse);
     }
 }

@@ -2,7 +2,6 @@ package school.sptech.hub.domain.dto.venda;
 
 import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.domain.entity.Usuario;
-import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaEntity;
 
 public class VendaMapper {
 
@@ -45,15 +44,5 @@ public class VendaMapper {
             existingVenda.setTotalReserva(toBeUpdatedVenda.getTotalReserva());
         }
         return existingVenda;
-    }
-    public static Venda toDomain(VendaEntity entity) {
-        Venda venda = new Venda();
-        venda.setId(entity.getId());
-        venda.setDtReserva(entity.getDtReserva());
-        venda.setDtLimite(entity.getDtLimite());
-        venda.setStatusReserva(entity.getStatusReserva());
-        venda.setTotalReserva(entity.getTotalReserva());
-        // Adicione outros campos conforme necessário
-        return venda;
     }
 }
