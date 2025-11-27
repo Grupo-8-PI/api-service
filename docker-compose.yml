@@ -45,9 +45,7 @@ services:
       start_period: 20s
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: felipegasp/aej-livros-api-service:latest
     container_name: api-service
     restart: unless-stopped
     ports:

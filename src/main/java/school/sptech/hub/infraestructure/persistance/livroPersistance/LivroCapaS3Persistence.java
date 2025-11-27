@@ -7,7 +7,6 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.Locale;
@@ -40,7 +39,7 @@ public class LivroCapaS3Persistence implements LivroImagemStorageGateway {
                 .bucket(bucket)
                 .key(key)
                 .contentType(detectContentType(key))
-                .acl(ObjectCannedACL.PUBLIC_READ)
+                // ACL removida - o bucket deve ter uma bucket policy para permitir leitura pública
                 .build();
 
         s3Client.putObject(request, RequestBody.fromBytes(conteudo));
