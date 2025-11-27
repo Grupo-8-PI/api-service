@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroErroResponseSwgDto;
+import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroUpdateDto;
 import school.sptech.hub.application.service.LivroService;
@@ -71,8 +72,10 @@ public class LivroController {
             )
     })
     @GetMapping
-    public ResponseEntity<List<LivroResponseDto>> listarLivros() {
-        List<LivroResponseDto> livros = livroService.listarLivros();
+    public ResponseEntity<LivroPaginatedResponseDto> listarLivros(
+            @RequestParam(defaultValue = "0", name = "page") int page,
+            @RequestParam(defaultValue = "9", name = "size") int size) {
+        LivroPaginatedResponseDto livros = livroService.listarLivrosPaginado(page, size);
         return ResponseEntity.ok(livros);
     }
 
@@ -95,7 +98,7 @@ public class LivroController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
     @SecurityRequirement(name = "bearer")
-    public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable Integer id) {
+    public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable("id") Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
         return ResponseEntity.ok(livro);
     }
@@ -129,17 +132,45 @@ public class LivroController {
         return ResponseEntity.ok(livroUpdated);
     }
 
-    @PatchMapping("/imagem")
+    @Operation(
+            summary = "Atualizar imagem do livro",
+            description = "Atualiza a imagem/capa de um livro. Envie o arquivo como multipart/form-data"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Imagem atualizada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Arquivo inválido ou ID inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Livro não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @PatchMapping("/{id}/imagem")
     @SecurityRequirement(name = "bearer")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LivroResponseDto> atualizarImagemLivro(
-            @RequestParam Integer id,
+            @PathVariable("id") Integer id,
             @RequestParam("arquivo") MultipartFile arquivo) throws IOException {
+
+        if (arquivo.isEmpty()) {
+            throw new IllegalArgumentException("Arquivo não pode ser vazio");
+        }
+
         LivroResponseDto livroUpdated = livroService.atualizarImagemLivro(
                 id,
                 arquivo.getBytes(),
                 arquivo.getOriginalFilename(),
                 arquivo.getContentType()
         );
+
         return ResponseEntity.status(200).body(livroUpdated);
     }
 
@@ -298,6 +329,35 @@ public class LivroController {
     public ResponseEntity<List<LivroResponseDto>> listarLivrosRecentes() {
         List<LivroResponseDto> livros = livroService.listarLivrosRecentes();
         return ResponseEntity.ok(livros);
+    }
+
+    @Operation(
+            summary = "Atualizar sinopse do livro",
+            description = "Atualiza a sinopse/descrição de um livro específico"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Sinopse atualizada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados inválidos fornecidos",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Livro não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @PutMapping("/atualizar/sinopse")
+    public ResponseEntity<LivroResponseDto> atualizarSinopseLivro(
+            @RequestParam("id") Integer id,
+            @RequestParam("sinopse") String sinopse) {
+        LivroResponseDto livroUpdated = livroService.atualizarSinopseLivro(id, sinopse);
+        return ResponseEntity.status(200).body(livroUpdated);
     }
 }
 

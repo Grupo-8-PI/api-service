@@ -2,6 +2,8 @@ package school.sptech.hub.infraestructure.gateways.livro;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
 import school.sptech.hub.domain.entity.Livro;
@@ -38,7 +40,17 @@ public class LivroRepositoryGateway implements LivroGateway {
     @Override
     public Optional<Livro> findById(Integer id) {
         Optional<LivroEntity> entity = livroRepository.findById(id);
-        return entity.map(LivroEntityMapper::toDomain);
+
+        if (entity.isEmpty()) {
+            return Optional.empty();
+        }
+
+        try {
+            Livro livro = LivroEntityMapper.toDomain(entity.get());
+            return Optional.of(livro);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao mapear LivroEntity para Livro (ID: " + id + "): " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -122,5 +134,11 @@ public class LivroRepositoryGateway implements LivroGateway {
         return entities.stream()
                 .map(LivroEntityMapper::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<Livro> findAllPaginated(int page, int size) {
+        Page<LivroEntity> entityPage = livroRepository.findAll(PageRequest.of(page, size));
+        return entityPage.map(LivroEntityMapper::toDomain);
     }
 }
