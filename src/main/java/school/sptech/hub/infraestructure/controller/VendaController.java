@@ -100,11 +100,10 @@ public class VendaController {
     @PutMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
-    public ResponseEntity<VendaResponseDto> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
+    public ResponseEntity<Venda> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
         Venda updatedVenda = updateVendaReservaUseCase.execute(id, vendaToUpdate);
-        VendaResponseDto response = VendaMapper.toResponseDto(updatedVenda);
 
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.status(200).body(updatedVenda);
     }
 
     @Operation(
@@ -126,11 +125,10 @@ public class VendaController {
     @GetMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
-    public ResponseEntity<VendaResponseDto> getReservaById(@PathVariable Integer id){
+    public ResponseEntity<Venda> getReservaById(@PathVariable Integer id){
         Venda venda = getVendaByIdUseCase.execute(id);
-        VendaResponseDto response = VendaMapper.toResponseDto(venda);
 
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.status(200).body(venda);
     }
 
 
@@ -153,11 +151,10 @@ public class VendaController {
     @DeleteMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
-    public ResponseEntity<VendaResponseDto> deleteReservaById(@PathVariable Integer id){
+    public ResponseEntity<Venda> deleteReservaById(@PathVariable Integer id){
         Venda venda = deleteVendaUseCase.execute(id);
-        VendaResponseDto response = VendaMapper.toResponseDto(venda);
 
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.status(200).body(venda);
     }
 
     @Operation(
@@ -193,17 +190,6 @@ public class VendaController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-            summary = "Listar todas as reservas",
-            description = "Retorna todas as reservas do sistema (apenas para administradores)."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Lista de reservas encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
-            )
-    })
     @GetMapping()
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('ADMIN')")
@@ -213,4 +199,5 @@ public class VendaController {
         ReservaPaginatedResponseDto reservas = listReservasPaginatedUseCase.execute(page, size);
         return ResponseEntity.ok(reservas);
     }
+
 }

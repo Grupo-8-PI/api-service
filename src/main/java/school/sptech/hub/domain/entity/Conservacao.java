@@ -73,9 +73,6 @@ public class Conservacao {
     public void setTipoConservacao(TipoConservacao tipoConservacao) {
         this.tipoConservacao = tipoConservacao;
         if (tipoConservacao != null) {
-            this.id = tipoConservacao.getId(); // Sincroniza o ID automaticamente
-        }
-        if (tipoConservacao != null) {
             this.id = tipoConservacao.getId();
         }
     }

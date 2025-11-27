@@ -35,6 +35,12 @@ class LivroServiceTest {
 
     @Mock
     private UploadImageUseCase uploadImageUseCase;
+    @Mock private FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase;
+    @Mock private FindLivrosByConservacaoUseCase findLivrosByConservacaoUseCase;
+    @Mock private FindLivrosByCategoriaUseCase findLivrosByCategoriaUseCase;
+    @Mock private ListAllCategoriesUseCase listAllCategoriesUseCase;
+    @Mock private ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
+    @Mock private ListRecentLivrosUseCase listRecentLivrosUseCase;
 
     @Mock
     private FindLivrosByAcabamentoUseCase findLivrosByAcabamentoUseCase;
