@@ -1,11 +1,12 @@
 package school.sptech.hub.application.usecases.usuario;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import school.sptech.hub.application.exceptions.UsuarioExceptions.UsuarioNaoEncontradoException;
 import school.sptech.hub.application.gateways.usuario.UsuarioGateway;
 import school.sptech.hub.domain.dto.usuario.UsuarioTokenDto;
 import school.sptech.hub.domain.entity.Usuario;
@@ -36,7 +37,7 @@ public class AuthenticateUsuarioUseCase {
         Usuario usuarioAutenticado =
                 gateway.findByEmail(usuario.getEmail())
                         .orElseThrow(
-                                () -> new ResponseStatusException(404, "Email de usuário não cadastrado", null)
+                                () -> new UsuarioNaoEncontradoException("Email de usuário não cadastrado")
                         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
