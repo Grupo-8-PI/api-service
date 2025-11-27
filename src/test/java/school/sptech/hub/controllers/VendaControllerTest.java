@@ -50,11 +50,15 @@ class VendaControllerTest {
     @Mock
     private ListAllVendasUseCase listAllVendasUseCase;
 
+    @Mock
+    private ListReservasPaginatedUseCase listReservasPaginatedUseCase;
+
     @InjectMocks
     private VendaController vendaController;
 
     private Venda vendaMock;
     private VendaResponseDto vendaResponseDto;
+    private ReservaPaginatedResponseDto reservaPaginatedResponseDto;
 
     @BeforeEach
     void setUp() {
@@ -73,6 +77,15 @@ class VendaControllerTest {
         vendaResponseDto.setDtLimite("2023-12-22");
         vendaResponseDto.setTotalReserva(3);
         vendaResponseDto.setStatusReserva("CONFIRMADA");
+
+        // Setup do DTO de resposta paginada usando o construtor correto
+        reservaPaginatedResponseDto = new ReservaPaginatedResponseDto(
+                List.of(vendaResponseDto), // reservas
+                0,                         // page
+                10,                        // size
+                1,                         // totalElements
+                1                          // totalPages
+        );
     }
 
     // ===== TESTES PARA CREATE RESERVA =====
@@ -319,45 +332,82 @@ class VendaControllerTest {
         verify(listAllVendasByClienteUseCase, times(1)).execute(idClienteInexistente);
     }
 
-    // ===== TESTES PARA LIST ALL RESERVAS =====
+    // ===== TESTES PARA LIST ALL RESERVAS COM PAGINAÇÃO =====
 
     @Test
-    @DisplayName("Quando listar todas as reservas deve retornar status 200 e lista de VendaResponseDto")
-    void when_listAllReservas_should_return200AndVendaResponseDtoList() {
+    @DisplayName("Quando listar todas as reservas com paginação deve retornar status 200 e ReservaPaginatedResponseDto")
+    void when_listAllReservasPaginated_should_return200AndReservaPaginatedResponseDto() {
         // Arrange
-        List<Venda> vendas = List.of(vendaMock);
-        when(listAllVendasUseCase.execute()).thenReturn(vendas);
-
-        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
-            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
-
-            // Act
-            ResponseEntity<List<VendaResponseDto>> response = vendaController.listAllReservas();
-
-            // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertNotNull(response.getBody());
-            assertEquals(1, response.getBody().size());
-            assertEquals(vendaResponseDto, response.getBody().get(0));
-            verify(listAllVendasUseCase, times(1)).execute();
-        }
-    }
-
-    @Test
-    @DisplayName("Quando listar reservas e não houver nenhuma deve retornar lista vazia")
-    void when_listAllReservas_withNoReservas_should_returnEmptyList() {
-        // Arrange
-        List<Venda> vendasVazias = Collections.emptyList();
-        when(listAllVendasUseCase.execute()).thenReturn(vendasVazias);
+        int page = 0;
+        int size = 10;
+        when(listReservasPaginatedUseCase.execute(page, size)).thenReturn(reservaPaginatedResponseDto);
 
         // Act
-        ResponseEntity<List<VendaResponseDto>> response = vendaController.listAllReservas();
+        ResponseEntity<ReservaPaginatedResponseDto> response = vendaController.listarReservasPaginado(page, size);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody().isEmpty());
-        verify(listAllVendasUseCase, times(1)).execute();
+        assertEquals(1, response.getBody().getTotalElements());
+        assertEquals(1, response.getBody().getReservas().size());
+        assertEquals(vendaResponseDto, response.getBody().getReservas().get(0));
+        verify(listReservasPaginatedUseCase, times(1)).execute(page, size);
+    }
+
+    @Test
+    @DisplayName("Quando listar reservas paginadas e não houver nenhuma deve retornar página vazia")
+    void when_listReservasPaginated_withNoReservas_should_returnEmptyPage() {
+        // Arrange
+        int page = 0;
+        int size = 10;
+        ReservaPaginatedResponseDto emptyPage = new ReservaPaginatedResponseDto(
+                Collections.emptyList(), // reservas
+                0,                       // page
+                10,                      // size
+                0,                       // totalElements
+                0                        // totalPages
+        );
+
+        when(listReservasPaginatedUseCase.execute(page, size)).thenReturn(emptyPage);
+
+        // Act
+        ResponseEntity<ReservaPaginatedResponseDto> response = vendaController.listarReservasPaginado(page, size);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().getTotalElements());
+        assertTrue(response.getBody().getReservas().isEmpty());
+        verify(listReservasPaginatedUseCase, times(1)).execute(page, size);
+    }
+
+    @Test
+    @DisplayName("Quando listar reservas paginadas com página específica deve retornar dados corretos")
+    void when_listReservasPaginated_withSpecificPage_should_returnCorrectData() {
+        // Arrange
+        int page = 1;
+        int size = 5;
+        ReservaPaginatedResponseDto specificPage = new ReservaPaginatedResponseDto(
+                List.of(vendaResponseDto), // reservas
+                1,                         // page
+                5,                         // size
+                6,                         // totalElements
+                2                          // totalPages
+        );
+
+        when(listReservasPaginatedUseCase.execute(page, size)).thenReturn(specificPage);
+
+        // Act
+        ResponseEntity<ReservaPaginatedResponseDto> response = vendaController.listarReservasPaginado(page, size);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(6, response.getBody().getTotalElements());
+        assertEquals(2, response.getBody().getTotalPages());
+        assertEquals(1, response.getBody().getPage());
+        assertEquals(5, response.getBody().getSize());
+        verify(listReservasPaginatedUseCase, times(1)).execute(page, size);
     }
 
     // ===== TESTES DE VALIDAÇÃO E VERIFICAÇÃO =====
@@ -379,7 +429,7 @@ class VendaControllerTest {
             // Assert
             verify(createVendaUseCase, times(1)).execute(any(Venda.class));
             verifyNoInteractions(updateVendaReservaUseCase, getVendaByIdUseCase, deleteVendaUseCase,
-                               checkVendaOwnershipUseCase, listAllVendasByClienteUseCase, listAllVendasUseCase);
+                               checkVendaOwnershipUseCase, listAllVendasByClienteUseCase, listReservasPaginatedUseCase);
         }
     }
 

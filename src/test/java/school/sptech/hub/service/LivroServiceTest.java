@@ -31,9 +31,6 @@ class LivroServiceTest {
     private FindLivroByIdUseCase findLivroByIdUseCase;
 
     @Mock
-    private ListAllLivrosUseCase listAllLivrosUseCase;
-
-    @Mock
     private UpdateLivroUseCase updateLivroUseCase;
 
     @Mock
@@ -129,31 +126,6 @@ class LivroServiceTest {
         assertEquals(livroResponseDto.getId(), result.getId());
         assertEquals(livroResponseDto.getTitulo(), result.getTitulo());
         verify(findLivroByIdUseCase, times(1)).execute(id);
-    }
-
-    // ===== TESTES PARA LISTAR LIVROS =====
-
-    @Test
-    @DisplayName("Deve listar todos os livros com sucesso")
-    void deveListarTodosOsLivrosComSucesso() {
-        // Arrange
-        LivroResponseDto livro2 = new LivroResponseDto();
-        livro2.setId(2);
-        livro2.setTitulo("O Cortiço");
-        livro2.setAutor("Aluísio Azevedo");
-
-        List<LivroResponseDto> livros = Arrays.asList(livroResponseDto, livro2);
-        when(listAllLivrosUseCase.execute()).thenReturn(livros);
-
-        // Act
-        List<LivroResponseDto> result = livroService.listarLivros();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals("Dom Casmurro", result.get(0).getTitulo());
-        assertEquals("O Cortiço", result.get(1).getTitulo());
-        verify(listAllLivrosUseCase, times(1)).execute();
     }
 
     // ===== TESTES PARA ATUALIZAR LIVRO =====
