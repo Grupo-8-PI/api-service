@@ -60,12 +60,13 @@ public class Categoria {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Categoria that = (Categoria) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(nome, that.nome);
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Categoria categoria = (Categoria) obj;
+        return Objects.equals(id, categoria.id) &&
+               Objects.equals(nome, categoria.nome);
     }
 
     @Override

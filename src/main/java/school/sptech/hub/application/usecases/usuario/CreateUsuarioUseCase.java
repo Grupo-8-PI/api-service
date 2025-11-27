@@ -29,6 +29,12 @@ public class CreateUsuarioUseCase {
         if (!isValidUserType(usuario.getTipo_usuario())) {
             throw new TipoUsuarioInvalidoException("Tipo de usuário inválido.");
         }
+
+        // Verificar se email já existe
+        if (gateway.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email já cadastrado");
+        }
+
         Usuario usuarioEntity = UsuarioMapper.toEntity(usuario);
 
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
