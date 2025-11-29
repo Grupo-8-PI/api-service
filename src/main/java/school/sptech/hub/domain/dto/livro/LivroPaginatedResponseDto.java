@@ -14,6 +14,8 @@ public class LivroPaginatedResponseDto {
         this.totalElements = totalElements;
         this.currentPage = currentPage;
     }
+    public LivroPaginatedResponseDto() {
+    }
 
     public List<LivroResponseDto> getLivros() {
         return livros;
@@ -29,6 +31,22 @@ public class LivroPaginatedResponseDto {
 
     public int getCurrentPage() {
         return currentPage;
+    }
+
+    public void setLivros(List<LivroResponseDto> livros) {
+        this.livros = livros;
+    }
+
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    public void setTotalElements(long totalElements) {
+        this.totalElements = totalElements;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 }
 

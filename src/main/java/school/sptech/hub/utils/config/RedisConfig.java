@@ -1,6 +1,7 @@
 package school.sptech.hub.utils.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -18,17 +19,22 @@ import java.time.Duration;
 public class RedisConfig {
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
-    }
-    @Bean
     public RedisCacheConfiguration cacheConfiguration(ObjectMapper objectMapper) {
+        ObjectMapper typedMapper = objectMapper.copy();
+        typedMapper.registerModule(new JavaTimeModule());
+        typedMapper.activateDefaultTyping(
+                typedMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
+
         GenericJackson2JsonRedisSerializer serializer =
-                new GenericJackson2JsonRedisSerializer(objectMapper);
+                new GenericJackson2JsonRedisSerializer(typedMapper);
 
         return RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(serializer)
+                        RedisSerializationContext.SerializationPair.fromSerializer(
+                               serializer
+                        )
                 );
     }
 }

@@ -46,11 +46,16 @@ public class LivroProducerAdapter implements ChatGptAdapter {
         } catch (JsonProcessingException e) {
             System.out.println("Houve um erro ao converter o evento para JSON: " + e.getMessage());
         }
-        rabbitTemplate.convertAndSend(
-                exchangeName,
-                routingKey,
-                json
-        );
+        try{
+            rabbitTemplate.convertAndSend(
+                    exchangeName,
+                    routingKey,
+                    json
+            );
+        }catch (Exception e){
+            System.out.println("[Adapter] Houve um erro ao gerar a sinopse");
+        }
+
         System.out.println("[Adapter] Evento de livro criado enviado -> " + evento);
     }
 }
