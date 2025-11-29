@@ -43,7 +43,21 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-
+# REMOVER ANTES DE COMMITAR
+  redis:
+    image: redis:7-alpine
+    container_name: redis-local
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
   app:
     image: felipegasp/aej-livros-api-service:latest
     container_name: api-service
@@ -61,13 +75,64 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_VALIDITY: ${JWT_VALIDITY}
       RABBITMQ_HOST: rabbitmq-local
-      RABBITMQ_PORT: 5672
+      RABBITMQ_PORT: "5672"
       RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-admin}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-admin}
+      REDIS_IP: ${REDIS_IP:-redis-local}
     depends_on:
       mysql:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  python-consumer:
+    image: felipegasp/aej-consumer-python:latest
+    container_name: python-consumer
+    restart: unless-stopped
+    environment:
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq-local}
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-admin}
+      RABBITMQ_VIRTUAL_HOST: /
+      RABBITMQ_QUEUE_NAME: livros.criados
+      RABBITMQ_EXCHANGE_NAME: "livros.exchange"
+      RABBITMQ_ROUTING_KEY: "livros.criado"
+      RABBITMQ_PREFETCH_COUNT: "1"
+
+      RABBITMQ_MAX_RETRIES: "10"
+      RABBITMQ_INITIAL_RETRY_DELAY: "1.0"
+      RABBITMQ_MAX_RETRY_DELAY: "60.0"
+      RABBITMQ_FAILURE_THRESHOLD: "5"
+      RABBITMQ_RECOVERY_TIMEOUT: "30.0"
+
+      RABBITMQ_QUEUE_MODE: passive
+      # RABBITMQ_QUEUE_MODE: active
+      RABBITMQ_WAIT_FOR_QUEUE: "true"
+      RABBITMQ_QUEUE_CHECK_INTERVAL: "5.0"
+
+      HF_API_KEY: ${HF_API_KEY:-}
+      HF_MODEL: meta-llama/Llama-2-7b-chat-hf
+      LLM_MAX_TOKENS: "500"
+      LLM_TEMPERATURE: "0.7"
+      LLM_TIMEOUT: "30"
+      API_BASE_URL: http://api-service:8080
+      API_CALLBACK_ENDPOINT: /livros/atualizar/sinopse
+      API_TIMEOUT: "30"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      app:
         condition: service_healthy
     networks:
       - app-network

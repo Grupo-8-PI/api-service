@@ -14,6 +14,9 @@ RUN mvn clean package -Dmaven.test.skip=true
 FROM amazoncorretto:21-alpine
 WORKDIR /app
 
+# Instalar curl para healthcheck
+RUN apk add --no-cache curl
+
 # Copiar o jar do estágio anterior
 COPY --from=build /app/target/*.jar app.jar
 
