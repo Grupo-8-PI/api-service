@@ -359,5 +359,15 @@ public class LivroController {
         LivroResponseDto livroUpdated = livroService.atualizarSinopseLivro(id, sinopse);
         return ResponseEntity.status(200).body(livroUpdated);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<LivroPaginatedResponseDto> pesquisaElastica(
+            @RequestParam(defaultValue = "0", name = "page") int page,
+            @RequestParam(defaultValue = "9", name = "size") int size,
+            @RequestParam(required = false, name = "query") String query
+    ){
+        LivroPaginatedResponseDto livroBuscados = livroService.buscarLivrosElasticoPaginado(page, size, query);
+        return ResponseEntity.ok(livroBuscados);
+    }
 }
 

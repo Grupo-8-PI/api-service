@@ -2,6 +2,8 @@ package school.sptech.hub.infraestructure.persistance.livroPersistance;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import school.sptech.hub.infraestructure.persistance.acabamentoPersistance.AcabamentoEntity;
 import school.sptech.hub.infraestructure.persistance.categoriaPersistance.CategoriaEntity;
 import school.sptech.hub.infraestructure.persistance.conservacaoPersistance.ConservacaoEntity;
@@ -12,6 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "livro")
+@Indexed
 public class LivroEntity {
 
     @Id
@@ -20,6 +23,7 @@ public class LivroEntity {
 
     @Column(nullable = false, length = 60)
     @NotBlank
+    @FullTextField
     private String titulo;
 
     @Column(nullable = false, unique = true, length = 45)
@@ -28,10 +32,12 @@ public class LivroEntity {
 
     @Column(nullable = false, length = 45)
     @NotBlank
+    @FullTextField
     private String autor;
 
     @Column(nullable = false, length = 45)
     @NotBlank
+    @FullTextField
     private String editora;
 
     @Column(nullable = false)
@@ -69,6 +75,7 @@ public class LivroEntity {
 
     @Lob
     @Column(name = "descricao", columnDefinition = "TEXT")
+    @FullTextField
     private String descricao;
 
     @Column(name = "data_adicao", nullable = false)

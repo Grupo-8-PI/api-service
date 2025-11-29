@@ -26,6 +26,7 @@ public class LivroService {
     private final ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
     private final ListRecentLivrosUseCase listRecentLivrosUseCase;
     private final UpdateLivroSinopseUseCase updateLivroSinopseUseCase;
+    private final ListLivrosElasticSearchPaginatedUseCase listLivrosElasticSearchPaginatedUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                         FindLivroByIdUseCase findLivroByIdUseCase,
@@ -39,7 +40,9 @@ public class LivroService {
                         ListAllCategoriesUseCase listAllCategoriesUseCase,
                         ListRecommendedLivrosUseCase listRecommendedLivrosUseCase,
                         ListRecentLivrosUseCase listRecentLivrosUseCase,
-                        UpdateLivroSinopseUseCase updateLivroSinopseUseCase) {
+                        UpdateLivroSinopseUseCase updateLivroSinopseUseCase,
+                        ListLivrosElasticSearchPaginatedUseCase listLivrosElasticSearchPaginatedUseCase
+                        ) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listLivrosPaginatedUseCase = listLivrosPaginatedUseCase;
@@ -53,6 +56,7 @@ public class LivroService {
         this.listRecommendedLivrosUseCase = listRecommendedLivrosUseCase;
         this.listRecentLivrosUseCase = listRecentLivrosUseCase;
         this.updateLivroSinopseUseCase = updateLivroSinopseUseCase;
+        this.listLivrosElasticSearchPaginatedUseCase = listLivrosElasticSearchPaginatedUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -105,5 +109,9 @@ public class LivroService {
 
     public LivroResponseDto atualizarSinopseLivro(Integer id, String sinopse) {
         return updateLivroSinopseUseCase.execute(id, sinopse);
+    }
+
+    public LivroPaginatedResponseDto buscarLivrosElasticoPaginado(int page, int size, String query){
+        return listLivrosElasticSearchPaginatedUseCase.execute(page, size, query);
     }
 }
