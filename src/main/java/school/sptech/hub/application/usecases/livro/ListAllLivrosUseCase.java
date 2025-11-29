@@ -1,5 +1,6 @@
 package school.sptech.hub.application.usecases.livro;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
 import school.sptech.hub.domain.entity.Livro;
@@ -18,6 +19,7 @@ public class ListAllLivrosUseCase {
         this.livroGateway = livroGateway;
     }
 
+    @Cacheable(value = "livros")
     public List<LivroResponseDto> execute() {
         List<Livro> livros = livroGateway.findAll();
 
