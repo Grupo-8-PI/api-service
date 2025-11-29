@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import school.sptech.hub.application.adapter.ChatGptAdapter;
+import school.sptech.hub.domain.entity.Livro;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,50 +20,78 @@ class ChatGptAdapterTest {
     }
 
     @Test
-    @DisplayName("Deve gerar sinopse com título e autor válidos")
-    void deveGerarSinopseComTituloEAutorValidos() {
+    @DisplayName("Deve gerar sinopse com livro válido")
+    void deveGerarSinopseComLivroValido() {
         // Arrange
-        String titulo = "O Hobbit";
-        String autor = "J.R.R. Tolkien";
+        Livro livro = new Livro();
+        livro.setId(1);
+        livro.setTitulo("O Hobbit");
+        livro.setAutor("J.R.R. Tolkien");
+        livro.setIsbn("978-0547928227");
+
         String sinopseEsperada = "Sinopse gerada para O Hobbit por J.R.R. Tolkien";
 
-        when(chatGptAdapter.gerarSinopse(titulo, autor)).thenReturn(sinopseEsperada);
+        when(chatGptAdapter.gerarSinopse(livro)).thenReturn(sinopseEsperada);
 
         // Act
-        String resultado = chatGptAdapter.gerarSinopse(titulo, autor);
+        String resultado = chatGptAdapter.gerarSinopse(livro);
 
         // Assert
         assertEquals(sinopseEsperada, resultado);
+        verify(chatGptAdapter).gerarSinopse(livro);
     }
 
     @Test
-    @DisplayName("Deve retornar null quando título for nulo")
-    void deveRetornarNullComTituloNulo() {
+    @DisplayName("Deve retornar null quando livro for nulo")
+    void deveRetornarNullComLivroNulo() {
         // Arrange
-        String autor = "J.R.R. Tolkien";
-
-        when(chatGptAdapter.gerarSinopse(null, autor)).thenReturn(null);
+        when(chatGptAdapter.gerarSinopse(null)).thenReturn(null);
 
         // Act
-        String resultado = chatGptAdapter.gerarSinopse(null, autor);
+        String resultado = chatGptAdapter.gerarSinopse(null);
 
         // Assert
         assertNull(resultado);
+        verify(chatGptAdapter).gerarSinopse(null);
     }
 
     @Test
-    @DisplayName("Deve retornar null quando autor for vazio")
-    void deveRetornarNullComAutorVazio() {
+    @DisplayName("Deve retornar null quando livro não tiver título")
+    void deveRetornarNullComLivroSemTitulo() {
         // Arrange
-        String titulo = "O Hobbit";
-        String autor = "";
+        Livro livro = new Livro();
+        livro.setId(1);
+        livro.setAutor("J.R.R. Tolkien");
+        livro.setIsbn("978-0547928227");
+        // título não definido (null)
 
-        when(chatGptAdapter.gerarSinopse(titulo, autor)).thenReturn(null);
+        when(chatGptAdapter.gerarSinopse(livro)).thenReturn(null);
 
         // Act
-        String resultado = chatGptAdapter.gerarSinopse(titulo, autor);
+        String resultado = chatGptAdapter.gerarSinopse(livro);
 
         // Assert
         assertNull(resultado);
+        verify(chatGptAdapter).gerarSinopse(livro);
+    }
+
+    @Test
+    @DisplayName("Deve retornar null quando livro não tiver autor")
+    void deveRetornarNullComLivroSemAutor() {
+        // Arrange
+        Livro livro = new Livro();
+        livro.setId(1);
+        livro.setTitulo("O Hobbit");
+        livro.setIsbn("978-0547928227");
+        // autor não definido (null)
+
+        when(chatGptAdapter.gerarSinopse(livro)).thenReturn(null);
+
+        // Act
+        String resultado = chatGptAdapter.gerarSinopse(livro);
+
+        // Assert
+        assertNull(resultado);
+        verify(chatGptAdapter).gerarSinopse(livro);
     }
 }

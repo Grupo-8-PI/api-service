@@ -6,13 +6,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import school.sptech.hub.infraestructure.controller.VendaController;
 import school.sptech.hub.domain.entity.Venda;
+import school.sptech.hub.domain.dto.venda.*;
+import school.sptech.hub.application.usecases.venda.*;
+import school.sptech.hub.application.exceptions.VendaExceptions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,308 +30,470 @@ import static org.mockito.Mockito.*;
 class VendaControllerTest {
 
     @Mock
-    private VendaService vendaService;
+    private CreateVendaUseCase createVendaUseCase;
+
+    @Mock
+    private UpdateVendaReservaUseCase updateVendaReservaUseCase;
+
+    @Mock
+    private GetVendaByIdUseCase getVendaByIdUseCase;
+
+    @Mock
+    private DeleteVendaUseCase deleteVendaUseCase;
+
+    @Mock
+    private CheckVendaOwnershipUseCase checkVendaOwnershipUseCase;
+
+    @Mock
+    private ListAllVendasByClienteUseCase listAllVendasByClienteUseCase;
+
+    @Mock
+    private ListAllVendasUseCase listAllVendasUseCase;
+
+    @Mock
+    private ListReservasPaginatedUseCase listReservasPaginatedUseCase;
 
     @InjectMocks
     private VendaController vendaController;
 
     private Venda vendaMock;
-    private Venda vendaCreateMock;
-    private Venda vendaUpdateMock;
+    private VendaResponseDto vendaResponseDto;
+    private ReservaPaginatedResponseDto reservaPaginatedResponseDto;
 
     @BeforeEach
     void setUp() {
-        // Arrange - Setup comum para todos os testes
+        // Setup da entidade Venda
         vendaMock = new Venda();
         vendaMock.setId(1);
-        vendaMock.setDtReserva(LocalDateTime.now());
-        vendaMock.setDtLimite(LocalDateTime.now().plusDays(7));
+        vendaMock.setDtReserva(LocalDateTime.of(2023, 12, 15, 10, 30));
+        vendaMock.setDtLimite(LocalDateTime.of(2023, 12, 22, 10, 30));
         vendaMock.setTotalReserva(3);
         vendaMock.setStatusReserva("CONFIRMADA");
 
-        vendaCreateMock = new Venda();
-        vendaCreateMock.setDtReserva(LocalDateTime.now());
-        vendaCreateMock.setDtLimite(LocalDateTime.now().plusDays(5));
-        vendaCreateMock.setTotalReserva(2);
-        vendaCreateMock.setStatusReserva("PENDENTE");
+        // Setup do DTO de resposta
+        vendaResponseDto = new VendaResponseDto();
+        vendaResponseDto.setId(1);
+        vendaResponseDto.setDtReserva("2023-12-15");
+        vendaResponseDto.setDtLimite("2023-12-22");
+        vendaResponseDto.setTotalReserva(3);
+        vendaResponseDto.setStatusReserva("CONFIRMADA");
 
-        vendaUpdateMock = new Venda();
-        vendaUpdateMock.setId(1);
-        vendaUpdateMock.setDtReserva(LocalDateTime.now());
-        vendaUpdateMock.setDtLimite(LocalDateTime.now().plusDays(10));
-        vendaUpdateMock.setTotalReserva(5);
-        vendaUpdateMock.setStatusReserva("ATUALIZADA");
+        // Setup do DTO de resposta paginada usando o construtor correto
+        reservaPaginatedResponseDto = new ReservaPaginatedResponseDto(
+                List.of(vendaResponseDto), // reservas
+                0,                         // page
+                10,                        // size
+                1,                         // totalElements
+                1                          // totalPages
+        );
     }
 
+    // ===== TESTES PARA CREATE RESERVA =====
+
     @Test
-    @DisplayName("Quando criar reserva com dados válidos deve retornar status 200 e reserva criada")
-    void when_criar_reserva_with_valid_data_should_return_200_and_created_reserva() {
+    @DisplayName("Quando criar reserva com dados válidos deve retornar status 201 e VendaResponseDto")
+    void when_createReserva_withValidData_should_return201AndVendaResponseDto() {
         // Arrange
-        when(vendaService.createReserva(any(Venda.class))).thenReturn(vendaMock);
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
+        vendaCreateDto.setDtReserva(LocalDateTime.of(2023, 12, 15, 10, 30));
+        vendaCreateDto.setTotalReserva(2);
+        vendaCreateDto.setStatusReserva("PENDENTE");
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.createReserva(vendaCreateMock);
+        when(createVendaUseCase.execute(any(Venda.class))).thenReturn(vendaMock);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().getId());
-        assertEquals("CONFIRMADA", response.getBody().getStatusReserva());
-        assertEquals(3, response.getBody().getTotalReserva());
-        verify(vendaService, times(1)).createReserva(any(Venda.class));
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
+
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaCreateDto);
+
+            // Assert
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(3, response.getBody().getTotalReserva());
+            assertEquals("CONFIRMADA", response.getBody().getStatusReserva());
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        }
     }
 
     @Test
-    @DisplayName("Quando criar reserva deve verificar se objeto correto foi passado para o serviço")
-    void when_criar_reserva_should_verify_correct_object_passed_to_service() {
+    @DisplayName("Quando criar reserva com dados inválidos deve lançar exceção")
+    void when_createReserva_withInvalidData_should_throwException() {
         // Arrange
-        when(vendaService.createReserva(any(Venda.class))).thenReturn(vendaMock);
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
+        when(createVendaUseCase.execute(any(Venda.class)))
+                .thenThrow(new VendaInvalidaException("Total da reserva não pode ser negativo"));
 
-        // Act
-        vendaController.createReserva(vendaCreateMock);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
 
-        // Assert
-        verify(vendaService, times(1)).createReserva(vendaCreateMock);
-        verifyNoMoreInteractions(vendaService);
+            // Act & Assert
+            assertThrows(VendaInvalidaException.class, () ->
+                vendaController.createReserva(vendaCreateDto)
+            );
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        }
     }
 
     @Test
-    @DisplayName("Quando atualizar reserva com dados válidos deve retornar status 200 e reserva atualizada")
-    void when_atualizar_reserva_with_valid_data_should_return_200_and_updated_reserva() {
+    @DisplayName("Quando criar reserva e ocorrer violação de integridade deve lançar exceção")
+    void when_createReserva_withDataIntegrityViolation_should_throwException() {
         // Arrange
-        Integer idValido = 1;
-        when(vendaService.updateReserva(eq(idValido), any(Venda.class))).thenReturn(vendaUpdateMock);
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
+        when(createVendaUseCase.execute(any(Venda.class)))
+                .thenThrow(new DataIntegrityViolationException("Violação de integridade"));
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.updateReservaById(idValido, vendaCreateMock);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().getId());
-        assertEquals("ATUALIZADA", response.getBody().getStatusReserva());
-        assertEquals(5, response.getBody().getTotalReserva());
-        verify(vendaService, times(1)).updateReserva(eq(idValido), any(Venda.class));
+            // Act & Assert
+            assertThrows(DataIntegrityViolationException.class, () ->
+                vendaController.createReserva(vendaCreateDto)
+            );
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        }
     }
 
+    // ===== TESTES PARA UPDATE RESERVA =====
+
     @Test
-    @DisplayName("Quando atualizar reserva com ID zero deve chamar o serviço")
-    void when_atualizar_reserva_with_zero_id_should_call_service() {
+    @DisplayName("Quando atualizar reserva com dados válidos deve retornar status 200 e VendaResponseDto")
+    void when_updateReservaById_withValidData_should_return200AndVendaResponseDto() {
         // Arrange
-        Integer idZero = 0;
-        when(vendaService.updateReserva(eq(idZero), any(Venda.class))).thenReturn(vendaUpdateMock);
+        Integer id = 1;
+        Venda vendaUpdate = new Venda();
+        vendaUpdate.setTotalReserva(5);
+        vendaUpdate.setStatusReserva("ATUALIZADA");
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.updateReservaById(idZero, vendaCreateMock);
+        when(updateVendaReservaUseCase.execute(eq(id), any(Venda.class))).thenReturn(vendaMock);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        verify(vendaService, times(1)).updateReserva(eq(idZero), any(Venda.class));
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
+
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.updateReservaById(id, vendaUpdate);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(vendaResponseDto, response.getBody());
+            verify(updateVendaReservaUseCase, times(1)).execute(eq(id), any(Venda.class));
+        }
     }
 
     @Test
-    @DisplayName("Quando atualizar reserva com ID negativo deve chamar o serviço")
-    void when_atualizar_reserva_with_negative_id_should_call_service() {
+    @DisplayName("Quando atualizar reserva inexistente deve lançar exceção")
+    void when_updateReservaById_withNonExistentId_should_throwException() {
         // Arrange
-        Integer idNegativo = -1;
-        when(vendaService.updateReserva(eq(idNegativo), any(Venda.class))).thenReturn(vendaUpdateMock);
+        Integer idInexistente = 999;
+        Venda vendaUpdate = new Venda();
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.updateReservaById(idNegativo, vendaCreateMock);
+        when(updateVendaReservaUseCase.execute(eq(idInexistente), any(Venda.class)))
+                .thenThrow(new VendaNaoEncontradaException("Reserva não encontrada"));
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        verify(vendaService, times(1)).updateReserva(eq(idNegativo), any(Venda.class));
+        // Act & Assert
+        assertThrows(VendaNaoEncontradaException.class, () ->
+            vendaController.updateReservaById(idInexistente, vendaUpdate)
+        );
+        verify(updateVendaReservaUseCase, times(1)).execute(eq(idInexistente), any(Venda.class));
     }
 
+    // ===== TESTES PARA GET RESERVA BY ID =====
+
     @Test
-    @DisplayName("Quando buscar reserva por ID válido deve retornar status 200 e reserva encontrada")
-    void when_buscar_reserva_por_id_with_valid_id_should_return_200_and_reserva() {
+    @DisplayName("Quando buscar reserva por ID válido deve retornar status 200 e VendaResponseDto")
+    void when_getReservaById_withValidId_should_return200AndVendaResponseDto() {
         // Arrange
-        Integer idValido = 1;
-        when(vendaService.getReservaById(idValido)).thenReturn(vendaMock);
+        Integer id = 1;
+        when(getVendaByIdUseCase.execute(id)).thenReturn(vendaMock);
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.getReservaById(idValido);
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().getId());
-        assertEquals("CONFIRMADA", response.getBody().getStatusReserva());
-        assertEquals(3, response.getBody().getTotalReserva());
-        verify(vendaService, times(1)).getReservaById(idValido);
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.getReservaById(id);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(vendaResponseDto, response.getBody());
+            verify(getVendaByIdUseCase, times(1)).execute(id);
+        }
     }
 
     @Test
-    @DisplayName("Quando buscar reserva por ID zero deve chamar o serviço")
-    void when_buscar_reserva_por_id_with_zero_should_call_service() {
+    @DisplayName("Quando buscar reserva por ID inexistente deve lançar exceção")
+    void when_getReservaById_withNonExistentId_should_throwException() {
         // Arrange
-        Integer idZero = 0;
-        when(vendaService.getReservaById(idZero)).thenReturn(vendaMock);
+        Integer idInexistente = 999;
+        when(getVendaByIdUseCase.execute(idInexistente))
+                .thenThrow(new VendaNaoEncontradaException("Reserva não encontrada"));
 
-        // Act
-        ResponseEntity<Venda> response = vendaController.getReservaById(idZero);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        verify(vendaService, times(1)).getReservaById(idZero);
+        // Act & Assert
+        assertThrows(VendaNaoEncontradaException.class, () ->
+            vendaController.getReservaById(idInexistente)
+        );
+        verify(getVendaByIdUseCase, times(1)).execute(idInexistente);
     }
 
     @Test
-    @DisplayName("Quando buscar reserva por ID negativo deve chamar o serviço")
-    void when_buscar_reserva_por_id_with_negative_id_should_call_service() {
-        // Arrange
-        Integer idNegativo = -1;
-        when(vendaService.getReservaById(idNegativo)).thenReturn(vendaMock);
-
-        // Act
-        ResponseEntity<Venda> response = vendaController.getReservaById(idNegativo);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        verify(vendaService, times(1)).getReservaById(idNegativo);
-    }
-
-    @Test
-    @DisplayName("Quando buscar reserva por ID deve verificar se não há interações adicionais com o serviço")
-    void when_buscar_reserva_por_id_should_verify_no_additional_service_interactions() {
-        // Arrange
-        Integer idValido = 1;
-        when(vendaService.getReservaById(idValido)).thenReturn(vendaMock);
-
-        // Act
-        vendaController.getReservaById(idValido);
-
-        // Assert
-        verify(vendaService, times(1)).getReservaById(idValido);
-        verifyNoMoreInteractions(vendaService);
-    }
-
-    @Test
-    @DisplayName("Quando deletar reserva com ID válido deve retornar status 200 e reserva deletada")
-    void when_deletar_reserva_with_valid_id_should_return_200_and_deleted_reserva() {
-        // Arrange
-        Integer idValido = 1;
-        when(vendaService.deleteReservaById(idValido)).thenReturn(vendaMock);
-
-        // Act
-        ResponseEntity<Venda> response = vendaController.deleteReservaById(idValido);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().getId());
-        assertEquals("CONFIRMADA", response.getBody().getStatusReserva());
-        assertEquals(3, response.getBody().getTotalReserva());
-        verify(vendaService, times(1)).deleteReservaById(idValido);
-    }
-
-    @Test
-    @DisplayName("Quando deletar reserva com ID zero deve chamar o serviço")
-    void when_deletar_reserva_with_zero_id_should_call_service() {
-        // Arrange
-        Integer idZero = 0;
-        when(vendaService.deleteReservaById(idZero)).thenReturn(vendaMock);
-
-        // Act
-        ResponseEntity<Venda> response = vendaController.deleteReservaById(idZero);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        verify(vendaService, times(1)).deleteReservaById(idZero);
-    }
-
-    @Test
-    @DisplayName("Quando deletar reserva com ID negativo deve chamar o serviço")
-    void when_deletar_reserva_with_negative_id_should_call_service() {
+    @DisplayName("Quando buscar reserva com ID negativo deve lançar exceção específica")
+    void when_getReservaById_withNegativeId_should_throwException() {
         // Arrange
         Integer idNegativo = -1;
-        when(vendaService.deleteReservaById(idNegativo)).thenReturn(vendaMock);
+        when(getVendaByIdUseCase.execute(idNegativo))
+                .thenThrow(new IllegalArgumentException("ID não pode ser negativo"));
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () ->
+            vendaController.getReservaById(idNegativo)
+        );
+        verify(getVendaByIdUseCase, times(1)).execute(idNegativo);
+    }
+
+    // ===== TESTES PARA DELETE RESERVA =====
+
+    @Test
+    @DisplayName("Quando deletar reserva com ID válido deve retornar status 200 e VendaResponseDto")
+    void when_deleteReservaById_withValidId_should_return200AndVendaResponseDto() {
+        // Arrange
+        Integer id = 1;
+        when(deleteVendaUseCase.execute(id)).thenReturn(vendaMock);
+
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
+
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.deleteReservaById(id);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(vendaResponseDto, response.getBody());
+            verify(deleteVendaUseCase, times(1)).execute(id);
+        }
+    }
+
+    @Test
+    @DisplayName("Quando deletar reserva inexistente deve lançar exceção")
+    void when_deleteReservaById_withNonExistentId_should_throwException() {
+        // Arrange
+        Integer idInexistente = 999;
+        when(deleteVendaUseCase.execute(idInexistente))
+                .thenThrow(new VendaNaoEncontradaException("Reserva não encontrada"));
+
+        // Act & Assert
+        assertThrows(VendaNaoEncontradaException.class, () ->
+            vendaController.deleteReservaById(idInexistente)
+        );
+        verify(deleteVendaUseCase, times(1)).execute(idInexistente);
+    }
+
+    // ===== TESTES PARA GET VENDAS POR ID CLIENTE =====
+
+    @Test
+    @DisplayName("Quando buscar vendas por ID cliente deve retornar status 200 e lista de VendaResponseDto")
+    void when_getVendaPorIdCliente_withValidId_should_return200AndVendaResponseDtoList() {
+        // Arrange
+        Integer idCliente = 1;
+        List<Venda> vendas = List.of(vendaMock);
+        when(listAllVendasByClienteUseCase.execute(idCliente)).thenReturn(vendas);
+
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
+
+            // Act
+            ResponseEntity<List<VendaResponseDto>> response = vendaController.getVendaPorIdCliente(idCliente);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(1, response.getBody().size());
+            verify(listAllVendasByClienteUseCase, times(1)).execute(idCliente);
+        }
+    }
+
+    @Test
+    @DisplayName("Quando buscar vendas por ID cliente inexistente deve retornar lista vazia")
+    void when_getVendaPorIdCliente_withNonExistentId_should_returnEmptyList() {
+        // Arrange
+        Integer idClienteInexistente = 999;
+        List<Venda> vendasVazias = Collections.emptyList();
+        when(listAllVendasByClienteUseCase.execute(idClienteInexistente)).thenReturn(vendasVazias);
 
         // Act
-        ResponseEntity<Venda> response = vendaController.deleteReservaById(idNegativo);
+        ResponseEntity<List<VendaResponseDto>> response = vendaController.getVendaPorIdCliente(idClienteInexistente);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        verify(vendaService, times(1)).deleteReservaById(idNegativo);
+        assertTrue(response.getBody().isEmpty());
+        verify(listAllVendasByClienteUseCase, times(1)).execute(idClienteInexistente);
     }
 
-    @Test
-    @DisplayName("Quando deletar reserva deve verificar se não há interações adicionais com o serviço")
-    void when_deletar_reserva_should_verify_no_additional_service_interactions() {
-        // Arrange
-        Integer idValido = 1;
-        when(vendaService.deleteReservaById(idValido)).thenReturn(vendaMock);
-
-        // Act
-        vendaController.deleteReservaById(idValido);
-
-        // Assert
-        verify(vendaService, times(1)).deleteReservaById(idValido);
-        verifyNoMoreInteractions(vendaService);
-    }
+    // ===== TESTES PARA LIST ALL RESERVAS COM PAGINAÇÃO =====
 
     @Test
-    @DisplayName("Quando atualizar reserva deve verificar se objeto correto foi passado para o serviço")
-    void when_atualizar_reserva_should_verify_correct_object_passed_to_service() {
+    @DisplayName("Quando listar todas as reservas com paginação deve retornar status 200 e ReservaPaginatedResponseDto")
+    void when_listAllReservasPaginated_should_return200AndReservaPaginatedResponseDto() {
         // Arrange
-        Integer idValido = 1;
-        when(vendaService.updateReserva(eq(idValido), any(Venda.class))).thenReturn(vendaUpdateMock);
+        int page = 0;
+        int size = 10;
+        when(listReservasPaginatedUseCase.execute(page, size)).thenReturn(reservaPaginatedResponseDto);
 
         // Act
-        vendaController.updateReservaById(idValido, vendaCreateMock);
-
-        // Assert
-        verify(vendaService, times(1)).updateReserva(idValido, vendaCreateMock);
-        verifyNoMoreInteractions(vendaService);
-    }
-
-    @Test
-    @DisplayName("Quando criar reserva com objeto nulo deve chamar o serviço")
-    void when_criar_reserva_with_null_object_should_call_service() {
-        // Arrange
-        Venda vendaNula = null;
-        when(vendaService.createReserva(vendaNula)).thenReturn(vendaMock);
-
-        // Act
-        ResponseEntity<Venda> response = vendaController.createReserva(vendaNula);
+        ResponseEntity<ReservaPaginatedResponseDto> response = vendaController.listarReservasPaginado(page, size);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        verify(vendaService, times(1)).createReserva(vendaNula);
+        assertEquals(1, response.getBody().getTotalElements());
+        assertEquals(1, response.getBody().getReservas().size());
+        assertEquals(vendaResponseDto, response.getBody().getReservas().get(0));
+        verify(listReservasPaginatedUseCase, times(1)).execute(page, size);
     }
 
     @Test
-    @DisplayName("Quando criar reserva deve retornar exatamente o que o serviço retorna")
-    void when_criar_reserva_should_return_exactly_what_service_returns() {
+    @DisplayName("Quando listar reservas paginadas e não houver nenhuma deve retornar página vazia")
+    void when_listReservasPaginated_withNoReservas_should_returnEmptyPage() {
         // Arrange
-        Venda vendaEspecifica = new Venda();
-        vendaEspecifica.setId(999);
-        vendaEspecifica.setStatusReserva("STATUS_ESPECÍFICO");
-        vendaEspecifica.setTotalReserva(10);
-        vendaEspecifica.setDtReserva(LocalDateTime.now().minusDays(1));
-        vendaEspecifica.setDtLimite(LocalDateTime.now().plusDays(15));
+        int page = 0;
+        int size = 10;
+        ReservaPaginatedResponseDto emptyPage = new ReservaPaginatedResponseDto(
+                Collections.emptyList(), // reservas
+                0,                       // page
+                10,                      // size
+                0,                       // totalElements
+                0                        // totalPages
+        );
 
-        when(vendaService.createReserva(any(Venda.class))).thenReturn(vendaEspecifica);
+        when(listReservasPaginatedUseCase.execute(page, size)).thenReturn(emptyPage);
 
         // Act
-        ResponseEntity<Venda> response = vendaController.createReserva(vendaCreateMock);
+        ResponseEntity<ReservaPaginatedResponseDto> response = vendaController.listarReservasPaginado(page, size);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertSame(vendaEspecifica, response.getBody());
-        assertEquals(999, response.getBody().getId());
-        assertEquals("STATUS_ESPECÍFICO", response.getBody().getStatusReserva());
-        assertEquals(10, response.getBody().getTotalReserva());
-        assertNotNull(response.getBody().getDtReserva());
-        assertNotNull(response.getBody().getDtLimite());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().getTotalElements());
+        assertTrue(response.getBody().getReservas().isEmpty());
+        verify(listReservasPaginatedUseCase, times(1)).execute(page, size);
+    }
+
+    @Test
+    @DisplayName("Quando listar reservas paginadas com página específica deve retornar dados corretos")
+    void when_listReservasPaginated_withSpecificPage_should_returnCorrectData() {
+        // Arrange
+        int page = 1;
+        int size = 5;
+        ReservaPaginatedResponseDto specificPage = new ReservaPaginatedResponseDto(
+                List.of(vendaResponseDto), // reservas
+                1,                         // page
+                5,                         // size
+                6,                         // totalElements
+                2                          // totalPages
+        );
+
+        when(listReservasPaginatedUseCase.execute(page, size)).thenReturn(specificPage);
+
+        // Act
+        ResponseEntity<ReservaPaginatedResponseDto> response = vendaController.listarReservasPaginado(page, size);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(6, response.getBody().getTotalElements());
+        assertEquals(2, response.getBody().getTotalPages());
+        assertEquals(1, response.getBody().getPage());
+        assertEquals(5, response.getBody().getSize());
+        verify(listReservasPaginatedUseCase, times(1)).execute(page, size);
+    }
+
+    // ===== TESTES DE VALIDAÇÃO E VERIFICAÇÃO =====
+
+    @Test
+    @DisplayName("Deve verificar que os use cases corretos estão sendo chamados")
+    void should_verifyCorrectUseCasesAreCalled() {
+        // Arrange
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
+        when(createVendaUseCase.execute(any(Venda.class))).thenReturn(vendaMock);
+
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
+
+            // Act
+            vendaController.createReserva(vendaCreateDto);
+
+            // Assert
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+            verifyNoInteractions(updateVendaReservaUseCase, getVendaByIdUseCase, deleteVendaUseCase,
+                               checkVendaOwnershipUseCase, listAllVendasByClienteUseCase, listReservasPaginatedUseCase);
+        }
+    }
+
+    @Test
+    @DisplayName("Deve verificar que update usa UpdateVendaReservaUseCase específico")
+    void should_verifyUpdateUsesCorrectSpecificUseCase() {
+        // Arrange
+        Integer id = 1;
+        Venda vendaUpdate = new Venda();
+        when(updateVendaReservaUseCase.execute(id, vendaUpdate)).thenReturn(vendaMock);
+
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
+
+            // Act
+            vendaController.updateReservaById(id, vendaUpdate);
+
+            // Assert
+            verify(updateVendaReservaUseCase, times(1)).execute(id, vendaUpdate);
+            verifyNoInteractions(createVendaUseCase, getVendaByIdUseCase, deleteVendaUseCase);
+        }
+    }
+
+    @Test
+    @DisplayName("Quando criar reserva com total muito grande deve ser tratado")
+    void when_createReserva_withVeryLargeTotal_should_beHandled() {
+        // Arrange
+        VendaCreateDto vendaComTotalGrande = new VendaCreateDto();
+        vendaComTotalGrande.setTotalReserva(Integer.MAX_VALUE);
+
+        when(createVendaUseCase.execute(any(Venda.class))).thenReturn(vendaMock);
+
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
+
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaComTotalGrande);
+
+            // Assert
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+            verify(createVendaUseCase, times(1)).execute(any(Venda.class));
+        }
+    }
+
+    @Test
+    @DisplayName("Deve verificar se todas as propriedades do response são retornadas corretamente")
+    void should_verifyAllResponsePropertiesAreReturnedCorrectly() {
+        // Arrange
+        when(getVendaByIdUseCase.execute(1)).thenReturn(vendaMock);
+
+        try (MockedStatic<VendaMapper> vendaMapperMock = mockStatic(VendaMapper.class)) {
+            vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
+
+            // Act
+            ResponseEntity<VendaResponseDto> response = vendaController.getReservaById(1);
+
+            // Assert
+            assertNotNull(response.getBody());
+            VendaResponseDto body = response.getBody();
+            assertEquals(3, body.getTotalReserva());
+            assertEquals("CONFIRMADA", body.getStatusReserva());
+            assertNotNull(body.getDtReserva());
+            verify(getVendaByIdUseCase, times(1)).execute(1);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package school.sptech.hub.application.service;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import school.sptech.hub.application.usecases.livro.*;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;

@@ -1,5 +1,6 @@
 package school.sptech.hub.application.usecases.livro;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
@@ -20,6 +21,7 @@ public class ListLivrosPaginatedUseCase {
         this.livroGateway = livroGateway;
     }
 
+    @Cacheable(value = "livros", key = "#page + '_' + #size")
     public LivroPaginatedResponseDto execute(int page, int size) {
         Page<Livro> livrosPage = livroGateway.findAllPaginated(page, size);
         List<LivroResponseDto> livros = livrosPage.getContent().stream()
