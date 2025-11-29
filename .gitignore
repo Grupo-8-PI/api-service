@@ -20,3 +20,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Hibernate Search Indexes
+indexes/
+**/indexes/
+
