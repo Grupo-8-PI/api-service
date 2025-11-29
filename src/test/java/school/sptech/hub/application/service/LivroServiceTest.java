@@ -57,6 +57,9 @@ class LivroServiceTest {
     @Mock
     private UpdateLivroSinopseUseCase updateLivroSinopseUseCase;
 
+    @Mock
+    private ListLivrosElasticSearchPaginatedUseCase listLivrosElasticSearchPaginatedUseCase;
+
     private LivroService livroService;
     private LivroCreateDto livroCreateDto;
     private LivroUpdateDto livroUpdateDto;
@@ -78,7 +81,8 @@ class LivroServiceTest {
             listAllCategoriesUseCase,
             listRecommendedLivrosUseCase,
             listRecentLivrosUseCase,
-            updateLivroSinopseUseCase
+            updateLivroSinopseUseCase,
+            listLivrosElasticSearchPaginatedUseCase
         );
 
         livroCreateDto = new LivroCreateDto();
