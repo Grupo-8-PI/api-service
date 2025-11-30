@@ -2,6 +2,7 @@ package school.sptech.hub.domain.dto.venda;
 
 import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.domain.entity.Usuario;
+import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaEntity;
 
 public class VendaMapper {
@@ -12,6 +13,14 @@ public class VendaMapper {
         venda.setDtReserva(dto.getDtReserva());
         venda.setStatusReserva(dto.getStatusReserva());
         venda.setTotalReserva(dto.getTotalReserva());
+
+        // Criar objeto Livro com apenas o ID para referência
+        if (dto.getLivroId() != null) {
+            Livro livro = new Livro();
+            livro.setId(dto.getLivroId());
+            venda.setLivro(livro);
+        }
+
         // Nota: O usuário deve ser associado no UseCase com base no contexto de autenticação
         return venda;
     }
@@ -29,8 +38,15 @@ public class VendaMapper {
         dto.setDtReserva(venda.getDtReserva().toString());
         dto.setStatusReserva(venda.getStatusReserva());
         dto.setTotalReserva(venda.getTotalReserva());
+
+        // Adicionar o livroId na resposta
+        if (venda.getLivro() != null) {
+            dto.setLivroId(venda.getLivro().getId());
+        }
+
         return dto;
     }
+
     public static Venda updateVendaFields(Venda existingVenda, Venda toBeUpdatedVenda) {
         if (toBeUpdatedVenda.getDtLimite() != null) {
             existingVenda.setDtLimite(toBeUpdatedVenda.getDtLimite());
@@ -44,8 +60,12 @@ public class VendaMapper {
         if (toBeUpdatedVenda.getTotalReserva() != null) {
             existingVenda.setTotalReserva(toBeUpdatedVenda.getTotalReserva());
         }
+        if (toBeUpdatedVenda.getLivro() != null) {
+            existingVenda.setLivro(toBeUpdatedVenda.getLivro());
+        }
         return existingVenda;
     }
+
     public static Venda toDomain(VendaEntity entity) {
         Venda venda = new Venda();
         venda.setId(entity.getId());
@@ -53,7 +73,15 @@ public class VendaMapper {
         venda.setDtLimite(entity.getDtLimite());
         venda.setStatusReserva(entity.getStatusReserva());
         venda.setTotalReserva(entity.getTotalReserva());
-        // Adicione outros campos conforme necessário
+
+        // Mapear o livro da entity para domain
+        if (entity.getLivro() != null) {
+            Livro livro = new Livro();
+            livro.setId(entity.getLivro().getId());
+            // Adicione outros campos do livro conforme necessário
+            venda.setLivro(livro);
+        }
+
         return venda;
     }
 }

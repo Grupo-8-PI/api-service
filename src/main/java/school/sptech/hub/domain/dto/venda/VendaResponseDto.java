@@ -20,6 +20,9 @@ public class VendaResponseDto {
     @Schema(description = "Valor total da reserva/venda dos livros", example = "25")
     private Integer totalReserva;
 
+    @Schema(description = "ID do livro associado à venda/reserva", example = "10")
+    private Integer livroId;
+
 
     public int getId() {
         return id;
@@ -59,5 +62,13 @@ public class VendaResponseDto {
 
     public void setTotalReserva(Integer totalReserva) {
         this.totalReserva = totalReserva;
+    }
+
+    public Integer getLivroId() {
+        return livroId;
+    }
+
+    public void setLivroId(Integer livroId) {
+        this.livroId = livroId;
     }
 }
