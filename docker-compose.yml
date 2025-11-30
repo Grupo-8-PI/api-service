@@ -43,21 +43,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-# REMOVER ANTES DE COMMITAR
-  redis:
-    image: redis:7-alpine
-    container_name: redis-local
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
   app:
     image: felipegasp/aej-livros-api-service:latest
     container_name: api-service
