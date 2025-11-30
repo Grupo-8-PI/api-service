@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "DTO de resposta com os dados públicos da reserva/venda")
 public class VendaResponseDto {
 
-    @Schema(description = "ID único do usuário no sistema", example = "1")
+    @Schema(description = "ID único da venda/reserva no sistema", example = "1")
     private int id;
 
     @Schema(description = "Data da reserva/venda no formato YYYY-MM-DD", example = "2025-05-22")
@@ -22,6 +22,9 @@ public class VendaResponseDto {
 
     @Schema(description = "ID do livro associado à venda/reserva", example = "10")
     private Integer livroId;
+
+    @Schema(description = "ID do usuário que realizou a reserva", example = "5")
+    private Integer usuarioId;
 
 
     public int getId() {
@@ -70,5 +73,13 @@ public class VendaResponseDto {
 
     public void setLivroId(Integer livroId) {
         this.livroId = livroId;
+    }
+
+    public Integer getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
     }
 }

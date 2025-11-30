@@ -3,6 +3,7 @@ package school.sptech.hub.infraestructure.gateways.venda;
 import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaEntity;
 import school.sptech.hub.infraestructure.gateways.usuario.UsuarioEntityMapper;
+import school.sptech.hub.infraestructure.gateways.livro.LivroEntityMapper;
 
 public class VendaEntityMapper {
 
@@ -16,6 +17,7 @@ public class VendaEntityMapper {
         vendaEntity.setStatusReserva(venda.getStatusReserva());
         vendaEntity.setTotalReserva(venda.getTotalReserva());
         vendaEntity.setUsuarios(UsuarioEntityMapper.toEntity(venda.getUsuarios()));
+        vendaEntity.setLivro(LivroEntityMapper.toEntity(venda.getLivro()));
 
         return vendaEntity;
     }
@@ -30,6 +32,7 @@ public class VendaEntityMapper {
         venda.setStatusReserva(vendaEntity.getStatusReserva());
         venda.setTotalReserva(vendaEntity.getTotalReserva());
         venda.setUsuarios(UsuarioEntityMapper.toDomain(vendaEntity.getUsuarios()));
+        venda.setLivro(LivroEntityMapper.toDomain(vendaEntity.getLivro()));
 
         return venda;
     }
