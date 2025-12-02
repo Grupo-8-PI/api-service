@@ -1,6 +1,5 @@
 package school.sptech.hub.application.service;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import school.sptech.hub.application.usecases.livro.*;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
@@ -26,6 +25,7 @@ public class LivroService {
     private final ListRecommendedLivrosUseCase listRecommendedLivrosUseCase;
     private final ListRecentLivrosUseCase listRecentLivrosUseCase;
     private final UpdateLivroSinopseUseCase updateLivroSinopseUseCase;
+    private final SearchLivrosUseCase searchLivrosUseCase;
 
     public LivroService(CreateLivroUseCase createLivroUseCase,
                         FindLivroByIdUseCase findLivroByIdUseCase,
@@ -39,7 +39,8 @@ public class LivroService {
                         ListAllCategoriesUseCase listAllCategoriesUseCase,
                         ListRecommendedLivrosUseCase listRecommendedLivrosUseCase,
                         ListRecentLivrosUseCase listRecentLivrosUseCase,
-                        UpdateLivroSinopseUseCase updateLivroSinopseUseCase) {
+                        UpdateLivroSinopseUseCase updateLivroSinopseUseCase,
+                        SearchLivrosUseCase searchLivrosUseCase) {
         this.createLivroUseCase = createLivroUseCase;
         this.findLivroByIdUseCase = findLivroByIdUseCase;
         this.listLivrosPaginatedUseCase = listLivrosPaginatedUseCase;
@@ -53,6 +54,7 @@ public class LivroService {
         this.listRecommendedLivrosUseCase = listRecommendedLivrosUseCase;
         this.listRecentLivrosUseCase = listRecentLivrosUseCase;
         this.updateLivroSinopseUseCase = updateLivroSinopseUseCase;
+        this.searchLivrosUseCase = searchLivrosUseCase;
     }
 
     public LivroResponseDto createNewLivro(LivroCreateDto livro) {
@@ -105,5 +107,9 @@ public class LivroService {
 
     public LivroResponseDto atualizarSinopseLivro(Integer id, String sinopse) {
         return updateLivroSinopseUseCase.execute(id, sinopse);
+    }
+
+    public LivroPaginatedResponseDto buscarLivrosElastica(String query, int page, int size) {
+        return searchLivrosUseCase.execute(query, page, size);
     }
 }
