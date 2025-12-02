@@ -20,3 +20,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Ignorar arquivos do Lucene
+*.cfs
+*.si
+write.lock
+*.cfe
+segments_3
