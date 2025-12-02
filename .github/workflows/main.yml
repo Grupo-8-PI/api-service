@@ -35,26 +35,27 @@ jobs:
           echo "RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }}" >> .env
           echo "RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}" >> .env
           echo "RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}" >> .env
+          echo "REDIS_IP=${{secrets.REDIS_IP}}" >> .env
 
-      # === 3. Copiar docker-compose.yml para EC2 privada via bastion ===
-      - name: Copy docker-compose to private EC2 via bastion
+       # === 3. Copiar docker-compose.yml e .env para EC2 privada via bastion ===
+      - name: Copy docker-compose and env to private EC2 via bastion
         run: |
+          # Copia docker-compose.yml
           scp -o StrictHostKeyChecking=no \
             -i key.pem \
             -o ProxyCommand="ssh -i key.pem -o StrictHostKeyChecking=no -W %h:%p ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_BASTION_IP }}" \
             docker-compose.yml \
             ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_IP }}:/home/${{ secrets.AWS_EC2_USER }}/docker-compose.yml
 
-      # === 4. Copiar .env para EC2 privada via bastion ===
-      - name: Copy .env to private EC2 via bastion
-        run: |
+          # Copia .env
           scp -o StrictHostKeyChecking=no \
             -i key.pem \
             -o ProxyCommand="ssh -i key.pem -o StrictHostKeyChecking=no -W %h:%p ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_BASTION_IP }}" \
             .env \
             ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_IP }}:/home/${{ secrets.AWS_EC2_USER }}/.env
 
-      # === 5. Rodar docker compose pull + up -d na EC2 privada via bastion ===
+
+      # === 4. Rodar docker compose pull + up -d na EC2 privada via bastion ===
       - name: Deploy on private EC2 via bastion
         run: |
           ssh -o StrictHostKeyChecking=no \
