@@ -377,8 +377,6 @@ public class LivroController {
             )
     })
     @GetMapping("/buscar")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
     public ResponseEntity<LivroPaginatedResponseDto> buscarLivrosElastica(
             @RequestParam("q") @Schema(description = "Termo de busca", example = "Harry Potter") String query,
             @RequestParam(defaultValue = "0", name = "page") @Schema(description = "Número da página (0-based)", example = "0") int page,
