@@ -27,3 +27,4 @@ Thumbs.db
 write.lock
 *.cfe
 segments_3
+lucene-index/*
