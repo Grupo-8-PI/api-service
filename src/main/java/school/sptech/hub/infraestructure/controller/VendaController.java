@@ -125,7 +125,7 @@ public class VendaController {
     })
     @GetMapping("/{id}")
     @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<VendaResponseDto> getReservaById(@PathVariable Integer id){
         Venda venda = getVendaByIdUseCase.execute(id);
         VendaResponseDto response = VendaMapper.toResponseDto(venda);
