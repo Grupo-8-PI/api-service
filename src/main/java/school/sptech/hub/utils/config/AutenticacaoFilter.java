@@ -46,6 +46,11 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (request.getMethod().equalsIgnoreCase("OPTIONS")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String jwtToken = requestTokenHeader.substring(7);
         String username;
 
