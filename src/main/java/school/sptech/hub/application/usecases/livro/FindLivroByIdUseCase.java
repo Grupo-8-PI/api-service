@@ -9,7 +9,6 @@ import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 
 @Component
 public class FindLivroByIdUseCase {
-
     private final LivroGateway livroGateway;
 
     public FindLivroByIdUseCase(LivroGateway livroGateway) {
