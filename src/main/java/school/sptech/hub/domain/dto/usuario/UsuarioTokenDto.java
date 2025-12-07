@@ -6,6 +6,7 @@ public class UsuarioTokenDto {
     private String nome;
     private String email;
     private String token;
+    private String cargo;
 
     public Long getUserId() {
         return userId;
@@ -37,5 +38,13 @@ public class UsuarioTokenDto {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
     }
 }
