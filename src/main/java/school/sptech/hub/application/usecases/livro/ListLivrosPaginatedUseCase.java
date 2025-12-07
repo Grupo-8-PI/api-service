@@ -21,7 +21,6 @@ public class ListLivrosPaginatedUseCase {
         this.livroGateway = livroGateway;
     }
 
-//    @Cacheable(value = "livros", key = "#page +
 @Cacheable(
         value = "livros",
         key = "'p=' + #page + ',s=' + #size",
