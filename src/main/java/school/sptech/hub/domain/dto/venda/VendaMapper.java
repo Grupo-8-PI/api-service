@@ -26,6 +26,7 @@ public class VendaMapper {
     }
 
     public static Venda toEntity(VendaCreateDto dto, Usuario usuario) {
+        if (dto == null) return null;
         Venda venda = toEntity(dto);
         venda.setUsuarios(usuario);
         return venda;
