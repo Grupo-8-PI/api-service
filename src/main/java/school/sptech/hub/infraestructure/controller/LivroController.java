@@ -270,8 +270,6 @@ public class LivroController {
             )
     })
     @GetMapping("/categoria/{categoriaId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
     public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorCategoria(
             @PathVariable @Schema(description = "ID da categoria", example = "1") Integer categoriaId) {
         List<LivroResponseDto> livros = livroService.buscarLivrosPorCategoria(categoriaId);
@@ -290,8 +288,6 @@ public class LivroController {
             )
     })
     @GetMapping("/categorias")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
     public ResponseEntity<List<String>> listarCategorias() {
         List<String> categorias = livroService.listarCategorias();
         return ResponseEntity.ok(categorias);
