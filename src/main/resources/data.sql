@@ -60,3 +60,5 @@ INSERT INTO conservacao (id, tipo_conservacao) VALUES (4, 'DEGRADADO');
 --('A Lâmina e o Véu', 'ISBN-000038', 'L. Sanches', 'Sombras', '2016', 300, 2, 2, NULL, 27.90, 5, 'Suspense com investigação.', NOW()),
 --('Pânico na Lua', 'ISBN-000039', 'C. Freire', 'Escuridão', '2021', 280, 1, 4, NULL, 33.90, 6, 'Terror espacial.', NOW()),
 --('Horizonte Partilhado', 'ISBN-000040', 'R. Avelar', 'Vila das Letras', '2022', 195, 2, 1, NULL, 17.90, 8, 'Histórias contemporâneas.', NOW());
+
+-- Desabilitado mock para produção
