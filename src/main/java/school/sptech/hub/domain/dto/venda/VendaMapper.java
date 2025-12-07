@@ -4,6 +4,8 @@ import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.domain.entity.Usuario;
 import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaEntity;
+import school.sptech.hub.infraestructure.gateways.livro.LivroEntityMapper;
+import school.sptech.hub.infraestructure.gateways.usuario.UsuarioEntityMapper;
 
 public class VendaMapper {
 
@@ -14,14 +16,12 @@ public class VendaMapper {
         venda.setStatusReserva(dto.getStatusReserva());
         venda.setTotalReserva(dto.getTotalReserva());
 
-        // Criar objeto Livro com apenas o ID para referência
         if (dto.getLivroId() != null) {
             Livro livro = new Livro();
             livro.setId(dto.getLivroId());
             venda.setLivro(livro);
         }
 
-        // Nota: O usuário deve ser associado no UseCase com base no contexto de autenticação
         return venda;
     }
 
@@ -39,12 +39,10 @@ public class VendaMapper {
         dto.setStatusReserva(venda.getStatusReserva());
         dto.setTotalReserva(venda.getTotalReserva());
 
-        // Adicionar o livroId na resposta
         if (venda.getLivro() != null) {
             dto.setLivroId(venda.getLivro().getId());
         }
 
-        // Adicionar o usuarioId na resposta
         if (venda.getUsuarios() != null) {
             dto.setUsuarioId(venda.getUsuarios().getId());
         }
@@ -72,6 +70,8 @@ public class VendaMapper {
     }
 
     public static Venda toDomain(VendaEntity entity) {
+        if (entity == null) return null;
+
         Venda venda = new Venda();
         venda.setId(entity.getId());
         venda.setDtReserva(entity.getDtReserva());
@@ -79,18 +79,12 @@ public class VendaMapper {
         venda.setStatusReserva(entity.getStatusReserva());
         venda.setTotalReserva(entity.getTotalReserva());
 
-        // Mapear o livro da entity para domain
         if (entity.getLivro() != null) {
-            Livro livro = new Livro();
-            livro.setId(entity.getLivro().getId());
-            venda.setLivro(livro);
+            venda.setLivro(LivroEntityMapper.toDomain(entity.getLivro()));
         }
 
-        // Mapear o usuário da entity para domain
         if (entity.getUsuarios() != null) {
-            Usuario usuario = new Usuario();
-            usuario.setId(entity.getUsuarios().getId());
-            venda.setUsuarios(usuario);
+            venda.setUsuarios(UsuarioEntityMapper.toDomain(entity.getUsuarios()));
         }
 
         return venda;
