@@ -14,6 +14,8 @@ import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.domain.entity.Usuario;
 import school.sptech.hub.domain.entity.Livro;
 
+import java.time.LocalDateTime;
+
 import static school.sptech.hub.application.validators.VendaValidator.isValidVenda;
 
 @Component
@@ -30,27 +32,29 @@ public class CreateVendaUseCase {
     }
 
     public Venda execute(Venda venda) {
-        // Obter o usuário autenticado do contexto de segurança
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String emailUsuario = authentication.getName();
 
-        // Buscar o usuário no banco de dados
         Usuario usuario = usuarioGateway.findByEmail(emailUsuario)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado: " + emailUsuario));
 
-        // Validar se o livro existe antes de criar a venda
         if (venda.getLivro() != null && venda.getLivro().getId() != null) {
             Livro livroExistente = livroGateway.findById(venda.getLivro().getId())
                     .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado com ID: " + venda.getLivro().getId()));
 
-            // Associar o livro completo à venda
             venda.setLivro(livroExistente);
+
+            if (livroExistente.getPreco() != null) {
+                venda.setTotalReserva(livroExistente.getPreco().intValue());
+            }
         }
 
-        // Associar o usuário à venda
         venda.setUsuarios(usuario);
 
-        // Validar a venda
+        LocalDateTime dtReserva = LocalDateTime.now();
+        venda.setDtReserva(dtReserva);
+        venda.setDtLimite(dtReserva.plusHours(48));
+
         boolean isReservaValid = isValidVenda(venda);
         if (!isReservaValid) {
             throw new VendaInvalidaException("Reserva inválida.");
