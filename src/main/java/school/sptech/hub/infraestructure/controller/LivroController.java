@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import school.sptech.hub.domain.dto.categoria.CategoriaDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroErroResponseSwgDto;
 import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
@@ -278,18 +279,18 @@ public class LivroController {
 
     @Operation(
             summary = "Listar todas as categorias",
-            description = "Retorna uma lista com todas as categorias disponíveis no sistema"
+            description = "Retorna uma lista com todas as categorias disponíveis no sistema, incluindo ID e nome"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Lista de categorias retornada com sucesso",
-                    content = @Content(mediaType = "application/json")
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategoriaDto.class))
             )
     })
     @GetMapping("/categorias")
-    public ResponseEntity<List<String>> listarCategorias() {
-        List<String> categorias = livroService.listarCategorias();
+    public ResponseEntity<List<CategoriaDto>> listarCategorias() {
+        List<CategoriaDto> categorias = livroService.listarCategorias();
         return ResponseEntity.ok(categorias);
     }
 

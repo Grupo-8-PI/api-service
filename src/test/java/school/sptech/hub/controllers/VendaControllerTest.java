@@ -93,11 +93,9 @@ class VendaControllerTest {
     @Test
     @DisplayName("Quando criar reserva com dados válidos deve retornar status 201 e VendaResponseDto")
     void when_createReserva_withValidData_should_return201AndVendaResponseDto() {
-        // Arrange
         VendaCreateDto vendaCreateDto = new VendaCreateDto();
-        vendaCreateDto.setDtReserva(LocalDateTime.of(2023, 12, 15, 10, 30));
-        vendaCreateDto.setTotalReserva(2);
         vendaCreateDto.setStatusReserva("PENDENTE");
+        vendaCreateDto.setLivroId(1);
 
         when(createVendaUseCase.execute(any(Venda.class))).thenReturn(vendaMock);
 
@@ -105,10 +103,8 @@ class VendaControllerTest {
             vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
             vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-            // Act
             ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaCreateDto);
 
-            // Assert
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
             assertNotNull(response.getBody());
             assertEquals(3, response.getBody().getTotalReserva());
@@ -454,11 +450,11 @@ class VendaControllerTest {
     }
 
     @Test
-    @DisplayName("Quando criar reserva com total muito grande deve ser tratado")
-    void when_createReserva_withVeryLargeTotal_should_beHandled() {
-        // Arrange
-        VendaCreateDto vendaComTotalGrande = new VendaCreateDto();
-        vendaComTotalGrande.setTotalReserva(Integer.MAX_VALUE);
+    @DisplayName("Quando criar reserva com livro válido deve processar corretamente")
+    void when_createReserva_withValidBook_should_processCorrectly() {
+        VendaCreateDto vendaCreateDto = new VendaCreateDto();
+        vendaCreateDto.setStatusReserva("PENDENTE");
+        vendaCreateDto.setLivroId(1);
 
         when(createVendaUseCase.execute(any(Venda.class))).thenReturn(vendaMock);
 
@@ -466,10 +462,8 @@ class VendaControllerTest {
             vendaMapperMock.when(() -> VendaMapper.toEntity(any(VendaCreateDto.class))).thenReturn(vendaMock);
             vendaMapperMock.when(() -> VendaMapper.toResponseDto(any(Venda.class))).thenReturn(vendaResponseDto);
 
-            // Act
-            ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaComTotalGrande);
+            ResponseEntity<VendaResponseDto> response = vendaController.createReserva(vendaCreateDto);
 
-            // Assert
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
             verify(createVendaUseCase, times(1)).execute(any(Venda.class));
         }

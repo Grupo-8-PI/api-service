@@ -2,6 +2,7 @@ package school.sptech.hub.application.service;
 
 import org.springframework.stereotype.Service;
 import school.sptech.hub.application.usecases.livro.*;
+import school.sptech.hub.domain.dto.categoria.CategoriaDto;
 import school.sptech.hub.domain.dto.livro.LivroCreateDto;
 import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
@@ -89,7 +90,7 @@ public class LivroService {
         return findLivrosByCategoriaUseCase.execute(categoriaId);
     }
 
-    public List<String> listarCategorias() {
+    public List<CategoriaDto> listarCategorias() {
         return listAllCategoriesUseCase.execute();
     }
 
