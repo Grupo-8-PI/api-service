@@ -3,7 +3,8 @@ package school.sptech.hub.application.service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -16,6 +17,7 @@ import school.sptech.hub.domain.dto.livro.LivroPaginatedResponseDto;
 import java.util.Arrays;
 import java.util.List;
 
+@ExtendWith(MockitoExtension.class)
 class LivroServiceTest {
 
     @Mock
@@ -57,6 +59,9 @@ class LivroServiceTest {
     @Mock
     private UpdateLivroSinopseUseCase updateLivroSinopseUseCase;
 
+    @Mock
+    private SearchLivrosUseCase searchLivrosUseCase;
+
     private LivroService livroService;
     private LivroCreateDto livroCreateDto;
     private LivroUpdateDto livroUpdateDto;
@@ -64,7 +69,6 @@ class LivroServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         livroService = new LivroService(
             createLivroUseCase,
             findLivroByIdUseCase,
@@ -78,7 +82,8 @@ class LivroServiceTest {
             listAllCategoriesUseCase,
             listRecommendedLivrosUseCase,
             listRecentLivrosUseCase,
-            updateLivroSinopseUseCase
+            updateLivroSinopseUseCase,
+            searchLivrosUseCase
         );
 
         livroCreateDto = new LivroCreateDto();
@@ -173,4 +178,3 @@ class LivroServiceTest {
         verify(deleteLivroUseCase).execute(id);
     }
 }
-

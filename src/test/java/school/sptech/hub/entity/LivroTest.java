@@ -1,6 +1,5 @@
 package school.sptech.hub.entity;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.domain.entity.Acabamento;
@@ -410,26 +409,32 @@ public class LivroTest {
     @Test
     public void testEqualsComMesmoObjeto() {
         Livro livro = createValidLivro();
-        assertEquals(livro, livro, "Livro deve ser igual a si mesmo");
+        assertSame(livro, livro, "Livro deve ser igual a si mesmo");
     }
 
     @Test
     public void testEqualsComObjetosIguais() {
         Livro livro1 = createValidLivro();
         Livro livro2 = createValidLivro();
+        LocalDateTime fixed = LocalDateTime.of(2020, 1, 1, 12, 0, 0);
+        livro1.setDataAdicao(fixed);
+        livro2.setDataAdicao(fixed);
         assertEquals(livro1, livro2, "Livros com mesmos dados devem ser iguais");
     }
 
     @Test
     public void testEqualsComObjetoNull() {
         Livro livro = createValidLivro();
-        assertNotEquals(livro, null, "Livro não deve ser igual a null");
+        assertNotEquals(null, livro, "Livro não deve ser igual a null");
     }
 
     @Test
     public void testHashCodeConsistente() {
         Livro livro1 = createValidLivro();
         Livro livro2 = createValidLivro();
+        LocalDateTime fixed = LocalDateTime.of(2020, 1, 1, 12, 0, 0);
+        livro1.setDataAdicao(fixed);
+        livro2.setDataAdicao(fixed);
         assertEquals(livro1.hashCode(), livro2.hashCode(), "Objetos iguais devem ter mesmo hashCode");
     }
 
