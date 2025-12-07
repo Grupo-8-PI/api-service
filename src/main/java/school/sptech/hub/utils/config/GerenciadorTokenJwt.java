@@ -44,7 +44,7 @@ public class GerenciadorTokenJwt {
                 .claim("id", usuarioDetalhes.getId())
                 .claim("roles", "ROLE_" + usuarioDetalhes.getTipoUsuario())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1800000
+                .setExpiration(new Date(System.currentTimeMillis() + jwtTokenValidity
                 ))
                 .signWith(parseSecret(), SignatureAlgorithm.HS512)
                 .compact();
