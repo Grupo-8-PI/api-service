@@ -355,5 +355,29 @@ public class LivroController {
         LivroResponseDto livroUpdated = livroService.atualizarSinopseLivro(id, sinopse);
         return ResponseEntity.status(200).body(livroUpdated);
     }
-}
 
+    @Operation(
+            summary = "Busca elástica de livros",
+            description = "Realiza busca textual nos livros utilizando Apache Lucene. Busca por título, autor, editora, categoria e descrição com paginação"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Busca realizada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroPaginatedResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Termo de busca inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LivroErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/buscar")
+    public ResponseEntity<LivroPaginatedResponseDto> buscarLivrosElastica(
+            @RequestParam("q") @Schema(description = "Termo de busca", example = "Harry Potter") String query,
+            @RequestParam(defaultValue = "0", name = "page") @Schema(description = "Número da página (0-based)", example = "0") int page,
+            @RequestParam(defaultValue = "9", name = "size") @Schema(description = "Tamanho da página", example = "9") int size) {
+        LivroPaginatedResponseDto resultado = livroService.buscarLivrosElastica(query, page, size);
+        return ResponseEntity.ok(resultado);
+    }
+}

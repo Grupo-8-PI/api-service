@@ -2,6 +2,7 @@ package school.sptech.hub.infraestructure.gateways.livro;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -27,11 +28,14 @@ public class LivroRepositoryGateway implements LivroGateway {
     }
 
     @Override
+    @CacheEvict(value = "livros", allEntries = true)
     public Optional<Livro> createLivro(Livro livro) {
         LivroEntity livroEntity = LivroEntityMapper.toEntity(livro);
         LivroEntity savedEntity = livroRepository.save(livroEntity);
+
         livroRepository.flush();
         entityManager.clear();
+
         LivroEntity reloadedEntity = livroRepository.findById(savedEntity.getId()).orElse(savedEntity);
 
         return Optional.of(LivroEntityMapper.toDomain(reloadedEntity));
@@ -62,6 +66,7 @@ public class LivroRepositoryGateway implements LivroGateway {
     }
 
     @Override
+    @CacheEvict(value = "livros", allEntries = true)
     public Optional<Livro> updateLivro(Livro livro) {
         LivroEntity livroEntity = LivroEntityMapper.toEntity(livro);
         LivroEntity updatedEntity = livroRepository.save(livroEntity);
@@ -75,6 +80,7 @@ public class LivroRepositoryGateway implements LivroGateway {
     }
 
     @Override
+    @CacheEvict(value = "livros", allEntries = true)
     public void deleteLivro(Integer id) {
         livroRepository.deleteById(id);
     }

@@ -1,5 +1,3 @@
-
-
 package school.sptech.hub.application.validators;
 
 import school.sptech.hub.domain.entity.Venda;
@@ -10,6 +8,12 @@ public class VendaValidator {
         if(venda.getTotalReserva() == null || venda.getTotalReserva() <= INVALID_TOTAL_RESERVA_QTD) {
             return false;
         }
+
+        // Validar se o livro foi informado
+        if(venda.getLivro() == null || venda.getLivro().getId() == null) {
+            return false;
+        }
+
         return true;
     }
 }

@@ -99,7 +99,7 @@ public class VendaController {
     })
     @PutMapping("/{id}")
     @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<VendaResponseDto> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
         Venda updatedVenda = updateVendaReservaUseCase.execute(id, vendaToUpdate);
         VendaResponseDto response = VendaMapper.toResponseDto(updatedVenda);
@@ -125,7 +125,7 @@ public class VendaController {
     })
     @GetMapping("/{id}")
     @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<VendaResponseDto> getReservaById(@PathVariable Integer id){
         Venda venda = getVendaByIdUseCase.execute(id);
         VendaResponseDto response = VendaMapper.toResponseDto(venda);
@@ -152,7 +152,7 @@ public class VendaController {
     })
     @DeleteMapping("/{id}")
     @SecurityRequirement(name = "bearer")
-    @PreAuthorize("hasRole('CLIENTE') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
     public ResponseEntity<VendaResponseDto> deleteReservaById(@PathVariable Integer id){
         Venda venda = deleteVendaUseCase.execute(id);
         VendaResponseDto response = VendaMapper.toResponseDto(venda);

@@ -21,8 +21,13 @@ public class ListLivrosPaginatedUseCase {
         this.livroGateway = livroGateway;
     }
 
-    @Cacheable(value = "livros", key = "#page + '_' + #size")
-    public LivroPaginatedResponseDto execute(int page, int size) {
+@Cacheable(
+        value = "livros",
+        key = "'p=' + #page + ',s=' + #size",
+        unless = "#result == null or #result.livros.isEmpty()"
+)
+
+public LivroPaginatedResponseDto execute(int page, int size) {
         Page<Livro> livrosPage = livroGateway.findAllPaginated(page, size);
         List<LivroResponseDto> livros = livrosPage.getContent().stream()
                 .map(LivroMapper::toResponseDto)
