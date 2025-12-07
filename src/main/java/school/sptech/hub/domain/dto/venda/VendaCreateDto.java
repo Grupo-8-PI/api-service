@@ -28,6 +28,10 @@ public class VendaCreateDto {
     @NotNull(message = "O total da reserva é obrigatório")
     private Integer totalReserva;
 
+    @Schema(description = "ID do livro a ser reservado", example = "10")
+    @NotNull(message = "O ID do livro é obrigatório")
+    private Integer livroId;
+
 
     public LocalDateTime getDtReserva() {
         return dtReserva;
@@ -59,5 +63,13 @@ public class VendaCreateDto {
 
     public void setTotalReserva(Integer totalReserva) {
         this.totalReserva = totalReserva;
+    }
+
+    public Integer getLivroId() {
+        return livroId;
+    }
+
+    public void setLivroId(Integer livroId) {
+        this.livroId = livroId;
     }
 }

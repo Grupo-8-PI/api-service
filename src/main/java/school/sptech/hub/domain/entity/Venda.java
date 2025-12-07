@@ -11,6 +11,7 @@ public class Venda {
     private String statusReserva;
     private Integer totalReserva;
     private Usuario usuarios;
+    private Livro livro;
 
     public Integer getId() {
         return id;
@@ -60,6 +61,14 @@ public class Venda {
         this.usuarios = usuarios;
     }
 
+    public Livro getLivro() {
+        return livro;
+    }
+
+    public void setLivro(Livro livro) {
+        this.livro = livro;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,12 +79,13 @@ public class Venda {
                 Objects.equals(dtLimite, venda.dtLimite) &&
                 Objects.equals(statusReserva, venda.statusReserva) &&
                 Objects.equals(totalReserva, venda.totalReserva) &&
-                Objects.equals(usuarios, venda.usuarios);
+                Objects.equals(usuarios, venda.usuarios) &&
+                Objects.equals(livro, venda.livro);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dtReserva, dtLimite, statusReserva, totalReserva, usuarios);
+        return Objects.hash(id, dtReserva, dtLimite, statusReserva, totalReserva, usuarios, livro);
     }
 
     @Override
@@ -87,6 +97,7 @@ public class Venda {
                 ", statusReserva='" + statusReserva + '\'' +
                 ", totalReserva=" + totalReserva +
                 ", usuarios=" + usuarios +
+                ", livro=" + livro +
                 '}';
     }
 }

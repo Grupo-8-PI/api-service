@@ -26,6 +26,10 @@ public class VendaEntity {
     @JoinColumn(name = "usuario_id", nullable = false)
     private school.sptech.hub.infraestructure.persistance.usuarioPersistance.UsuarioEntity usuarios;
 
+    @ManyToOne
+    @JoinColumn(name = "livro_id", nullable = false)
+    private school.sptech.hub.infraestructure.persistance.livroPersistance.LivroEntity livro;
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public LocalDateTime getDtReserva() { return dtReserva; }
@@ -38,5 +42,6 @@ public class VendaEntity {
     public void setTotalReserva(Integer totalReserva) { this.totalReserva = totalReserva; }
     public school.sptech.hub.infraestructure.persistance.usuarioPersistance.UsuarioEntity getUsuarios() { return usuarios; }
     public void setUsuarios(school.sptech.hub.infraestructure.persistance.usuarioPersistance.UsuarioEntity usuarios) { this.usuarios = usuarios; }
+    public school.sptech.hub.infraestructure.persistance.livroPersistance.LivroEntity getLivro() { return livro; }
+    public void setLivro(school.sptech.hub.infraestructure.persistance.livroPersistance.LivroEntity livro) { this.livro = livro; }
 }
-
