@@ -1,4 +1,4 @@
-package school.sptech.hub.controller.dto;
+package school.sptech.hub.infraestructure.controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -42,3 +42,4 @@ public class UsuarioErroResponseDto {
         return timestamp;
     }
 }
+

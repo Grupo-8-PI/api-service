@@ -1,19 +1,19 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql-db-dev
+    container_name: mysql-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: aej_hub_db
-      MYSQL_USER: ${DB_USER:-aej_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-aej_password}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data_dev:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     networks:
-      - app-network-dev
+      - app-network
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
@@ -21,27 +21,9 @@ services:
       retries: 10
       start_period: 80s
 
-  redis:
-    image: redis:7-alpine
-    container_name: redis-dev
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data_dev:/data
-    networks:
-      - app-network-dev
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 10s
-    command: redis-server --appendonly yes
-
   rabbitmq:
     image: rabbitmq:3.12-management
-    container_name: rabbitmq-dev
+    container_name: rabbitmq-local
     restart: unless-stopped
     ports:
       - "5672:5672"
@@ -50,9 +32,9 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:-admin}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-admin}
     volumes:
-      - rabbitmq_data_dev:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - app-network-dev
+      - app-network
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
@@ -60,15 +42,104 @@ services:
       retries: 5
       start_period: 20s
 
+  app:
+    image: felipegasp/aej-livros-api-service:latest
+    container_name: api-service
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prd
+      DB_NAME: aej_hub_db
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      AWS_REGION: ${AWS_REGION}
+      AWS_BUCKET: ${AWS_BUCKET}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_VALIDITY: ${JWT_VALIDITY}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-admin}
+      REDIS_IP: ${REDIS_IP:-redis-local}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  python-consumer:
+    image: felipegasp/aej-consumer-python:latest
+    container_name: python-consumer
+    restart: unless-stopped
+    environment:
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq-local}
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-admin}
+      RABBITMQ_VIRTUAL_HOST: /
+      RABBITMQ_QUEUE_NAME: livros.criados
+      RABBITMQ_EXCHANGE_NAME: "livros.exchange"
+      RABBITMQ_ROUTING_KEY: "livros.criado"
+      RABBITMQ_PREFETCH_COUNT: "1"
+
+      RABBITMQ_MAX_RETRIES: "10"
+      RABBITMQ_INITIAL_RETRY_DELAY: "1.0"
+      RABBITMQ_MAX_RETRY_DELAY: "60.0"
+      RABBITMQ_FAILURE_THRESHOLD: "5"
+      RABBITMQ_RECOVERY_TIMEOUT: "30.0"
+
+      RABBITMQ_QUEUE_MODE: passive
+      # RABBITMQ_QUEUE_MODE: active
+      RABBITMQ_WAIT_FOR_QUEUE: "true"
+      RABBITMQ_QUEUE_CHECK_INTERVAL: "5.0"
+
+      HF_API_KEY: ${HF_API_KEY:-}
+      HF_MODEL: meta-llama/Llama-2-7b-chat-hf
+      LLM_MAX_TOKENS: "500"
+      LLM_TEMPERATURE: "0.7"
+      LLM_TIMEOUT: "30"
+      API_BASE_URL: http://api-service:8080
+      API_CALLBACK_ENDPOINT: /livros/atualizar/sinopse
+      API_TIMEOUT: "30"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.2
+    container_name: redis-local
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
 volumes:
-  mysql_data_dev:
+  mysql_data:
     driver: local
-  redis_data_dev:
-    driver: local
-  rabbitmq_data_dev:
+  rabbitmq_data:
     driver: local
 
 networks:
-  app-network-dev:
+  app-network:
     driver: bridge
-
