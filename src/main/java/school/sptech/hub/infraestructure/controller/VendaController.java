@@ -1,6 +1,5 @@
 package school.sptech.hub.infraestructure.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,12 +8,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.hub.application.usecases.venda.*;
 import school.sptech.hub.domain.dto.venda.VendaCreateDto;
+import school.sptech.hub.domain.dto.venda.VendaUpdateDto;
 import school.sptech.hub.domain.dto.venda.VendaErroResponseSwgDto;
 import school.sptech.hub.domain.dto.venda.VendaResponseDto;
 import school.sptech.hub.domain.dto.venda.VendaMapper;
@@ -28,46 +28,33 @@ import java.util.List;
 @RequestMapping("/reservas")
 public class VendaController {
 
-    @Autowired
-    private CreateVendaUseCase createVendaUseCase;
+    private final CreateVendaUseCase createVendaUseCase;
+    private final UpdateVendaReservaUseCase updateVendaReservaUseCase;
+    private final GetVendaByIdUseCase getVendaByIdUseCase;
+    private final DeleteVendaUseCase deleteVendaUseCase;
+    private final ListAllVendasByClienteUseCase listAllVendasByClienteUseCase;
+    private final ListReservasPaginatedUseCase listReservasPaginatedUseCase;
 
-    @Autowired
-    private UpdateVendaReservaUseCase updateVendaReservaUseCase;
+    public VendaController(CreateVendaUseCase createVendaUseCase,
+                          UpdateVendaReservaUseCase updateVendaReservaUseCase,
+                          GetVendaByIdUseCase getVendaByIdUseCase,
+                          DeleteVendaUseCase deleteVendaUseCase,
+                          ListAllVendasByClienteUseCase listAllVendasByClienteUseCase,
+                          ListReservasPaginatedUseCase listReservasPaginatedUseCase) {
+        this.createVendaUseCase = createVendaUseCase;
+        this.updateVendaReservaUseCase = updateVendaReservaUseCase;
+        this.getVendaByIdUseCase = getVendaByIdUseCase;
+        this.deleteVendaUseCase = deleteVendaUseCase;
+        this.listAllVendasByClienteUseCase = listAllVendasByClienteUseCase;
+        this.listReservasPaginatedUseCase = listReservasPaginatedUseCase;
+    }
 
-    @Autowired
-    private GetVendaByIdUseCase getVendaByIdUseCase;
-
-    @Autowired
-    private DeleteVendaUseCase deleteVendaUseCase;
-
-    @Autowired
-    private CheckVendaOwnershipUseCase checkVendaOwnershipUseCase;
-
-    @Autowired
-    private ListAllVendasByClienteUseCase listAllVendasByClienteUseCase;
-
-    @Autowired
-    private ListAllVendasUseCase listAllVendasUseCase;
-
-    @Autowired
-    private ListReservasPaginatedUseCase listReservasPaginatedUseCase;
-
-
-    @Operation(
-            summary = "Criar nova reserva",
-            description = "Cria uma nova reserva com os dados enviados."
-    )
+    @Operation(summary = "Criar nova reserva", description = "Cria uma nova reserva com os dados enviados.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Reserva efetuada com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Processo de reserva não finalizado.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
-            )
+            @ApiResponse(responseCode = "201", description = "Reserva efetuada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Processo de reserva não finalizado.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class)))
     })
     @PostMapping
     @SecurityRequirement(name = "bearer")
@@ -76,115 +63,68 @@ public class VendaController {
         Venda venda = VendaMapper.toEntity(vendaDto);
         Venda createdVenda = createVendaUseCase.execute(venda);
         VendaResponseDto response = VendaMapper.toResponseDto(createdVenda);
-
-        return ResponseEntity.status(201).body(response);
-
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Operation(
-            summary = "Atualizar reserva do livro",
-            description = "Atualiza os dados da reserva/venda do livro com base no ID informado."
-    )
+    @Operation(summary = "Atualizar reserva do livro", description = "Atualiza os dados da reserva/venda do livro com base no ID informado.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Reserva atualizada com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Reserva com este id não encontrada.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
-            )
+            @ApiResponse(responseCode = "200", description = "Reserva atualizada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Reserva com este id não encontrada.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class)))
     })
     @PutMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
-    public ResponseEntity<VendaResponseDto> updateReservaById(@PathVariable Integer id, @RequestBody Venda vendaToUpdate){
-        Venda updatedVenda = updateVendaReservaUseCase.execute(id, vendaToUpdate);
+    public ResponseEntity<VendaResponseDto> updateReservaById(@PathVariable Integer id, @Valid @RequestBody VendaUpdateDto vendaUpdateDto) {
+        Venda updatedVenda = updateVendaReservaUseCase.execute(id, vendaUpdateDto);
         VendaResponseDto response = VendaMapper.toResponseDto(updatedVenda);
-
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.ok(response);
     }
 
-    @Operation(
-            summary = "Buscar reserva por ID",
-            description = "Retorna os dados da reserva correspondente ao ID informado, caso exista."
-    )
+    @Operation(summary = "Buscar reserva por ID", description = "Retorna os dados da reserva correspondente ao ID informado, caso exista.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Reserva encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Reserva não encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
-            )
+            @ApiResponse(responseCode = "200", description = "Reserva encontrada",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Reserva não encontrada",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class)))
     })
     @GetMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
-    public ResponseEntity<VendaResponseDto> getReservaById(@PathVariable Integer id){
+    public ResponseEntity<VendaResponseDto> getReservaById(@PathVariable Integer id) {
         Venda venda = getVendaByIdUseCase.execute(id);
         VendaResponseDto response = VendaMapper.toResponseDto(venda);
-
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.ok(response);
     }
 
-
-    @Operation(
-            summary = "Deletar uma reserva por ID",
-            description = "Remove a reserva correspondente ao ID informado do sistema, caso exista."
-    )
+    @Operation(summary = "Deletar uma reserva por ID", description = "Remove a reserva correspondente ao ID informado do sistema, caso exista.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Reserva deletada com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Reserva não encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
-            )
+            @ApiResponse(responseCode = "204", description = "Reserva deletada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Reserva não encontrada",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class)))
     })
     @DeleteMapping("/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN') and @checkVendaOwnershipUseCase.execute(#id, authentication.name)")
-    public ResponseEntity<VendaResponseDto> deleteReservaById(@PathVariable Integer id){
-        Venda venda = deleteVendaUseCase.execute(id);
-        VendaResponseDto response = VendaMapper.toResponseDto(venda);
-
-        return ResponseEntity.status(200).body(response);
+    public ResponseEntity<Void> deleteReservaById(@PathVariable Integer id) {
+        deleteVendaUseCase.execute(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @Operation(
-            summary = "Buscar reservas por ID do cliente",
-            description = "Retorna todas as reservas de um cliente específico com base no ID informado."
-    )
+    @Operation(summary = "Buscar reservas por ID do cliente", description = "Retorna todas as reservas de um cliente específico com base no ID informado.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Lista de reservas do cliente encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Cliente não encontrado ou sem reservas",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "Acesso negado - apenas clientes podem acessar suas próprias reservas",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))
-            )
+            @ApiResponse(responseCode = "200", description = "Lista de reservas do cliente encontrada",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado ou sem reservas",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class))),
+            @ApiResponse(responseCode = "403", description = "Acesso negado - apenas clientes podem acessar suas próprias reservas",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VendaErroResponseSwgDto.class)))
     })
     @GetMapping("/user/{id}")
     @SecurityRequirement(name = "bearer")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<List<VendaResponseDto>> getVendaPorIdCliente(@PathVariable Integer id){
+    public ResponseEntity<List<VendaResponseDto>> getVendaPorIdCliente(@PathVariable Integer id) {
         List<Venda> vendas = listAllVendasByClienteUseCase.execute(id);
         List<VendaResponseDto> response = vendas.stream()
                 .map(VendaMapper::toResponseDto)

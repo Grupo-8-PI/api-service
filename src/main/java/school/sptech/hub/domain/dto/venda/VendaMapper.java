@@ -48,6 +48,14 @@ public class VendaMapper {
         return dto;
     }
 
+    public static void updateFromDto(Venda existingVenda, VendaUpdateDto dto) {
+        if (dto == null) return;
+
+        if (dto.getStatusReserva() != null) {
+            existingVenda.setStatusReserva(dto.getStatusReserva());
+        }
+    }
+
     public static Venda updateVendaFields(Venda existingVenda, Venda toBeUpdatedVenda) {
         if (toBeUpdatedVenda.getDtLimite() != null) {
             existingVenda.setDtLimite(toBeUpdatedVenda.getDtLimite());
