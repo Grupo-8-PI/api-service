@@ -267,19 +267,23 @@ class LivroServiceTest {
     @Test
     @DisplayName("Deve listar categorias com sucesso")
     void deveListarCategoriasComSucesso() {
-        // Arrange
-        List<String> categorias = Arrays.asList("Ficção", "Romance", "Literatura Brasileira");
+        List<school.sptech.hub.domain.dto.categoria.CategoriaDto> categorias = Arrays.asList(
+                new school.sptech.hub.domain.dto.categoria.CategoriaDto(1, "Ficção"),
+                new school.sptech.hub.domain.dto.categoria.CategoriaDto(2, "Romance"),
+                new school.sptech.hub.domain.dto.categoria.CategoriaDto(3, "Literatura Brasileira")
+        );
         when(listAllCategoriesUseCase.execute()).thenReturn(categorias);
 
-        // Act
-        List<String> result = livroService.listarCategorias();
+        List<school.sptech.hub.domain.dto.categoria.CategoriaDto> result = livroService.listarCategorias();
 
-        // Assert
         assertNotNull(result);
         assertEquals(3, result.size());
-        assertTrue(result.contains("Ficção"));
-        assertTrue(result.contains("Romance"));
-        assertTrue(result.contains("Literatura Brasileira"));
+        assertEquals(1, result.get(0).getId());
+        assertEquals("Ficção", result.get(0).getNome());
+        assertEquals(2, result.get(1).getId());
+        assertEquals("Romance", result.get(1).getNome());
+        assertEquals(3, result.get(2).getId());
+        assertEquals("Literatura Brasileira", result.get(2).getNome());
         verify(listAllCategoriesUseCase, times(1)).execute();
     }
 

@@ -21,7 +21,7 @@ public class UsuarioMapper {
         dto.setNome(usuario.getNome());
         dto.setEmail(usuario.getEmail());
         dto.setTelefone(usuario.getTelefone());
-        dto.setTipo_usuario(usuario.getTipo_usuario());
+        dto.setTipo_usuario(usuario.getTipo_usuario() != null ? usuario.getTipo_usuario().toLowerCase() : null);
         dto.setCpf(usuario.getCpf());
         dto.setDtNascimento(usuario.getDtNascimento());
         return dto;

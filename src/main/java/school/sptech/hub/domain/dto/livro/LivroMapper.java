@@ -163,20 +163,6 @@ public class LivroMapper {
         if (dto.getDescricao() != null) {
             existingLivro.setDescricao(dto.getDescricao());
         }
-
-        if (dto.getAcabamentoId() != null) {
-            existingLivro.setAcabamento(new Acabamento(dto.getAcabamentoId()));
-        }
-
-        if (dto.getConservacaoId() != null) {
-            existingLivro.setEstadoConservacao(new Conservacao(dto.getConservacaoId()));
-        }
-
-        if (dto.getNomeCategoria() != null) {
-            Categoria categoria = new Categoria();
-            categoria.setNome(dto.getNomeCategoria());
-            existingLivro.setCategoria(categoria);
-        }
     }
 }
 

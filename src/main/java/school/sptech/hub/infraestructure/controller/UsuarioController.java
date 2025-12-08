@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.hub.domain.dto.usuario.*;
 import school.sptech.hub.domain.entity.Usuario;
@@ -21,6 +21,7 @@ import school.sptech.hub.application.usecases.usuario.CreateUsuarioUseCase;
 import school.sptech.hub.application.usecases.usuario.GetUsuarioByIdUseCase;
 import school.sptech.hub.application.usecases.usuario.UpdateUsuarioUseCase;
 import school.sptech.hub.application.usecases.usuario.DeleteUsuarioUseCase;
+import school.sptech.hub.application.usecases.usuario.GetCurrentUserUseCase;
 
 @Tag(name = "usuarios", description = "Operações relacionadas a usuários")
 @RestController
@@ -41,6 +42,9 @@ public class UsuarioController {
 
     @Autowired
     private DeleteUsuarioUseCase deleteUsuarioUseCase;
+
+    @Autowired
+    private GetCurrentUserUseCase getCurrentUserUseCase;
 
     @Operation(
             summary = "Criar novo usuário",
@@ -147,6 +151,37 @@ public class UsuarioController {
 
         return ResponseEntity.status(200).body(deletedUser);
     }
+
+    @Operation(
+            summary = "Obter usuário autenticado",
+            description = "Retorna os dados do usuário autenticado baseado no token JWT"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Dados do usuário retornados com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Token inválido ou ausente",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuário não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioErroResponseSwgDto.class))
+            )
+    })
+    @GetMapping("/me")
+    @SecurityRequirement(name = "bearer")
+    public ResponseEntity<UsuarioResponseDto> getCurrentUser(
+            @AuthenticationPrincipal UsuarioDetalhesDto usuarioDetalhes
+    ) {
+        UsuarioResponseDto usuario = getCurrentUserUseCase.execute(usuarioDetalhes.getId());
+        return ResponseEntity.status(200).body(usuario);
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
