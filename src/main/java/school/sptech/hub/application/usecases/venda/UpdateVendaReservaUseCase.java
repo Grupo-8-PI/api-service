@@ -2,11 +2,10 @@ package school.sptech.hub.application.usecases.venda;
 
 import org.springframework.stereotype.Component;
 import school.sptech.hub.domain.entity.Venda;
-import school.sptech.hub.application.exceptions.VendaExceptions.VendaInvalidaException;
+import school.sptech.hub.domain.dto.venda.VendaUpdateDto;
+import school.sptech.hub.domain.dto.venda.VendaMapper;
 import school.sptech.hub.application.exceptions.VendaExceptions.VendaNaoEncontradaException;
 import school.sptech.hub.application.gateways.venda.VendaGateway;
-
-import static school.sptech.hub.application.validators.VendaValidator.isValidVenda;
 
 @Component
 public class UpdateVendaReservaUseCase {
@@ -16,14 +15,13 @@ public class UpdateVendaReservaUseCase {
         this.gateway = gateway;
     }
 
-    public Venda execute(Integer id, Venda vendaToBeUpdated) {
-        boolean isReservaValid = isValidVenda(vendaToBeUpdated);
-        if (!isReservaValid) {
-            throw new VendaInvalidaException("Reserva inválida.");
-        }
-        vendaToBeUpdated.setId(id);
+    public Venda execute(Integer id, VendaUpdateDto vendaUpdateDto) {
+        Venda existingVenda = gateway.findById(id)
+                .orElseThrow(() -> new VendaNaoEncontradaException("Reserva não encontrada com ID: " + id));
 
-        return gateway.updateVenda(vendaToBeUpdated)
+        VendaMapper.updateFromDto(existingVenda, vendaUpdateDto);
+
+        return gateway.updateVenda(existingVenda)
                 .orElseThrow(() -> new VendaNaoEncontradaException("Erro ao atualizar reserva"));
     }
 }
