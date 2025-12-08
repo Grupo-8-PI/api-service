@@ -41,9 +41,16 @@ public class UpdateLivroUseCase {
         Livro existingLivro = livroGateway.findById(id)
                 .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado com ID: " + id));
 
+        if (livroUpdateDto.getIsbn() != null && !livroUpdateDto.getIsbn().equals(existingLivro.getIsbn())) {
+            livroGateway.findByIsbn(livroUpdateDto.getIsbn())
+                .ifPresent(livro -> {
+                    throw new LivroJaExisteException("Já existe um livro cadastrado com este ISBN.");
+                });
+        }
+
         if (livroUpdateDto.getNomeCategoria() != null) {
             Categoria categoria = processarCategoria(livroUpdateDto.getNomeCategoria());
-            livroUpdateDto.setNomeCategoria(categoria.getNome());
+            existingLivro.setCategoria(categoria);
         }
 
         if (livroUpdateDto.getAcabamentoId() != null) {
@@ -62,16 +69,6 @@ public class UpdateLivroUseCase {
 
         existingLivro.validateUpdateRules();
 
-        // Verificar se há mudança de ISBN e se o novo ISBN já existe
-        if (livroUpdateDto.getIsbn() != null &&
-            !livroUpdateDto.getIsbn().equals(existingLivro.getIsbn())) {
-            livroGateway.findByIsbn(livroUpdateDto.getIsbn())
-                .ifPresent(livro -> {
-                    throw new LivroJaExisteException("Já existe um livro cadastrado com este ISBN.");
-                });
-        }
-
-        // Salvar no repositório
         Livro savedLivro = livroGateway.updateLivro(existingLivro)
                 .orElseThrow(() -> new LivroNaoEncontradoException("Erro ao atualizar livro"));
 
