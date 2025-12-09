@@ -98,8 +98,6 @@ public class LivroController {
             )
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
     public ResponseEntity<LivroResponseDto> buscarLivroPorId(@PathVariable("id") Integer id) {
         LivroResponseDto livro = livroService.buscarLivroPorId(id);
         return ResponseEntity.ok(livro);
