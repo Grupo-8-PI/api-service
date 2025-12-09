@@ -81,6 +81,9 @@ public class LivroEntityMapper {
         }
 
         livro.setDescricao(entity.getDescricao());
+        // Nota: hasReserva será enriquecido pelo LivroEnrichmentService
+        // Iniciamos como null para que o mapper saiba que ainda não foi processado
+        livro.setHasReserva(null);
 
         return livro;
     }

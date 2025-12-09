@@ -8,6 +8,7 @@ import school.sptech.hub.infraestructure.persistance.vendaPersistance.VendaRepos
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -64,5 +65,15 @@ public class VendaRepositoryGateway implements VendaGateway {
         return vendaEntities.stream()
                 .map(VendaEntityMapper::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean hasReservaByLivroId(Integer livroId) {
+        return vendaRepository.existsByLivroId(livroId);
+    }
+
+    @Override
+    public Set<Integer> findLivroIdsWithReservas(Set<Integer> livroIds) {
+        return vendaRepository.findDistinctLivroIdsByLivroIdIn(livroIds);
     }
 }

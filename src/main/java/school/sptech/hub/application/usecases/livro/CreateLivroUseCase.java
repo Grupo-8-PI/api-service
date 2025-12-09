@@ -9,6 +9,7 @@ import school.sptech.hub.application.gateways.acabamento.AcabamentoGateway;
 import school.sptech.hub.application.gateways.categoria.CategoriaGateway;
 import school.sptech.hub.application.gateways.conservacao.ConservacaoGateway;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
+import school.sptech.hub.application.service.LivroEnrichmentService;
 import school.sptech.hub.domain.entity.Acabamento;
 import school.sptech.hub.domain.entity.Categoria;
 import school.sptech.hub.domain.entity.Conservacao;
@@ -27,18 +28,21 @@ public class CreateLivroUseCase {
     private final AcabamentoGateway acabamentoGateway;
     private final ConservacaoGateway conservacaoGateway;
     private final ChatGptAdapter chatGptAdapter;
+    private final LivroEnrichmentService livroEnrichmentService;
 
     public CreateLivroUseCase(
             LivroGateway livroGateway,
             CategoriaGateway categoriaGateway,
             AcabamentoGateway acabamentoGateway,
             ConservacaoGateway conservacaoGateway,
-            ChatGptAdapter chatGptAdapter) {
+            ChatGptAdapter chatGptAdapter,
+            LivroEnrichmentService livroEnrichmentService) {
         this.livroGateway = livroGateway;
         this.categoriaGateway = categoriaGateway;
         this.acabamentoGateway = acabamentoGateway;
         this.conservacaoGateway = conservacaoGateway;
         this.chatGptAdapter = chatGptAdapter;
+        this.livroEnrichmentService = livroEnrichmentService;
     }
 
     @Transactional
@@ -69,6 +73,8 @@ public class CreateLivroUseCase {
                 .orElseThrow(() -> new LivroNaoEncontradoException("Erro ao criar livro"));
 
         chatGptAdapter.gerarSinopse(createdLivro);
+
+        livroEnrichmentService.enrichWithReservaStatus(createdLivro);
 
         return LivroMapper.toResponseDto(createdLivro);
     }

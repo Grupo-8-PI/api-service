@@ -38,6 +38,7 @@ public class LivroMapper {
         }
 
         livro.setDataAdicao(LocalDateTime.now());
+        livro.setHasReserva(false);
 
         return livro;
     }
@@ -79,6 +80,8 @@ public class LivroMapper {
 
         dto.setDescricao(livro.getDescricao());
         dto.setDataAdicao(livro.getDataAdicao());
+        // Garantir que hasReserva nunca seja null: true se houver reserva, false se não houver ou se valor for null
+        dto.setHasReserva(livro.getHasReserva() != null ? livro.getHasReserva() : false);
 
         return dto;
     }
@@ -106,6 +109,7 @@ public class LivroMapper {
         dto.setCategoriaId(baseDto.getCategoriaId());
         dto.setNomeCategoria(baseDto.getNomeCategoria());
         dto.setDataAdicao(baseDto.getDataAdicao());
+        dto.setHasReserva(baseDto.getHasReserva());
 
         dto.setSinopse(sinopse);
 

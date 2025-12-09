@@ -103,7 +103,11 @@ public class LivroService {
     }
 
     public LivroPaginatedResponseDto listarLivrosPaginado(int page, int size) {
-        return listLivrosPaginatedUseCase.execute(page, size);
+        return listarLivrosPaginado(page, size, false);
+    }
+
+    public LivroPaginatedResponseDto listarLivrosPaginado(int page, int size, boolean bypassCache) {
+        return listLivrosPaginatedUseCase.execute(page, size, bypassCache);
     }
 
     public LivroResponseDto atualizarSinopseLivro(Integer id, String sinopse) {
