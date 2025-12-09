@@ -60,6 +60,9 @@ public class LivroResponseDto {
             example = "2024-12-05T14:30:00")
     private LocalDateTime dataAdicao;
 
+    @Schema(description = "Indica se o livro possui reserva ativa", example = "true")
+    private Boolean hasReserva;
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -110,5 +113,8 @@ public class LivroResponseDto {
 
     public LocalDateTime getDataAdicao() { return dataAdicao; }
     public void setDataAdicao(LocalDateTime dataAdicao) { this.dataAdicao = dataAdicao; }
+
+    public Boolean getHasReserva() { return hasReserva; }
+    public void setHasReserva(Boolean hasReserva) { this.hasReserva = hasReserva; }
 }
 

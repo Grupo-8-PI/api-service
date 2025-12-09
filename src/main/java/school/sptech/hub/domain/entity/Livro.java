@@ -21,6 +21,7 @@ public class Livro {
     private Double preco;
     private Categoria categoria;
     private LocalDateTime dataAdicao;
+    private Boolean hasReserva;
 
     public Livro() {}
 
@@ -216,6 +217,9 @@ public class Livro {
 
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public Boolean getHasReserva() { return hasReserva; }
+    public void setHasReserva(Boolean hasReserva) { this.hasReserva = hasReserva; }
 
     @Override
     public boolean equals(Object o) {

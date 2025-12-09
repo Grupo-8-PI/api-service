@@ -4,6 +4,7 @@ import school.sptech.hub.domain.entity.Venda;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface VendaGateway {
     Optional<Venda> createVenda(Venda venda);
@@ -13,4 +14,6 @@ public interface VendaGateway {
     boolean reservaPertenceAoUsuario(Integer idReserva, String emailUsuario);
     List<Venda> findVendasByClienteId(Integer clienteId);
     List<Venda> findAll();
+    boolean hasReservaByLivroId(Integer livroId);
+    Set<Integer> findLivroIdsWithReservas(Set<Integer> livroIds);
 }

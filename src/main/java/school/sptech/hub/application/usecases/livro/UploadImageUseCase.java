@@ -5,6 +5,7 @@ import school.sptech.hub.application.exceptions.LivroExceptions.CapaUploadExcept
 import school.sptech.hub.application.exceptions.LivroExceptions.LivroNaoEncontradoException;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
 import school.sptech.hub.application.gateways.livro.LivroImagemStorageGateway;
+import school.sptech.hub.application.service.LivroEnrichmentService;
 import school.sptech.hub.domain.dto.livro.LivroMapper;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.entity.Livro;
@@ -16,10 +17,12 @@ public class UploadImageUseCase {
 
     private final LivroGateway livroGateway;
     private final LivroImagemStorageGateway imagemStorageGateway;
+    private final LivroEnrichmentService livroEnrichmentService;
 
-    public UploadImageUseCase(LivroGateway livroGateway, LivroImagemStorageGateway imagemStorageGateway) {
+    public UploadImageUseCase(LivroGateway livroGateway, LivroImagemStorageGateway imagemStorageGateway, LivroEnrichmentService livroEnrichmentService) {
         this.livroGateway = livroGateway;
         this.imagemStorageGateway = imagemStorageGateway;
+        this.livroEnrichmentService = livroEnrichmentService;
     }
 
     public LivroResponseDto execute(Integer id, byte[] conteudoArquivo, String nomeArquivo, String contentType) {
@@ -59,6 +62,8 @@ public class UploadImageUseCase {
             // Salvar livro atualizado
             Livro livroAtualizado = livroGateway.updateLivro(livro)
                     .orElseThrow(() -> new CapaUploadException("Erro ao salvar URL da capa"));
+
+            livroEnrichmentService.enrichWithReservaStatus(livroAtualizado);
 
             return LivroMapper.toResponseDto(livroAtualizado);
 
