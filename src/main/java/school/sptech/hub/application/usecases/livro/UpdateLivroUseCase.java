@@ -10,6 +10,7 @@ import school.sptech.hub.application.gateways.acabamento.AcabamentoGateway;
 import school.sptech.hub.application.gateways.categoria.CategoriaGateway;
 import school.sptech.hub.application.gateways.conservacao.ConservacaoGateway;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
+import school.sptech.hub.application.service.LivroEnrichmentService;
 import school.sptech.hub.domain.entity.Livro;
 import school.sptech.hub.domain.entity.Acabamento;
 import school.sptech.hub.domain.entity.Categoria;
@@ -26,15 +27,18 @@ public class UpdateLivroUseCase {
     private final CategoriaGateway categoriaGateway;
     private final AcabamentoGateway acabamentoGateway;
     private final ConservacaoGateway conservacaoGateway;
+    private final LivroEnrichmentService livroEnrichmentService;
 
     public UpdateLivroUseCase(LivroGateway livroGateway,
                               CategoriaGateway categoriaGateway,
                               AcabamentoGateway acabamentoGateway,
-                              ConservacaoGateway conservacaoGateway) {
+                              ConservacaoGateway conservacaoGateway,
+                              LivroEnrichmentService livroEnrichmentService) {
         this.livroGateway = livroGateway;
         this.categoriaGateway = categoriaGateway;
         this.acabamentoGateway = acabamentoGateway;
         this.conservacaoGateway = conservacaoGateway;
+        this.livroEnrichmentService = livroEnrichmentService;
     }
 
     public LivroResponseDto execute(Integer id, LivroUpdateDto livroUpdateDto) {
@@ -71,6 +75,8 @@ public class UpdateLivroUseCase {
 
         Livro savedLivro = livroGateway.updateLivro(existingLivro)
                 .orElseThrow(() -> new LivroNaoEncontradoException("Erro ao atualizar livro"));
+
+        livroEnrichmentService.enrichWithReservaStatus(savedLivro);
 
         return LivroMapper.toResponseDto(savedLivro);
     }

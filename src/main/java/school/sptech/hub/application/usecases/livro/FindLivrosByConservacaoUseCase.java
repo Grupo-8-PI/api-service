@@ -2,6 +2,7 @@ package school.sptech.hub.application.usecases.livro;
 
 import org.springframework.stereotype.Component;
 import school.sptech.hub.application.gateways.livro.LivroGateway;
+import school.sptech.hub.application.service.LivroEnrichmentService;
 import school.sptech.hub.domain.dto.livro.LivroMapper;
 import school.sptech.hub.domain.dto.livro.LivroResponseDto;
 import school.sptech.hub.domain.entity.Livro;
@@ -14,9 +15,11 @@ import java.util.stream.Collectors;
 public class FindLivrosByConservacaoUseCase {
 
     private final LivroGateway livroGateway;
+    private final LivroEnrichmentService livroEnrichmentService;
 
-    public FindLivrosByConservacaoUseCase(LivroGateway livroGateway) {
+    public FindLivrosByConservacaoUseCase(LivroGateway livroGateway, LivroEnrichmentService livroEnrichmentService) {
         this.livroGateway = livroGateway;
+        this.livroEnrichmentService = livroEnrichmentService;
     }
 
     public List<LivroResponseDto> execute(Integer conservacaoId) {
@@ -33,6 +36,7 @@ public class FindLivrosByConservacaoUseCase {
 
         // Buscar livros por conservação
         List<Livro> livros = livroGateway.findByConservacaoId(conservacaoId);
+        livroEnrichmentService.enrichWithReservaStatus(livros);
 
         // Converter para DTOs de resposta
         return livros.stream()

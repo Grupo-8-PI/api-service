@@ -42,6 +42,26 @@ services:
       retries: 5
       start_period: 20s
 
+  redis:
+    image: redis:7.2
+    container_name: redis-local
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   app:
     image: felipegasp/aej-livros-api-service:latest
     container_name: api-service
@@ -67,6 +87,8 @@ services:
       mysql:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - app-network
@@ -118,21 +140,6 @@ services:
         condition: service_healthy
     networks:
       - app-network
-
-  redis:
-    image: redis:7.2
-    container_name: redis-local
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
 
 volumes:
   mysql_data:

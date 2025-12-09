@@ -75,8 +75,9 @@ public class LivroController {
     @GetMapping
     public ResponseEntity<LivroPaginatedResponseDto> listarLivros(
             @RequestParam(defaultValue = "0", name = "page") int page,
-            @RequestParam(defaultValue = "9", name = "size") int size) {
-        LivroPaginatedResponseDto livros = livroService.listarLivrosPaginado(page, size);
+            @RequestParam(defaultValue = "9", name = "size") int size,
+            @RequestParam(defaultValue = "false", name = "bypass-cache") boolean bypassCache) {
+        LivroPaginatedResponseDto livros = livroService.listarLivrosPaginado(page, size, bypassCache);
         return ResponseEntity.ok(livros);
     }
 
