@@ -215,8 +215,6 @@ public class LivroController {
             )
     })
     @GetMapping("/acabamento/{acabamentoId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENTE')")
-    @SecurityRequirement(name = "bearer")
     public ResponseEntity<List<LivroResponseDto>> buscarLivrosPorAcabamento(
             @PathVariable @Schema(description = "ID do tipo de acabamento", example = "1", allowableValues = {"1", "2"}) Integer acabamentoId) {
         List<LivroResponseDto> livros = livroService.buscarLivrosPorAcabamento(acabamentoId);
