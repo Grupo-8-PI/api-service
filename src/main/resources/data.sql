@@ -85,30 +85,39 @@ VALUES
 ('Bruno Cardoso', 'bruno.cardoso@email.com', '11898765432', 'cliente', '01234567890', '$2a$12$Ebaxm7Qqi.6xDI/UDVt7t.62PljaX2QkHN.3OEa1HMfhhQBxbAKsi', '1999-01-30');
 
 -- Vendas/Reservas
--- Business Rule: Hard delete - reservas concluídas/finalizadas/canceladas são DELETADAS do banco
--- Apenas 2 status existem:
---   'pendente': Usuário fez a reserva mas ainda não concluiu (não retirou/pagou)
---   'inconsistente': Passou do prazo limite (dt_limite < NOW())
+-- Frontend Status Calculation Logic (calculateStatusByDeadline):
+--   CONFIRMADA: dtLimite >= TODAY (✅ Green - active, within deadline)
+--   PENDENTE: 1-2 days after dtLimite (⚠️ Yellow - overdue but recoverable)
+--   CANCELADA: 2+ days after dtLimite (❌ Red - too late, hidden from UI)
+--   CONCLUIDA: Manual status when user completes reservation (✅ Blue - finished)
+--
+-- Note: statusReserva in DB always starts as 'CONFIRMADA' or 'CONCLUIDA'
+--       Frontend recalculates actual status based on dtLimite value
+--
 -- IDs dos usuários começam em 2 (id 1 é admin)
 -- IDs dos livros vão de 1 a 40
 INSERT INTO venda (dt_reserva, dt_limite, status_reserva, total_reserva, usuario_id, livro_id)
 VALUES
--- Reservas PENDENTES (aguardando conclusão - dentro do prazo)
-(NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 6 DAY, 'pendente', 1, 2, 1),    -- Maria reservou "Amanhã Estelar"
-(NOW() - INTERVAL 2 HOUR, NOW() + INTERVAL 6 DAY, 'pendente', 1, 3, 5),   -- João reservou "Sabores da Terra"
-(NOW() - INTERVAL 5 HOUR, NOW() + INTERVAL 6 DAY, 'pendente', 1, 4, 12),  -- Ana reservou "A Casa Sem Vozes"
-(NOW() - INTERVAL 1 HOUR, NOW() + INTERVAL 6 DAY, 'pendente', 1, 5, 30),  -- Pedro reservou "Entre Fumaça e Espelhos"
-(NOW() - INTERVAL 3 HOUR, NOW() + INTERVAL 6 DAY, 'pendente', 1, 6, 27),  -- Carla reservou "O Jardim Vermelho"
-(NOW() - INTERVAL 8 HOUR, NOW() + INTERVAL 5 DAY, 'pendente', 1, 7, 15),  -- Lucas reservou "Contos do Cotidiano"
-(NOW() - INTERVAL 12 HOUR, NOW() + INTERVAL 6 DAY, 'pendente', 1, 8, 20), -- Juliana reservou "Sabores do Oriente"
-(NOW() - INTERVAL 6 HOUR, NOW() + INTERVAL 5 DAY, 'pendente', 1, 9, 16),  -- Fernanda reservou "Noites em Lisboa"
+-- ===== CONFIRMADA Status (Within Deadline - 5 reservations) =====
+-- These show as GREEN in dashboard (dtLimite >= today)
+(NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY, 'CONFIRMADA', 29.90, 2, 1),      -- Maria reservou "Amanhã Estelar" (dt_limite tomorrow)
+(NOW() - INTERVAL 2 HOUR, NOW() + INTERVAL 6 DAY, 'CONFIRMADA', 49.90, 3, 5),    -- João reservou "Sabores da Terra" (6 days remaining)
+(NOW() - INTERVAL 5 HOUR, NOW() + INTERVAL 4 DAY, 'CONFIRMADA', 29.50, 4, 12),   -- Ana reservou "A Casa Sem Vozes" (4 days remaining)
+(NOW() - INTERVAL 1 HOUR, NOW() + INTERVAL 5 DAY, 'CONFIRMADA', 26.90, 5, 30),   -- Pedro reservou "Entre Fumaça e Espelhos" (5 days remaining)
+(NOW() - INTERVAL 3 HOUR, NOW() + INTERVAL 2 DAY, 'CONFIRMADA', 19.70, 6, 27),   -- Carla reservou "O Jardim Vermelho" (2 days remaining)
 
--- Reservas INCONSISTENTES (passou do prazo - dt_limite < NOW())
-(NOW() - INTERVAL 10 DAY, NOW() - INTERVAL 3 DAY, 'inconsistente', 1, 10, 8),  -- Bruno - VENCIDA há 3 dias "Cidade de Ferro"
-(NOW() - INTERVAL 12 DAY, NOW() - INTERVAL 2 DAY, 'inconsistente', 1, 2, 25),  -- Maria - VENCIDA há 2 dias "O Circulo Partido"
-(NOW() - INTERVAL 15 DAY, NOW() - INTERVAL 1 DAY, 'inconsistente', 1, 3, 7),   -- João - VENCIDA há 1 dia "O Reino Despedaçado"
-(NOW() - INTERVAL 9 DAY, NOW() - INTERVAL 2 DAY, 'inconsistente', 1, 4, 13),   -- Ana - VENCIDA há 2 dias "Pensamentos que Mudam"
-(NOW() - INTERVAL 20 DAY, NOW() - INTERVAL 5 DAY, 'inconsistente', 1, 11, 19); -- Rafael - VENCIDA há 5 dias "O Corpo Seco"
+-- ===== PENDENTE Status (1-2 Days Overdue - 2 reservations) =====
+-- These show as YELLOW in Inconsistências tab (1-2 days after dtLimite)
+(NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 0 DAY, 'CONFIRMADA', 14.90, 7, 15),    -- Lucas reservou "Contos do Cotidiano" (expires TODAY - 0 days overdue)
+(NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 1 DAY, 'CONFIRMADA', 54.50, 8, 20),    -- Juliana reservou "Sabores do Oriente" (1 day overdue)
+
+-- ===== CANCELADA Status (2+ Days Overdue - 1 reservation) =====
+-- These are HIDDEN from UI (2+ days after dtLimite)
+(NOW() - INTERVAL 5 DAY, NOW() - INTERVAL 2 DAY, 'CONFIRMADA', 22.90, 9, 9),     -- Fernanda reservou "O Eco na Parede" (2 days overdue - should be hidden)
+
+-- ===== CONCLUIDA Status (Manually Completed - 1 reservation) =====
+-- These show as BLUE (disabled, already finished)
+(NOW() - INTERVAL 10 DAY, NOW() - INTERVAL 5 DAY, 'CONCLUIDA', 27.80, 10, 8);    -- Rafael completou "Cidade de Ferro" (finished 5 days ago)
 
 -- ============================================
 -- FIM DO MOCK PARA APRESENTAÇÃO
