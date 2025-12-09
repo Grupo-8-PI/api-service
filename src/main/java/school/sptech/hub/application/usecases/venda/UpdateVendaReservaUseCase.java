@@ -6,13 +6,16 @@ import school.sptech.hub.domain.dto.venda.VendaUpdateDto;
 import school.sptech.hub.domain.dto.venda.VendaMapper;
 import school.sptech.hub.application.exceptions.VendaExceptions.VendaNaoEncontradaException;
 import school.sptech.hub.application.gateways.venda.VendaGateway;
+import school.sptech.hub.utils.cache.CacheInvalidationHelper;
 
 @Component
 public class UpdateVendaReservaUseCase {
     private final VendaGateway gateway;
+    private final CacheInvalidationHelper cacheInvalidationHelper;
 
-    public UpdateVendaReservaUseCase(VendaGateway gateway) {
+    public UpdateVendaReservaUseCase(VendaGateway gateway, CacheInvalidationHelper cacheInvalidationHelper) {
         this.gateway = gateway;
+        this.cacheInvalidationHelper = cacheInvalidationHelper;
     }
 
     public Venda execute(Integer id, VendaUpdateDto vendaUpdateDto) {
@@ -21,7 +24,13 @@ public class UpdateVendaReservaUseCase {
 
         VendaMapper.updateFromDto(existingVenda, vendaUpdateDto);
 
-        return gateway.updateVenda(existingVenda)
+        Venda updatedVenda = gateway.updateVenda(existingVenda)
                 .orElseThrow(() -> new VendaNaoEncontradaException("Erro ao atualizar reserva"));
+
+        if (updatedVenda.getLivro() != null) {
+            cacheInvalidationHelper.invalidarTodosCachesLivro(updatedVenda.getLivro().getId());
+        }
+
+        return updatedVenda;
     }
 }

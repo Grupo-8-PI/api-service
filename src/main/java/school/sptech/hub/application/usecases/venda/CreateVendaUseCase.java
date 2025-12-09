@@ -1,5 +1,7 @@
 package school.sptech.hub.application.usecases.venda;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import school.sptech.hub.application.gateways.livro.LivroGateway;
 import school.sptech.hub.domain.entity.Venda;
 import school.sptech.hub.domain.entity.Usuario;
 import school.sptech.hub.domain.entity.Livro;
+import school.sptech.hub.utils.cache.CacheInvalidationHelper;
 
 import java.time.LocalDateTime;
 
@@ -20,15 +23,18 @@ import static school.sptech.hub.application.validators.VendaValidator.isValidVen
 
 @Component
 public class CreateVendaUseCase {
+    private static final Logger logger = LoggerFactory.getLogger(CreateVendaUseCase.class);
 
     private final VendaGateway vendaGateway;
     private final UsuarioGateway usuarioGateway;
     private final LivroGateway livroGateway;
+    private final CacheInvalidationHelper cacheInvalidationHelper;
 
-    public CreateVendaUseCase(VendaGateway vendaGateway, UsuarioGateway usuarioGateway, LivroGateway livroGateway) {
+    public CreateVendaUseCase(VendaGateway vendaGateway, UsuarioGateway usuarioGateway, LivroGateway livroGateway, CacheInvalidationHelper cacheInvalidationHelper) {
         this.vendaGateway = vendaGateway;
         this.usuarioGateway = usuarioGateway;
         this.livroGateway = livroGateway;
+        this.cacheInvalidationHelper = cacheInvalidationHelper;
     }
 
     public Venda execute(Venda venda) {
@@ -60,7 +66,13 @@ public class CreateVendaUseCase {
             throw new VendaInvalidaException("Reserva inválida.");
         }
         
-        return vendaGateway.createVenda(venda)
+        Venda vendaCriada = vendaGateway.createVenda(venda)
                 .orElseThrow(() -> new VendaNaoEncontradaException("Erro ao criar reserva"));
+
+        if (venda.getLivro() != null) {
+            cacheInvalidationHelper.invalidarTodosCachesLivro(venda.getLivro().getId());
+        }
+
+        return vendaCriada;
     }
 }
