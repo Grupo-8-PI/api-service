@@ -85,6 +85,8 @@ VALUES
 ('Bruno Cardoso', 'bruno.cardoso@email.com', '11898765432', 'cliente', '01234567890', '$2a$12$Ebaxm7Qqi.6xDI/UDVt7t.62PljaX2QkHN.3OEa1HMfhhQBxbAKsi', '1999-01-30');
 
 -- Vendas/Reservas
+-- REGRA DE NEGÓCIO: Toda reserva é criada com prazo de 2 dias (dt_limite = dt_reserva + 2 dias)
+--
 -- Frontend Status Calculation Logic (calculateStatusByDeadline):
 --   CONFIRMADA: dtLimite >= TODAY (✅ Green - active, within deadline)
 --   PENDENTE: 1-2 days after dtLimite (⚠️ Yellow - overdue but recoverable)
@@ -100,24 +102,39 @@ INSERT INTO venda (dt_reserva, dt_limite, status_reserva, total_reserva, usuario
 VALUES
 -- ===== CONFIRMADA Status (Within Deadline - 5 reservations) =====
 -- These show as GREEN in dashboard (dtLimite >= today)
-(NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY, 'CONFIRMADA', 29.90, 2, 1),      -- Maria reservou "Amanhã Estelar" (dt_limite tomorrow)
-(NOW() - INTERVAL 2 HOUR, NOW() + INTERVAL 6 DAY, 'CONFIRMADA', 49.90, 3, 5),    -- João reservou "Sabores da Terra" (6 days remaining)
-(NOW() - INTERVAL 5 HOUR, NOW() + INTERVAL 4 DAY, 'CONFIRMADA', 29.50, 4, 12),   -- Ana reservou "A Casa Sem Vozes" (4 days remaining)
-(NOW() - INTERVAL 1 HOUR, NOW() + INTERVAL 5 DAY, 'CONFIRMADA', 26.90, 5, 30),   -- Pedro reservou "Entre Fumaça e Espelhos" (5 days remaining)
-(NOW() - INTERVAL 3 HOUR, NOW() + INTERVAL 2 DAY, 'CONFIRMADA', 19.70, 6, 27),   -- Carla reservou "O Jardim Vermelho" (2 days remaining)
+-- Criada há 1 dia -> dt_limite = (NOW() - 1 dia) + 2 dias = NOW() + 1 dia (1 dia restante)
+(NOW() - INTERVAL 1 DAY, (NOW() - INTERVAL 1 DAY) + INTERVAL 2 DAY, 'CONFIRMADA', 29.90, 2, 1),
 
--- ===== PENDENTE Status (1-2 Days Overdue - 2 reservations) =====
--- These show as YELLOW in Inconsistências tab (1-2 days after dtLimite)
-(NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 0 DAY, 'CONFIRMADA', 14.90, 7, 15),    -- Lucas reservou "Contos do Cotidiano" (expires TODAY - 0 days overdue)
-(NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 1 DAY, 'CONFIRMADA', 54.50, 8, 20),    -- Juliana reservou "Sabores do Oriente" (1 day overdue)
+-- Criada há 2 horas -> dt_limite = (NOW() - 2h) + 2 dias ≈ NOW() + 2 dias (quase 2 dias restantes)
+(NOW() - INTERVAL 2 HOUR, (NOW() - INTERVAL 2 HOUR) + INTERVAL 2 DAY, 'CONFIRMADA', 49.90, 3, 5),
+
+-- Criada há 5 horas -> dt_limite = (NOW() - 5h) + 2 dias ≈ NOW() + 1.8 dias
+(NOW() - INTERVAL 5 HOUR, (NOW() - INTERVAL 5 HOUR) + INTERVAL 2 DAY, 'CONFIRMADA', 29.50, 4, 12),
+
+-- Criada há 1 hora -> dt_limite = (NOW() - 1h) + 2 dias ≈ NOW() + 2 dias
+(NOW() - INTERVAL 1 HOUR, (NOW() - INTERVAL 1 HOUR) + INTERVAL 2 DAY, 'CONFIRMADA', 26.90, 5, 30),
+
+-- Criada há 3 horas -> dt_limite = (NOW() - 3h) + 2 dias ≈ NOW() + 1.9 dias
+(NOW() - INTERVAL 3 HOUR, (NOW() - INTERVAL 3 HOUR) + INTERVAL 2 DAY, 'CONFIRMADA', 19.70, 6, 27),
+
+-- ===== PENDENTE Status (1 Day Overdue - 1 reservation) =====
+-- These show as YELLOW in Inconsistências tab (1 day after dtLimite)
+-- Criada há 3 dias -> dt_limite = (NOW() - 3 dias) + 2 dias = NOW() - 1 dia (1 dia atrasada)
+(NOW() - INTERVAL 3 DAY, (NOW() - INTERVAL 3 DAY) + INTERVAL 2 DAY, 'CONFIRMADA', 14.90, 7, 15),
+
+-- ===== PENDENTE Status (Expires Today - Edge Case) =====
+-- Criada há 2 dias -> dt_limite = (NOW() - 2 dias) + 2 dias = NOW() (expira hoje)
+(NOW() - INTERVAL 2 DAY, (NOW() - INTERVAL 2 DAY) + INTERVAL 2 DAY, 'CONFIRMADA', 54.50, 8, 20),
 
 -- ===== CANCELADA Status (2+ Days Overdue - 1 reservation) =====
 -- These are HIDDEN from UI (2+ days after dtLimite)
-(NOW() - INTERVAL 5 DAY, NOW() - INTERVAL 2 DAY, 'CONFIRMADA', 22.90, 9, 9),     -- Fernanda reservou "O Eco na Parede" (2 days overdue - should be hidden)
+-- Criada há 4 dias -> dt_limite = (NOW() - 4 dias) + 2 dias = NOW() - 2 dias (2 dias atrasada)
+(NOW() - INTERVAL 4 DAY, (NOW() - INTERVAL 4 DAY) + INTERVAL 2 DAY, 'CONFIRMADA', 22.90, 9, 9),
 
 -- ===== CONCLUIDA Status (Manually Completed - 1 reservation) =====
 -- These show as BLUE (disabled, already finished)
-(NOW() - INTERVAL 10 DAY, NOW() - INTERVAL 5 DAY, 'CONCLUIDA', 27.80, 10, 8);    -- Rafael completou "Cidade de Ferro" (finished 5 days ago)
+-- Criada há 10 dias, concluída há 5 dias (dt_limite não importa quando status = CONCLUIDA)
+(NOW() - INTERVAL 10 DAY, (NOW() - INTERVAL 10 DAY) + INTERVAL 2 DAY, 'CONCLUIDA', 27.80, 10, 8);
 
 -- ============================================
 -- FIM DO MOCK PARA APRESENTAÇÃO
